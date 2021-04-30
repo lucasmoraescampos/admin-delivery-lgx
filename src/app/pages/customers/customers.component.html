@@ -1,0 +1,206 @@
+<div class="row">
+
+    <div class="col-sm-12">
+
+        <app-iq-card>
+
+            <div card-header class="iq-header-title">
+
+                <div class="filters row">
+
+                    <div class="col-md-4 mt-1 mb-1">
+
+                        <input type="text" class="form-control" placeholder="Search Project Here">
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)"><i
+                                class="ri-add-line"></i>Add Customer</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table id="datatable" class="table table-hover">
+
+                    <thead class="thead-primary">
+
+                        <tr>
+
+                            <th>
+
+                                <div class="checkbox">
+
+                                    <input type="checkbox" id="checkbox1" class="checkbox-input">
+
+                                </div>
+
+                            </th>
+
+                            <th>Name</th>
+
+                            <th>Address</th>
+
+                            <th>Time Window</th>
+
+                            <th>Duration</th>
+
+                            <th>Load</th>
+
+                            <th>Mobile Phone</th>
+
+                            <th>Priority</th>
+
+                            <th>Email</th>
+
+                            <th>Types</th>
+
+                            <th>Notes</th>
+
+                            <th>Notes2</th>
+
+                            <th>Address Check</th>
+
+                            <th>Created On</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+
+                                <div class="checkbox">
+
+                                    <input type="checkbox" id="checkbox1" class="checkbox-input">
+
+                                </div>
+
+                            </td>
+
+                            <td>Lucas Moraes Campos</td>
+
+                            <td>Rua 2, Centro, Porangatu - GO, 76550000</td>
+
+                            <td>14:00 - 17:00</td>
+
+                            <td>60</td>
+
+                            <td>3</td>
+
+                            <td>+5562984619997</td>
+
+                            <td></td>
+
+                            <td></td>
+
+                            <td></td>
+
+                            <td></td>
+
+                            <td></td>
+
+                            <td>Valid</td>
+
+                            <td>2021-03-23</td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </app-iq-card>
+
+    </div>
+
+</div>
+
+<ng-template #modal>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left">Add Customer</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body">
+
+        <div class="form-group row">
+
+            <label for="name" class="col-sm-2 col-form-label" triggers="mouseenter:mouseleave" popover="The name of your customer">Name</label>
+
+            <div class="col-sm-10">
+
+                <input type="text" class="form-control" id="name" placeholder="Name">
+                    
+                <small>Required</small>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <label for="name" class="col-sm-2 col-form-label" triggers="mouseenter:mouseleave" popover="Address for the delivery. After inputting the address, select a suggestion from the dropdown menu.">Address</label>
+
+            <div class="col-sm-10">
+
+                <input type="text" class="form-control" id="name" placeholder="Enter a Location">
+                    
+                <small>Required</small>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <label for="name" class="col-sm-2 col-form-label" triggers="mouseenter:mouseleave" popover="Used to indicate that a delivery must be complemented in a particular time window. Please enter it using the 24-hour format. For example, a time window of 2 p.m. to 5 p.m. is 14:00 to 17:00.">Time window</label>
+
+            <div class="col-sm-4">
+
+                <input type="text" class="form-control" id="name" placeholder="From">
+
+            </div>
+
+            <div class="col-sm-4">
+
+                <input type="text" class="form-control" id="name" placeholder="To">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <label for="name" class="col-sm-2 col-form-label" triggers="mouseenter:mouseleave" popover="Time it takes to complete the delivery, which can include, parking time, service time, unloading time, etc">Duration</label>
+
+            <div class="col-sm-8">
+
+                <input type="text" class="form-control" id="name" placeholder="Minutes">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</ng-template>

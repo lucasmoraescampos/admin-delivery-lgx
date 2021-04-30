@@ -1,0 +1,320 @@
+<div class="row">
+
+  <div class="col-xl-6" *ngIf="display == 1">
+
+    <app-iq-card [isCardHeader]="false">
+
+      <tabset type="pills" [justified]="true">
+
+        <tab class="animate__animated animate__fadeIn" heading="Drivers ({{ project?.drivers.length || '0' }})">
+
+          <div class="row">
+
+            <div class="col-md-12 text-right mt-3">
+
+              <button type="button" class="btn btn-primary btn-sm" (click)="modalDriver()">
+
+                <i class="ri-add-line"></i>
+
+                Add Drivers
+
+              </button>
+
+            </div>
+
+            <div class="col-md-12 mt-3">
+
+              <div class="table-responsive">
+
+                <table class="table table-hover table-sm">
+
+                  <thead class="thead-primary">
+
+                    <tr>
+
+                      <th></th>
+
+                      <th>Name</th>
+
+                      <th>Start Address</th>
+
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    <tr *ngFor="let driver of drivers; let i=index" (click)="driverInfoById(driver.id)">
+
+                      <td>
+
+                        <input type="checkbox" [checked]="isDriverchecked(driver)" (input)="checkDriver(driver, $event)">
+
+                      </td>
+
+                      <td width="200px">
+
+                        <span>{{ driver.name }}</span>
+
+                      </td>
+
+                      <td>
+
+                        <span>{{ driver.start_address }}</span>
+
+                      </td>
+
+                    </tr>
+
+                    <tr class="text-center" *ngIf="drivers.length == 0">
+
+                      <td colspan="6">
+
+                        <i class="ri-search-line"></i> No drivers found
+
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </tab>
+
+        <tab class="animate__animated animate__fadeIn" heading="Stops ({{ project?.stops.length || '0' }})">
+
+          <div class="row">
+
+            <div class="col-md-12 mt-3 text-right">
+
+              <button type="button" class="btn btn-primary btn-sm mr-1" (click)="modalStop()">
+
+                <i class="ri-add-line"></i>
+
+                Add Stops
+
+              </button>
+
+              <button type="button" class="btn btn-primary btn-sm" (click)="modalUploadStops()">
+
+                <i class="ri-upload-line"></i>
+
+                Upload a List of Stops
+
+              </button>
+
+            </div>
+
+            <div class="col-md-12 mt-3">
+
+              <div class="table-responsive">
+
+                <table class="table table-hover table-sm">
+
+                  <thead class="thead-primary">
+
+                    <tr class="text-center">
+
+                      <th>Name</th>
+
+                      <th>Address</th>
+
+                      <th></th>
+
+                      <th></th>
+
+                    </tr>
+
+                  </thead>
+
+                  <tbody>
+
+                    <tr class="text-center" *ngFor="let stop of project?.stops | slice:((page-1)*6):(page*6);"
+                      (click)="stopInfo(stop)">
+
+                      <td>
+
+                        <span>{{ stop.name }}</span>
+
+                      </td>
+
+                      <td>
+
+                        <span>{{ stop.address }}</span>
+
+                      </td>
+
+                      <td class="text-right p-0">
+
+                        <button class="btn btn-link p-0" (click)="$event.stopPropagation(); modalStop(stop)">
+
+                          <i class="ri-edit-box-line"></i>
+
+                        </button>
+
+                      </td>
+
+                      <td class="text-right p-0">
+
+                        <button class="btn btn-link p-0" (click)="$event.stopPropagation(); deleteStop(stop)">
+
+                          <i class="ri-delete-bin-line"></i>
+
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                    <tr class="text-center" *ngIf="project?.stops.length == 0">
+
+                      <td colspan="3">
+
+                        <i class="ri-search-line"></i> No stops found
+
+                      </td>
+
+                    </tr>
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+            </div>
+
+            <div class="col-md-12 mt-2" *ngIf="project?.stops.length > 0">
+
+              <pagination previousText="&laquo;" nextText="&raquo;" [rotate]="true" [itemsPerPage]="6" [maxSize]="5"
+                [totalItems]="project?.stops.length" [(ngModel)]="page" (pageChanged)="pageChanged($event)">
+              </pagination>
+
+            </div>
+
+          </div>
+
+        </tab>
+
+      </tabset>
+
+    </app-iq-card>
+
+  </div>
+
+  <div [class]="display == 1 ? 'col-xl-6' : 'col-xl-12'" [hidden]="!project">
+
+    <div class="map-header" *ngIf="project?.stops.length > 0 && project?.drivers.length > 0">
+
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="display = 1"
+        *ngIf="display != 1">
+
+        <i class="ri-menu-line"></i> Drivers And Stops
+
+      </button>
+
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="display = 0"
+        *ngIf="project?.status > 0 && display == 1">
+
+        Continue Routing <i class="ri-arrow-right-line"></i>
+
+      </button>
+
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()" *ngIf="project?.status == 0">
+
+        <i class="ri-flashlight-line"></i> Optimize Route
+
+      </button>
+
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()" *ngIf="project?.status > 0 && display != 1">
+
+        <i class="ri-flashlight-line"></i> Reoptimize Route
+
+      </button>
+
+    </div>
+
+    <div class="map" #map></div>
+
+    <div class="plan animate__animated animate__fadeInUp" *ngIf="project?.status > 0 && display != 1">
+
+      <div class="header">
+
+        <span class="title">Plan</span>
+
+        <div class="text-right">
+
+          <button class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            
+            <i class="ri-download-line"></i> Download
+          
+          </button>
+
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+            <a class="dropdown-item" href="javascript:void(0);" (click)="downloadSolution()">Solution Download</a>
+
+            <a class="dropdown-item" href="javascript:void(0);" (click)="downloadSummary()">Summary Download</a>
+
+          </div>
+
+          <button class="btn btn-dark btn-sm" (click)="display = 0" *ngIf="display == 2">
+
+            <i class="ri-arrow-down-s-line"></i> Collapse
+
+          </button>
+
+          <button class="btn btn-dark btn-sm" (click)="display = 2" *ngIf="display == 0">
+
+            <i class="ri-arrow-up-s-line"></i> Expand
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="body table-responsive" *ngIf="display == 2">
+
+        <table class="table">
+
+          <thead>
+
+            <tr *ngFor="let driver of project?.drivers; let i=index;">
+
+              <td width="200px">{{ driver.name }}</td>
+
+              <td>
+
+                <div class="truck" [style.background]="colors[i]" (click)="driverInfo(driver)"><i
+                    class="ri-truck-line"></i></div>
+
+                <ul [sortablejs]="driver.pivot.stops_order" [sortablejsOptions]="options">
+
+                  <li class="ml-2" [value]="i" (click)="stopInfoById(stop_id)"
+                    *ngFor="let stop_id of driver.pivot.stops_order; let i2=index;">{{ i2+1 }}</li>
+
+                </ul>
+
+              </td>
+
+            </tr>
+
+          </thead>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

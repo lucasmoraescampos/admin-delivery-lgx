@@ -1,0 +1,60 @@
+/* Importing Bootstrap SCSS file. */
+@import "~bootstrap/scss/bootstrap";
+@import "assets/scss/alert";
+
+/* You can add global styles to this file, and also import other style files */
+.owl-carousel .owl-dot {
+  display: inline-block;
+}
+.iq-email-list .iq-email-ui li a {
+  padding: 0.5rem 1rem !important;
+}
+
+.theme-green .bs-datepicker-head {
+  background-color: var(--primary) !important;
+}
+
+.theme-green .bs-datepicker-body table td.week span {
+  color: var(--primary) !important;
+}
+
+.theme-green .bs-datepicker-body table td span.selected,
+.theme-green .bs-datepicker-body table td.selected span,
+.theme-green .bs-datepicker-body table td span[class*="select-"]:after,
+.theme-green .bs-datepicker-body table td[class*="select-"] span:after {
+  background-color: var(--primary) !important;
+}
+
+.bs-datepicker-container {
+  padding: 0 !important;
+}
+
+.btn-group-clear {
+  border: 0px solid #d7dbda;
+  border-top-right-radius: .25rem;
+  border-bottom-right-radius: .25rem;
+  background: #e9edf4;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.btn-primary:active {
+  border-color: #FC9D20 !important;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+table {
+  &.table-hover {
+    cursor: pointer;
+  }
+
+  thead {
+    &.thead-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+  }
+}

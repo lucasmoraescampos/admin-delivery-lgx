@@ -1,0 +1,42 @@
+<div class="modal-header ">
+
+    <h4 class="modal-title">
+
+        Drag and drop a xls file
+
+        <br>
+
+        <small>Or, select from your computer</small>
+
+    </h4>
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+
+        <span aria-hidden="true">&times;</span>
+
+    </button>
+
+</div>
+
+<div class="modal-body">
+
+    <div class="form-group">
+
+        <input type="file" class="form-control file" (change)="chooseFile($event.target.files)" accept=".xls">
+
+    </div>
+
+    <div class="form-group">
+
+        <p>Not sure how to format your file? <a href="../../../assets/samples/sample-stops.xls">Download a sample.</a>
+        </p>
+
+    </div>
+
+    <div class="form-group text-right">
+
+        <button class="btn btn-primary" (click)="import()" [disabled]="!file">Done</button>
+
+    </div>
+
+</div>

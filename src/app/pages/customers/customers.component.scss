@@ -1,0 +1,28 @@
+.iq-header-title {
+    flex: auto;
+}
+
+.filters {
+    padding: 5px 0;
+
+    input {
+        height: 35px;
+    }
+}
+
+.modal-header {
+    border-bottom: 0;
+}
+
+@media (min-width: 768px) {
+    .filters {
+        display: flex;
+        justify-content: flex-end;
+
+        div {
+            &:not(:last-child) {
+                padding-right: 0 !important;
+            }
+        }
+    }
+}

@@ -1,0 +1,90 @@
+<div class="modal-header">
+
+    <h4 class="modal-title pull-left">Driver</h4>
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+
+        <span aria-hidden="true">&times;</span>
+
+    </button>
+
+</div>
+
+<div class="modal-body">
+
+    <form [formGroup]="formGroup">
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+
+                <label for="name" class="col-form-label mt-1">Name</label>
+
+                <i class="ri-information-line ml-2" tooltip="This is the name of your driver." placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-8">
+
+                <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
+                    formControlName="name">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+
+                <label class="col-form-label mt-1">Start Address</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="This is where your driver will depart from at the start of their shift."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-8">
+
+                <app-google-autocomplete [address]="formControl.start_address.value" (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+
+                <label for="phone" class="col-form-label mt-1">Phone</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="Your driver’s mobile number is required if you want to dispatch the routes to them using the Routific’s driver app."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-8">
+
+                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309"
+                    maxlength="40" formControlName="phone" [brmasker]="{ type: 'num' }">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-12 text-right pt-3">
+
+                <button class="btn btn-primary" [disabled]="formGroup.invalid"
+                    (click)="save()">Save</button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

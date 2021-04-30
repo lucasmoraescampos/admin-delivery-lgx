@@ -1,0 +1,22 @@
+<!-- Sidebar [START] -->
+<div class="iq-sidebar">
+  <div class="iq-sidebar-logo d-flex justify-content-between">
+    <a routerLink="/">
+      <img src="assets/images/logo-full2.png" class="img-fluid" alt="">
+    </a>
+    <div class="iq-menu-bt align-self-center">
+      <div class="wrapper-menu">
+        <div class="line-menu half start"></div>
+        <div class="line-menu"></div>
+        <div class="line-menu half end"></div>
+      </div>
+    </div>
+  </div>
+  <ng-scrollbar>
+    <nav class="iq-sidebar-menu mt-3">
+      <app-list-style1 [listItems]="menuItems" [collapseOpen]="true" id="iq-sidebar-toggle"></app-list-style1>
+    </nav>
+    <div class="p-3"></div>
+  </ng-scrollbar>
+</div>
+<!-- Sidebar [END] -->

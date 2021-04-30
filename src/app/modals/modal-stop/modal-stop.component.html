@@ -1,0 +1,108 @@
+<div class="modal-header">
+
+    <h4 class="modal-title pull-left">Stop</h4>
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+
+        <span aria-hidden="true">&times;</span>
+
+    </button>
+
+</div>
+
+<div class="modal-body">
+
+    <form [formGroup]="formGroup">
+
+        <div class="form-group row">
+
+            <div class="col-sm-3">
+
+                <label for="order_id" class="col-form-label mt-1">Order ID</label>
+
+                <i class="ri-information-line ml-2" tooltip="The order identification." placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <input type="text" class="form-control" id="order_id" placeholder="Order ID" maxlength="20"
+                    formControlName="order_id">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-3">
+
+                <label for="name" class="col-form-label mt-1">Name</label>
+
+                <i class="ri-information-line ml-2" tooltip="The name of your customer." placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <input type="text" class="form-control" id="name" placeholder="Name" maxlength="200"
+                    formControlName="name">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-3">
+
+                <label for="phone" class="col-form-label mt-1">Phone</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="Customer’s mobile number, which can be used to send automated customer notifications."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309"
+                    maxlength="40" formControlName="phone" [brmasker]="{ type: 'num' }">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-3">
+
+                <label class="col-form-label mt-1">Address</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="Address for the delivery. After inputting the address, select a suggestion from the dropdown menu."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <app-google-autocomplete (changeAddress)="changeAddress($event)"></app-google-autocomplete>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-12 text-right pt-3">
+
+                <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

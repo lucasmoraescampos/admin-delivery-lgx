@@ -1,0 +1,16 @@
+<input type="text" class="form-control" id="start_address" placeholder="Enter a location" maxlength="255"
+    [(ngModel)]="address" (input)="addressChanged()" (blur)="setEnableList(false)" (focus)="setEnableList(true)">
+
+<table class="table table-sm table-hover animate__animated animate__fadeIn" *ngIf="addressList?.length > 0 && enableList">
+
+    <tbody>
+
+        <tr *ngFor="let address of addressList" (click)="selectStartAddress(address)">
+
+            <td>{{ address }}</td>
+
+        </tr>
+
+    </tbody>
+
+</table>

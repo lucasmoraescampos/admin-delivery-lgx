@@ -1,0 +1,212 @@
+<div class="row">
+
+    <div class="col-sm-12">
+
+        <app-iq-card>
+
+            <div card-header class="iq-header-title">
+
+                <div class="filters row">
+
+                    <div class="col-md-2 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" placeholder="From" class="form-control" bsDatepicker
+                                [bsConfig]="{ showWeekNumbers: false }"
+                                (bsValueChange)="changeDateFilter($event, 'from')" #datefrom>
+
+                            <div class="input-group-append">
+
+                                <button class="btn-group-clear" (click)="datefrom.value = from = ''" *ngIf="from?.length > 0">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-2 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" placeholder="To" class="form-control" bsDatepicker
+                                [bsConfig]="{ showWeekNumbers: false }" (bsValueChange)="changeDateFilter($event, 'to')"
+                                #dateto>
+
+                            <div class="input-group-append">
+
+                                <button class="btn-group-clear" (click)="dateto.value = to = ''" *ngIf="to?.length > 0">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <input type="text" class="form-control" placeholder="Search Project Name Here"
+                            [(ngModel)]="name">
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)"><i
+                                class="ri-add-line"></i>New Project</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table id="datatable" class="table table-hover">
+
+                    <thead class="thead-primary">
+
+                        <tr class="text-center">
+
+                            <th>Name</th>
+
+                            <th>#Of Drivers</th>
+
+                            <th>#Of Stops</th>
+
+                            <th>#Of Unserved</th>
+
+                            <th>Total Distance</th>
+
+                            <th>Total Working Time</th>
+
+                            <th>Date</th>
+
+                            <th>Dispatch Status</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr class="text-center"
+                            *ngFor="let project of ( projects | filter:'name':name ) | filterDateBetween:'date':from:to; let i=index"
+                            (click)="openProject(project)">
+
+                            <td>{{ project.name }}</td>
+
+                            <td>{{ project.number_of_drivers }}</td>
+
+                            <td>{{ project.number_of_stops }}</td>
+
+                            <td>{{ project.number_of_unserved }}</td>
+
+                            <td>{{ project.total_distance }}</td>
+
+                            <td>{{ project.total_working_time }}</td>
+
+                            <td>{{ project.date | date }}</td>
+
+                            <td>
+
+                                <span class="badge badge-light" *ngIf="project.dispatch_status == 0">Waiting for
+                                    dispatch</span>
+
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-link" (click)="$event.stopPropagation(); delete(i)">
+
+                                    <i class="ri-delete-bin-line"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="text-center" *ngIf="projects.length == 0">
+
+                            <td colspan="9">
+
+                                <i class="ri-search-line"></i> No projects found
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </app-iq-card>
+
+    </div>
+
+</div>
+
+<ng-template #modal>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left">Create New Project</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body">
+
+        <form [formGroup]="formGroup">
+
+            <div class="form-group row">
+
+                <label for="name" class="col-sm-2 col-form-label">Name</label>
+
+                <div class="col-sm-10">
+
+                    <input type="text" class="form-control" id="name" placeholder="Project name" maxlength="100"
+                        formControlName="name">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-12 text-center pt-2">
+
+                    <bs-datepicker-inline [bsConfig]="{ showWeekNumbers: false }" [bsValue]="today" useUtc="true"
+                        [minDate]="today" (bsValueChange)="changeDate($event)"></bs-datepicker-inline>
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-12 text-right pt-3">
+
+                    <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</ng-template>
