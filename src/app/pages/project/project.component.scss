@@ -25,12 +25,25 @@
     }
 }
 
-.plan {
+.map-footer {
     position: absolute;
     bottom: 0;
     background: #fff;
     width: calc(100% - 30px);
     box-shadow: 0 0 12px 2px rgb(55 73 72 / 30%);
+
+    .tabs {
+        position: absolute;
+        top: -35px;
+        left: 10px;
+
+        button.btn-tab {
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
 
     .header {
         height: 51px;
@@ -40,7 +53,7 @@
 
         .title {
             float: left;
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 500;
             margin: 0 10px 0 5px;
         }
@@ -52,10 +65,18 @@
 
     .body {
         max-height: 50%;
-        overflow-y: auto;
 
         table {
             margin: 0;
+            
+            th {
+                background: #282828;
+                color: #fff;
+                padding: 0 15px;
+                border: 0;
+                font-weight: 500;
+                font-size: 0.8rem;
+            }
 
             td {
                 padding: 10px 15px !important;
@@ -66,7 +87,7 @@
                     padding: 0;
 
                     li {
-                        background: #FFF;
+                        background: #fff;
                         text-align: center;
                         font-weight: 600;
                         box-shadow: 0 0 12px 2px rgb(55 73 72 / 30%);
@@ -80,7 +101,16 @@
                             cursor: -moz-grabbing;
                             cursor: -webkit-grabbing;
                         }
+
+                        &:last-child {
+                            margin-right: 30px;
+                        }
                     }
+                }
+
+                .badge {
+                    border-radius: 12px;
+                    font-weight: 500;
                 }
 
                 .truck {

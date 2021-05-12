@@ -1,0 +1,313 @@
+<div class="modal-body">
+
+    <h4>Map your data</h4>
+
+    <p>We need your help matching some of the data from your CSV. Please map/correct any columns that we've missed!</p>
+
+    <div class="table-responsive">
+
+        <table class="table table-sm" width="100%" [formGroup]="formGroup">
+
+            <tr>
+
+                <td>Categories</td>
+
+                <td>Your data column</td>
+
+                <td></td>
+
+            </tr>
+
+            <tr>
+
+                <td>Order ID</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="order_id">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'order_id'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'order_id'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.order_id.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.order_id.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>First Name</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="first_name">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'first_name'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'first_name'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.first_name.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.first_name.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>Last Name</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="last_name">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'last_name'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'last_name'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.last_name.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-secondary" *ngIf="!formControl.last_name.value">
+                        
+                        <i class="ri-information-line"></i> Optional
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>Street Name</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="street">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'street'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'street'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.street.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.street.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>City</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="city">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'city'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'city'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.city.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.city.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>Zipcode</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="zip_code">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'zip_code'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'zip_code'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.zip_code.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.zip_code.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td>Phone</td>
+
+                <td>
+
+                    <select class="form-control" formControlName="phone">
+
+                        <option value disabled hidden></option>
+
+                        <ng-container *ngFor="let column of columns">
+
+                            <option *ngIf="column != 'phone'">{{ column }}</option>
+
+                            <option selected *ngIf="column == 'phone'">{{ column }}</option>
+
+                        </ng-container>
+
+                    </select>
+
+                </td>
+
+                <td class="text-right">
+
+                    <span class="text-success" *ngIf="formControl.phone.value">
+                        
+                        <i class="ri-check-line"></i> Matched
+                    
+                    </span>
+
+                    <span class="text-danger" *ngIf="!formControl.phone.value">
+                        
+                        <i class="ri-error-warning-line"></i> Required
+                    
+                    </span>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="form-group text-right">
+
+        <button class="btn btn-light mr-2" (click)="dismiss()">Cancel</button>
+
+        <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="done()">Done</button>
+
+    </div>
+
+</div>

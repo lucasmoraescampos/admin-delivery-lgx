@@ -37,26 +37,6 @@
 
             <div class="col-sm-4">
 
-                <label class="col-form-label mt-1">Start Address</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="This is where your driver will depart from at the start of their shift."
-                    placement="right"></i>
-
-            </div>
-
-            <div class="col-sm-8">
-
-                <app-google-autocomplete [address]="formControl.start_address.value" (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
-
-            </div>
-
-        </div>
-
-        <div class="form-group row">
-
-            <div class="col-sm-4">
-
                 <label for="phone" class="col-form-label mt-1">Phone</label>
 
                 <i class="ri-information-line ml-2"
@@ -67,8 +47,49 @@
 
             <div class="col-sm-8">
 
-                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309"
-                    maxlength="40" formControlName="phone" [brmasker]="{ type: 'num' }">
+                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
+                    formControlName="phone" [brmasker]="{ type: 'num' }">
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+
+                <label class="col-form-label mt-1">Start Address</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="This is where your driver will depart from at the start of their shift."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-8">
+
+                <app-google-autocomplete [address]="formControl.start_address.value"
+                    (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+
+                <label for="start_time" class="col-form-label mt-1">Start Time</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="This is your driver's start time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-8">
+
+                <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00" formControlName="start_time">
 
             </div>
 
@@ -78,8 +99,7 @@
 
             <div class="col-sm-12 text-right pt-3">
 
-                <button class="btn btn-primary" [disabled]="formGroup.invalid"
-                    (click)="save()">Save</button>
+                <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
 
             </div>
 

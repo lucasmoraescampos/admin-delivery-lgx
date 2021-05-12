@@ -26,7 +26,11 @@ export class StopService {
     return this.http.delete<HttpResult>(`${this.apiUrl}/user/stop/${id}`);
   }
   
+  public columnNames(data: FormData) {
+    return this.http.post<HttpResult>(`${this.apiUrl}/user/stop/import/columnNames`, data);
+  }
+
   public import(data: FormData) {
-    return this.http.post<HttpResult>(`${this.apiUrl}/user/import`, data);
+    return this.http.post<HttpResult>(`${this.apiUrl}/user/stop/import`, data);
   }
 }

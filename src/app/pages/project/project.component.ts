@@ -11,6 +11,8 @@ import { DriverService } from 'src/app/services/driver.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { StopService } from 'src/app/services/stop.service';
+import { environment } from 'src/environments/environment';
+import * as md5 from 'md5';
 
 declare const google: any;
 
@@ -26,9 +28,15 @@ export class ProjectComponent implements OnInit, OnDestroy {
   /*
    * 0 : Show only the "map".
    * 1 : Show "map" and "drivers and map".
-   * 2 : Expand "plan".
+   * 2 : Expand "map footer".
    */
   public display: 0 | 1 | 2 = 0;
+
+  /*
+   * 1 : Show "timeline".
+   * 2 : Show "dispatch".
+   */
+  public tab: 1 | 2 = 1;
 
   public project: any;
 
@@ -60,8 +68,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.options = {
+      group: 'stops',
+      onAdd: (event: any) => {
+        this.reorder(this.project.drivers[event.to.id]);
+      },
       onUpdate: (event: any) => {
-        this.reorder(this.project.drivers[event.clone.value])
+        this.reorder(this.project.drivers[event.to.id]);
       }
     }
 
@@ -198,7 +210,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
       class: 'modal-dialog-centered',
       backdrop: 'static',
       initialState: {
-        stop: stop
+        stop: stop,
+        drivers: this.project.drivers
       }
     });
 
@@ -208,8 +221,20 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.clearMarkers();
 
         if (stop) {
+
+          if (stop.driver_id != result.driver_id) {
+
+
+
+
+            
+          }
+
           const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', stop.id);
+
           this.project.stops[index] = result;
+
+
         }
 
         else {
@@ -543,6 +568,44 @@ export class ProjectComponent implements OnInit, OnDestroy {
       
   }
 
+  public dispatch() {
+
+    this.loadingSrv.show();
+
+    this.projectSrv.dispatch(this.project.id)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+
+        this.loadingSrv.hide();
+
+        if (res.success) {
+
+          this.alertSrv.toast({
+            icon: 'success',
+            message: res.message
+          });
+
+          this.project = res.data;
+
+        }
+
+      });
+
+  }
+
+  public driverLink(driver_id: number) {
+    return `${environment.driverUrl}/${md5(String(driver_id))}/stops/route/${md5(String(this.project.id))}`;
+  }
+
+  public copyLinkSuccess() {
+
+    this.alertSrv.toast({
+      icon: 'success',
+      message: 'The route link has been copied to your clipboard'
+    });
+    
+  }
+
   private setPolyline() {
 
     this.polyline.forEach(line => {
@@ -730,9 +793,18 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         if (res.success) {
 
+          this.alertSrv.toast({
+            icon: 'success',
+            message: res.message
+          });
+
+          this.clearMarkers();
+
           this.project = res.data;
 
           this.setPolyline();
+
+          this.setMarkers();
 
         }
 

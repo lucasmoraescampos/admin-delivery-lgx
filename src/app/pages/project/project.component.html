@@ -48,7 +48,8 @@
 
                       <td>
 
-                        <input type="checkbox" [checked]="isDriverchecked(driver)" (input)="checkDriver(driver, $event)">
+                        <input type="checkbox" [checked]="isDriverchecked(driver)"
+                          (input)="checkDriver(driver, $event)">
 
                       </td>
 
@@ -213,8 +214,7 @@
 
     <div class="map-header" *ngIf="project?.stops.length > 0 && project?.drivers.length > 0">
 
-      <button class="btn btn-light animate__animated animate__fadeIn" (click)="display = 1"
-        *ngIf="display != 1">
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="display = 1" *ngIf="display != 1">
 
         <i class="ri-menu-line"></i> Drivers And Stops
 
@@ -233,7 +233,8 @@
 
       </button>
 
-      <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()" *ngIf="project?.status > 0 && display != 1">
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()"
+        *ngIf="project?.status > 0 && display != 1">
 
         <i class="ri-flashlight-line"></i> Reoptimize Route
 
@@ -243,18 +244,31 @@
 
     <div class="map" #map></div>
 
-    <div class="plan animate__animated animate__fadeInUp" *ngIf="project?.status > 0 && display != 1">
+    <div class="map-footer animate__animated animate__fadeInUp" *ngIf="project?.status > 0 && display != 1">
+
+      <div class="tabs">
+
+        <button class="btn btn-tab" [ngClass]="{ 'btn-dark': tab == 1, 'btn-light': tab == 2 }"
+          (click)="tab = 1; display = 2;">TIMELINE</button>
+
+        <button class="btn btn-tab ml-2" [ngClass]="{ 'btn-dark': tab == 2, 'btn-light': tab == 1 }"
+          (click)="tab = 2; display = 2;">DISPATCH</button>
+
+      </div>
 
       <div class="header">
 
-        <span class="title">Plan</span>
+        <span class="title" *ngIf="tab == 1">Plan</span>
+
+        <span class="title" *ngIf="tab == 2">Dispatch Manager</span>
 
         <div class="text-right">
 
-          <button class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            
+          <button class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false" *ngIf="tab == 1">
+
             <i class="ri-download-line"></i> Download
-          
+
           </button>
 
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -264,6 +278,12 @@
             <a class="dropdown-item" href="javascript:void(0);" (click)="downloadSummary()">Summary Download</a>
 
           </div>
+
+          <button class="btn btn-primary btn-sm" *ngIf="tab == 2 && project.status != 2" (click)="dispatch()">
+
+            <i class="ri-send-plane-line"></i> Publish Changes
+
+          </button>
 
           <button class="btn btn-dark btn-sm" (click)="display = 0" *ngIf="display == 2">
 
@@ -283,9 +303,17 @@
 
       <div class="body table-responsive" *ngIf="display == 2">
 
-        <table class="table">
+        <table class="table" width="100%" *ngIf="tab == 1">
 
           <thead>
+
+            <th>Driver</th>
+
+            <th>Stops</th>
+
+          </thead>
+
+          <tbody>
 
             <tr *ngFor="let driver of project?.drivers; let i=index;">
 
@@ -296,9 +324,9 @@
                 <div class="truck" [style.background]="colors[i]" (click)="driverInfo(driver)"><i
                     class="ri-truck-line"></i></div>
 
-                <ul [sortablejs]="driver.pivot.stops_order" [sortablejsOptions]="options">
+                <ul [sortablejs]="driver.pivot.stops_order" [sortablejsOptions]="options" [id]="i">
 
-                  <li class="ml-2" [value]="i" (click)="stopInfoById(stop_id)"
+                  <li class="ml-2" (click)="stopInfoById(stop_id)"
                     *ngFor="let stop_id of driver.pivot.stops_order; let i2=index;">{{ i2+1 }}</li>
 
                 </ul>
@@ -307,7 +335,64 @@
 
             </tr>
 
+          </tbody>
+
+        </table>
+
+        <table class="table" width="100%" *ngIf="tab == 2">
+
+          <thead>
+
+            <th>Driver</th>
+
+            <th>Stops</th>
+
+            <th>Status</th>
+
+            <th>Phone</th>
+
+            <th *ngIf="project.status == 2"></th>
+
           </thead>
+
+          <tbody>
+
+            <tr *ngFor="let driver of project?.drivers; let i=index;">
+
+              <td width="200px">{{ driver.name }}</td>
+
+              <td>{{ driver.pivot.stops_order?.length }}</td>
+
+              <td>
+
+                <span class="badge badge-primary" *ngIf="project.status == 1">READY FOR DISPATCH</span>
+
+                <span class="badge badge-dark" *ngIf="project.status == 2">DISPATCHED</span>
+
+              </td>
+
+              <td>{{ driver.phone }}</td>
+
+              <td class="text-right" *ngIf="project.status == 2">
+
+                <button class="btn btn-light btn-sm mr-2" ngxClipboard [cbContent]="driverLink(driver.id)"
+                  (click)="copyLinkSuccess()">
+
+                  <i class="ri-file-copy-line"></i> Copy link
+
+                </button>
+
+                <button class="btn btn-light btn-sm">
+
+                  <i class="ri-send-plane-line"></i> Resend link
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          </tbody>
 
         </table>
 

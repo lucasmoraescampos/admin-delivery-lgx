@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { StopService } from 'src/app/services/stop.service';
+import { ModalUploadStopsColumnsComponent } from '../modal-upload-stops-columns/modal-upload-stops-columns.component';
 
 @Component({
   selector: 'app-modal-upload-stops',
@@ -13,6 +14,8 @@ import { StopService } from 'src/app/services/stop.service';
   styleUrls: ['./modal-upload-stops.component.scss']
 })
 export class ModalUploadStopsComponent implements OnInit, OnDestroy {
+
+  public columnNames: any;
 
   public file: File;
 
@@ -25,11 +28,11 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
     private loadingSrv: LoadingService,
     private alertSrv: AlertService,
     private stopSrv: StopService,
-    private projectSrv: ProjectService
+    private projectSrv: ProjectService,
+    private modalSrv: BsModalService
   ) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   ngOnDestroy() {
     this.unsubscribe.next();
@@ -41,10 +44,56 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
   }
 
   public chooseFile(files: FileList) {
+
+    this.loadingSrv.show();
+
     this.file = files.item(0);
+
+    const data = new FormData();
+
+    data.append('file', this.file);
+
+    this.stopSrv.columnNames(data)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+
+        this.loadingSrv.hide();
+
+        if (res.success) {
+
+          const modal = this.modalSrv.show(ModalUploadStopsColumnsComponent, {
+            keyboard: false,
+            class: 'modal-dialog-centered',
+            backdrop: 'static',
+            initialState: {
+              columns: res.data
+            }
+          });
+      
+          modal.content.onClose.pipe(takeUntil(this.unsubscribe))
+            .subscribe((columnNames: any) => {
+              
+              if (columnNames) {
+
+                this.columnNames = columnNames;
+
+                this.import();
+
+              }
+
+              else {
+                this.bsModalRef.hide();
+              }
+              
+            });
+          
+        }
+
+      });
+
   }
 
-  public import() {
+  private import() {
 
     this.loadingSrv.show();
 
@@ -54,6 +103,10 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
 
     data.append('project_id', String(project.id));
     data.append('file', this.file);
+
+    for (let key in this.columnNames) {
+      data.append(`column_names[${key}]`, this.columnNames[key]);
+    }
 
     this.alertSrv.toast({
       icon: 'warning',

@@ -17,6 +17,8 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
   @Input() stop: any;
 
+  @Input() drivers: any;
+
   public formGroup: FormGroup;
 
   public onClose = new Subject();
@@ -41,7 +43,8 @@ export class ModalStopComponent implements OnInit, OnDestroy {
       phone: [this.stop?.phone ?? '', Validators.required],
       address: [this.stop?.address ?? '', Validators.required],
       lat: [this.stop?.lat ?? '', Validators.required],
-      lng: [this.stop?.lng ?? '', Validators.required]
+      lng: [this.stop?.lng ?? '', Validators.required],
+      driver_id: [this.stop?.driver_id ?? '']
     });
 
   }

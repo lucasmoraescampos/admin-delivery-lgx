@@ -40,24 +40,24 @@ export class SideBar1Component implements OnInit {
       isIconClass: true,
       icon: 'ri-truck-line'
     },
-    {
-      title: 'Customer Notifications',
-      isHeading: false,
-      isActive: false,
-      link: '/notifications',
-      className: '',
-      isIconClass: true,
-      icon: 'ri-mail-send-line'
-    },
-    {
-      title: 'My Account',
-      isHeading: false,
-      isActive: false,
-      link: '/account',
-      className: '',
-      isIconClass: true,
-      icon: 'ri-user-settings-line'
-    },
+    // {
+    //   title: 'Customer Notifications',
+    //   isHeading: false,
+    //   isActive: false,
+    //   link: '/notifications',
+    //   className: '',
+    //   isIconClass: true,
+    //   icon: 'ri-mail-send-line'
+    // },
+    // {
+    //   title: 'My Account',
+    //   isHeading: false,
+    //   isActive: false,
+    //   link: '/account',
+    //   className: '',
+    //   isIconClass: true,
+    //   icon: 'ri-user-settings-line'
+    // },
     {
       title: 'Logout',
       isHeading: false,

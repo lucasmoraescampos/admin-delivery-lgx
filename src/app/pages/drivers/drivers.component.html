@@ -44,6 +44,8 @@
 
                             <th>Start Address</th>
 
+                            <th>Start Time</th>
+
                             <th></th>
 
                         </tr>
@@ -69,6 +71,12 @@
                             <td>
 
                                 <span>{{ driver.start_address }}</span>
+
+                            </td>
+
+                            <td>
+
+                                <span>{{ driver.start_time | slice:0:5 }}</span>
 
                             </td>
 

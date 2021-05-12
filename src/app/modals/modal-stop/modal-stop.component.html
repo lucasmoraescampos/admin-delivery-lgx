@@ -93,6 +93,30 @@
 
         </div>
 
+        <div class="form-group row" *ngIf="drivers.length && false">
+
+            <div class="col-sm-3">
+
+                <label for="driver_id" class="col-form-label mt-1">Driver</label>
+
+                <i class="ri-information-line ml-2"
+                    tooltip="Customer’s mobile number, which can be used to send automated customer notifications."
+                    placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <select class="form-control" id="driver_id" formControlName="driver_id">
+
+                    <option [value]="driver.id" *ngFor="let driver of drivers">{{ driver.name }}</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
         <div class="form-group row">
 
             <div class="col-sm-12 text-right pt-3">

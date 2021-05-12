@@ -15,6 +15,7 @@ import { ModalUploadStopsModule } from 'src/app/modals/modal-upload-stops/modal-
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
 import { ModalDriverModule } from 'src/app/modals/modal-driver/modal-driver.module';
 import { SortablejsModule } from 'ngx-sortablejs';
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
   declarations: [ProjectComponent],
@@ -31,6 +32,7 @@ import { SortablejsModule } from 'ngx-sortablejs';
     ModalDriverModule,
     FilterModule,
     SortablejsModule,
+    ClipboardModule,
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
     PopoverModule.forRoot(),

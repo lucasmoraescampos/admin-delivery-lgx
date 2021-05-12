@@ -37,10 +37,11 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
     this.formGroup = this.formBuilder.group({
       name: [this.driver?.name ?? '', Validators.required],
+      phone: [this.driver?.phone ?? '', Validators.required],
       start_address: [this.driver?.start_address ?? '', Validators.required],
       start_lat: [this.driver?.start_lat ?? '', Validators.required],
       start_lng: [this.driver?.start_lng ?? '', Validators.required],
-      phone: [this.driver?.phone ?? '', Validators.required],
+      start_time: [this.driver?.start_time ?? '', Validators.required],
       project_id: [this.project_id ?? null]
     });
 

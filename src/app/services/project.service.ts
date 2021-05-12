@@ -54,6 +54,10 @@ export class ProjectService {
     return this.http.post<HttpResult>(`${this.apiUrl}/user/project/${id}/reorder`, data);
   }
 
+  public dispatch(id: number) {
+    return this.http.put<HttpResult>(`${this.apiUrl}/user/project/${id}/dispatch`, null);
+  }
+
   public create(data: any) {
     return this.http.post<HttpResult>(`${this.apiUrl}/user/project`, data);
   }

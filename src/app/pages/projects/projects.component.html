@@ -18,7 +18,8 @@
 
                             <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="datefrom.value = from = ''" *ngIf="from?.length > 0">clear</button>
+                                <button class="btn-group-clear" (click)="datefrom.value = from = ''"
+                                    *ngIf="from?.length > 0">clear</button>
 
                             </div>
 
@@ -36,7 +37,8 @@
 
                             <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="dateto.value = to = ''" *ngIf="to?.length > 0">clear</button>
+                                <button class="btn-group-clear" (click)="dateto.value = to = ''"
+                                    *ngIf="to?.length > 0">clear</button>
 
                             </div>
 
@@ -76,11 +78,9 @@
 
                             <th>#Of Stops</th>
 
-                            <th>#Of Unserved</th>
-
                             <th>Total Distance</th>
 
-                            <th>Total Working Time</th>
+                            <th>Total Time</th>
 
                             <th>Date</th>
 
@@ -100,22 +100,23 @@
 
                             <td>{{ project.name }}</td>
 
-                            <td>{{ project.number_of_drivers }}</td>
+                            <td>{{ project.drivers.length }}</td>
 
-                            <td>{{ project.number_of_stops }}</td>
+                            <td>{{ stops(project) }}</td>
 
-                            <td>{{ project.number_of_unserved }}</td>
+                            <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
 
-                            <td>{{ project.total_distance }}</td>
-
-                            <td>{{ project.total_working_time }}</td>
+                            <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
 
                             <td>{{ project.date | date }}</td>
 
                             <td>
 
-                                <span class="badge badge-light" *ngIf="project.dispatch_status == 0">Waiting for
-                                    dispatch</span>
+                                <span class="badge badge-light" *ngIf="project.status == 0">Waiting for dispatch</span>
+
+                                <span class="badge badge-primary" *ngIf="project.status == 1">Dispatched</span>
+
+                                <span class="badge badge-success" *ngIf="project.status == 2">Completed</span>
 
                             </td>
 
