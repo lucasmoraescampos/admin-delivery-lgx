@@ -42,9 +42,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public drivers: any[] = [];
 
-  public page: number = 1;
+  public unscheduled: any[] = [];
 
-  public colors = ['#0000FF', '#FF0000', '#039103', '#9400D3', '#babd00', '#FF00FF', '#029696', '#FF4500', '#114011', '#8B4513', '#2F4F4F', '#4682B4', '#00704b', '#808000', '#222222'];
+  public unscheduled_order: any[] = [];
+
+  public colors = ['#0000cd', '#ff0000', '#2e8b57', '#ffa500', '#c71585', '#ff4500', '#808000', '#1e90ff', '#e9967a', '#2f4f4f', '#8b0000', '#191970', '#ff00ff', '#00ff00', '#ba55d3', '#00fa9a', '#f0e68c', '#dda0dd', '#006400', '#ffd700'];
 
   public options: any;
 
@@ -88,10 +90,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  public pageChanged(event: any): void {
-    this.page = event.page;
-  }
-
   public isDriverchecked(driver: any) {
     if (ArrayHelper.exist(this.project.drivers, 'id', driver.id)) {
       return true;
@@ -126,7 +124,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
                   this.project.drivers[index].marker.setMap(null);
 
+                  this.clearMarkers();
+
                   this.project = res.data;
+
+                  this.setTime();
+
+                  this.setUnscheduled();
 
                   this.setMarkers();
 
@@ -177,6 +181,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
               this.project = res.data;
 
+              this.setTime();
+
+              this.setUnscheduled();
+
               this.setMarkers();
 
               this.setPolyline();
@@ -210,8 +218,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       class: 'modal-dialog-centered',
       backdrop: 'static',
       initialState: {
-        stop: stop,
-        drivers: this.project.drivers
+        stop: stop
       }
     });
 
@@ -227,7 +234,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-            
+
           }
 
           const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', stop.id);
@@ -259,6 +266,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .subscribe((stops: any) => {
         this.clearMarkers();
         this.project.stops = stops;
+        this.setUnscheduled();
         this.setMarkers();
         this.setPolyline();
       });
@@ -276,55 +284,216 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     stop.marker.setZIndex(9999999999);
 
-    this.map.setZoom(13);
+    this.map.setZoom(11);
 
     this.map.panTo(stop.marker.position);
 
     let content = document.createElement('div');
 
-    content.innerHTML = `
-      <h5 class="text-dark m-1">Stop</h5>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Order ID:</b> ${stop.order_id}
-        </strong>
-      </p>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Name:</b> ${stop.name}
-        </strong>
-      </p>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Phone:</b> ${stop.phone}
-        </strong>
-      </p>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Address:</b> ${stop.address}
-        </strong>
-      </p>
+    const driver_index = ArrayHelper.getIndexByKey(this.project.drivers, 'id', stop.driver_id);
+
+    const route_index = ArrayHelper.getIndexByKey(this.project.drivers[driver_index].pivot.routes, 'end_id', stop.id);
+
+    const route = this.project.drivers[driver_index].pivot.routes[route_index];
+
+    if (stop.status == 0) {
+
+      content.innerHTML = `
+        <div class="row mt-1">
+          <div class="col">
+            <h5>Stop</h5>
+          </div>
+          <div class="col text-right">
+            <span class="badge badge-light">Waiting</span>
+          </div>
+        </div>
+      `;
+    }
+
+    else if (stop.status == 1) {
+
+      content.innerHTML = `
+        <div class="row mt-1">
+          <div class="col">
+            <h5>Stop</h5>
+          </div>
+          <div class="col text-right">
+            <span class="badge badge-primary">Started</span>
+          </div>
+        </div>
+
+        <div class="row mt-1">
+          <div class="col">
+            <h6>Started at:</h6>
+          </div>
+          <div class="col text-right">
+            <b>${route.started_at}</b>
+          </div>
+        </div>
+      `;
+
+    }
+
+    else if (stop.status == 2) {
+
+      content.innerHTML = `
+        <div class="row mt-1">
+          <div class="col">
+            <h5>Stop</h5>
+          </div>
+          <div class="col text-right">
+            <span class="badge badge-success">Arrived</span>
+          </div>
+        </div>
+
+        <div class="row mt-1">
+          <div class="col">
+            <h6>Arrived at:</h6>
+          </div>
+          <div class="col text-right">
+            <b>${route.arrived_at}</b>
+          </div>
+        </div>
+      `;
+
+    }
+
+    else if (stop.status == 3) {
+
+      content.innerHTML = `
+        <div class="row mt-1">
+          <div class="col">
+            <h5>Stop</h5>
+          </div>
+          <div class="col text-right">
+            <span class="badge badge-danger">Skipped</span>
+          </div>
+        </div>
+
+        <div class="row mt-1">
+          <div class="col">
+            <h6>Skipped at:</h6>
+          </div>
+          <div class="col text-right">
+            <b>${route.skipped_at}</b>
+          </div>
+        </div>
+      `;
+
+    }
+
+    content.innerHTML += `
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Order ID:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${stop.order_id}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Name:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${stop.name}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Phone:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${stop.phone}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Address:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${stop.address}</b>
+        </div>
+      </div>
     `;
 
-    const buttonEdit = document.createElement('button');
+    if (stop.status == 0) {
 
-    buttonEdit.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
+      const buttonEdit = document.createElement('button');
 
-    buttonEdit.innerHTML = '<i class="ri-edit-box-line"></i> Edit';
+      buttonEdit.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
 
-    buttonEdit.onclick = () => this.modalStop(stop);
+      buttonEdit.innerHTML = '<i class="ri-edit-box-line"></i> Edit';
 
-    content.appendChild(buttonEdit);
+      buttonEdit.onclick = () => this.modalStop(stop);
 
-    const buttonDelete = document.createElement('button');
+      content.appendChild(buttonEdit);
 
-    buttonDelete.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
+      const buttonDelete = document.createElement('button');
 
-    buttonDelete.innerHTML = '<i class="ri-delete-bin-line"></i> Delete';
+      buttonDelete.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
 
-    buttonDelete.onclick = () => this.deleteStop(stop);
+      buttonDelete.innerHTML = '<i class="ri-delete-bin-line"></i> Delete';
 
-    content.appendChild(buttonDelete);
+      buttonDelete.onclick = () => this.deleteStop(stop);
+
+      content.appendChild(buttonDelete);
+
+    }
+
+    else {
+
+      if (route.bags) {
+
+        content.innerHTML += `
+          <div class="row mt-1">
+            <div class="col">
+              <h6>Bags:</h6>
+            </div>
+            <div class="col text-right">
+              <b>${route.bags}</b>
+            </div>
+          </div>
+        `;
+
+      }
+
+      if (route.note) {
+
+        content.innerHTML += `
+          <div class="row mt-1">
+            <div class="col">
+              <h6>Note:</h6>
+            </div>
+            <div class="col text-right">
+              <b>${route.note}</b>
+            </div>
+          </div>
+        `;
+
+      }
+
+      if (route.image) {
+
+        content.innerHTML += `
+          <div class="row mt-1">
+            <div class="col">
+              <h6>Image:</h6>
+            </div>
+            <div class="col text-right">
+              <a href="${route.image}" target="_blank">
+                <img class="img-thumbnail fit-image" src="${route.image}" style="width: 60px; height: 60px">
+              </a>
+            </div>
+          </div>
+        `;
+
+      }
+
+    }
 
     this.infoWindow.setContent(content);
 
@@ -380,9 +549,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   }
 
-  public modalDriver(index?: number) {
-
-    const driver = this.drivers[index];
+  public modalDriver(driver?: any) {
 
     const modal = this.modalSrv.show(ModalDriverComponent, {
       keyboard: false,
@@ -399,13 +566,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         if (driver) {
 
+          let index = ArrayHelper.getIndexByKey(this.drivers, 'id', driver.id);
+
           this.drivers[index] = result;
 
-          const index2 = ArrayHelper.getIndexByKey(this.project.drivers, 'id', driver.id);
+          index = ArrayHelper.getIndexByKey(this.project.drivers, 'id', driver.id);
 
-          if (index2 != -1) {
+          if (index != -1) {
             this.clearMarkers();
-            this.project.drivers[index2] = result;
+            this.project.drivers[index].name = result.name;
+            this.project.drivers[index].phone = result.phone;
+            this.project.drivers[index].start_time = result.start_time;
+            this.project.drivers[index].end_time = result.end_time;
+            this.project.drivers[index].start_address = result.start_address;
           }
 
         }
@@ -434,30 +607,74 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     driver.marker.setZIndex(9999999999);
 
-    this.map.setZoom(13);
+    this.map.setZoom(11);
 
     this.map.panTo(driver.marker.position);
 
     let content = document.createElement('div');
 
     content.innerHTML = `
-      <h5 class="text-dark m-1">Driver</h5>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Name:</b> ${driver.name}
-        </strong>
-      </p>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Phone:</b> ${driver.phone}
-        </strong>
-      </p>
-      <p class="text-dark m-1">
-        <strong>
-          <b class="mr-1">Start Address:</b> ${driver.start_address}
-        </strong>
-      </p>
+      <div class="row mt-1">
+        <div class="col">
+          <h5>Driver</h5>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Name:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${driver.name}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Phone:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${driver.phone}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Start Time:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${driver.start_time.slice(0, 5)}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>End Time:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${driver.end_time?.slice(0, 5) ?? '-'}</b>
+        </div>
+      </div>
+
+      <div class="row mt-1">
+        <div class="col">
+          <h6>Start Address:</h6>
+        </div>
+        <div class="col text-right">
+          <b>${driver.start_address}</b>
+        </div>
+      </div>
     `;
+
+    const buttonEdit = document.createElement('button');
+
+    buttonEdit.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
+
+    buttonEdit.innerHTML = '<i class="ri-edit-box-line"></i> Edit';
+
+    buttonEdit.onclick = () => this.modalDriver(driver);
+
+    content.appendChild(buttonEdit);
 
     this.infoWindow.setContent(content);
 
@@ -498,9 +715,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
           this.project = res.data;
 
-          this.setPolyline();
+          this.setTime();
+
+          this.setUnscheduled();
 
           this.setMarkers();
+
+          this.setPolyline();
 
         }
 
@@ -516,7 +737,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
 
-        this.loadingSrv.hide(); 
+        this.loadingSrv.hide();
 
         let binaryData = [];
 
@@ -546,7 +767,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
 
-        this.loadingSrv.hide(); 
+        this.loadingSrv.hide();
 
         let binaryData = [];
 
@@ -565,7 +786,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         download.click();
 
       });
-      
+
   }
 
   public dispatch() {
@@ -585,7 +806,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             message: res.message
           });
 
-          this.project = res.data;
+          this.project.status = 2;
 
         }
 
@@ -603,8 +824,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
       icon: 'success',
       message: 'The route link has been copied to your clipboard'
     });
-    
+
   }
+
+  // public progress(driver: any) {
+
+  //   const start_time = new 
+
+  //   var date1 = new Date(dtPartida.slice(0,4), dtPartida.slice(4,6),dtPartida.slice(6,8), dtPartida.slice(9,11), dtPartida.slice(12,14)),
+  //       date2 = new Date(dtChegada.slice(0,4), dtChegada.slice(4,6),dtChegada.slice(6,8), dtChegada.slice(9,11), dtChegada.slice(12,14));
+
+  //   var diffMs = (date2 - date1);
+
+  // }
 
   private setPolyline() {
 
@@ -706,7 +938,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     });
 
-    this.project.stops.forEach((stop: any, index: number) => {
+    this.unscheduled.forEach((stop: any, index: number) => {
 
       if (!stop.driver_id) {
 
@@ -719,12 +951,20 @@ export class ProjectComponent implements OnInit, OnDestroy {
           position: new google.maps.LatLng(stop.lat, stop.lng),
           zIndex: (index + 1) * 9,
           icon: {
-            path: "M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0",
+            path: "M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z",
             fillColor: '#6F6C6B',
             fillOpacity: 1,
             strokeWeight: 1.5,
             strokeColor: '#FFFFFF',
-            scale: 1.2
+            scale: 1.2,
+            labelOrigin: new google.maps.Point(0, -29),
+            anchor: new google.maps.Point(0, 0)
+          },
+          label: {
+            text: String(index + 1),
+            color: '#FFFFFF',
+            fontSize: '12px',
+            fontWeight: '500'
           }
         });
 
@@ -735,6 +975,49 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
 
     this.centerMap();
+
+  }
+
+  private setUnscheduled() {
+
+    this.unscheduled = this.project.stops.filter((stop: any) => {
+      return stop.driver_id == null;
+    });
+
+    this.unscheduled_order = this.unscheduled.map((stop: any) => {
+      return stop.id;
+    });
+
+  }
+
+  private setTime() {
+
+    this.project.drivers.forEach((driver: any) => {
+
+      let duration = 0;
+
+      const split = driver.start_time.split(':');
+
+      const date = new Date();
+
+      driver.pivot.routes.forEach((route: any) => {
+
+        duration += route.duration;
+
+        date.setHours(Number(split[0]), Number(split[1]), 0, 0);
+
+        date.setSeconds(date.getSeconds() + duration);
+
+        route.time = date.toLocaleTimeString(navigator.language, {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        duration += route.downtime;
+        
+      });
+
+    });
 
   }
 
@@ -757,27 +1040,29 @@ export class ProjectComponent implements OnInit, OnDestroy {
   private centerMap() {
 
     const bounds = new google.maps.LatLngBounds();
-    
+
     this.project.drivers.forEach((driver: any) => {
       bounds.extend(driver.marker.position);
     });
 
     this.project.stops.forEach((stop: any) => {
-      bounds.extend(stop.marker.position);
+      if (stop.marker) {
+        bounds.extend(stop.marker.position);
+      }
     });
 
     if (this.project.stops.length > 0 || this.project.drivers.length > 0) {
 
       this.map.fitBounds(bounds);
 
-      this.map.setZoom(9);
+      this.map.setZoom(10);
 
     }
 
   }
 
   private reorder(driver: any) {
-    
+
     this.loadingSrv.show();
 
     const data = {
@@ -802,9 +1087,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
           this.project = res.data;
 
-          this.setPolyline();
+          this.setTime();
+
+          this.setUnscheduled();
 
           this.setMarkers();
+
+          this.setPolyline();
 
         }
 
@@ -815,8 +1104,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
   private initMap() {
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: new google.maps.LatLng(37.33772, -121.88741),
-      zoom: 9,
+      center: {
+        lat: 37.33772,
+        lng: -121.88741
+      },
+      zoom: 11,
       zoomControl: false,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       mapTypeControl: false,
@@ -856,6 +1148,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         this.project = res.data;
 
+        this.setTime();
+
         if (this.project.status == 0) {
           this.display = 1;
         }
@@ -863,6 +1157,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
         else if (this.project.status > 0) {
           this.display = 2;
         }
+
+        this.setUnscheduled();
 
         this.setMarkers();
 

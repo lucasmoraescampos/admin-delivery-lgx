@@ -8,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { GoogleAutocompleteModule } from 'src/app/components/google-autocomplete/google-autocomplete.module';
 import { BrMaskerModule } from 'br-mask';
-import { PopoverModule } from 'ngx-bootstrap/popover';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalStopModule } from 'src/app/modals/modal-stop/modal-stop.module';
 import { ModalUploadStopsModule } from 'src/app/modals/modal-upload-stops/modal-upload-stops.module';
@@ -35,7 +34,6 @@ import { ClipboardModule } from 'ngx-clipboard';
     ClipboardModule,
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
-    PopoverModule.forRoot(),
     PaginationModule.forRoot()
   ]
 })

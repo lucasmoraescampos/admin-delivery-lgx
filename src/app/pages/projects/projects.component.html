@@ -112,11 +112,13 @@
 
                             <td>
 
-                                <span class="badge badge-light" *ngIf="project.status == 0">Waiting for dispatch</span>
+                                <span class="badge badge-light" *ngIf="project.status == 0">Waiting</span>
 
-                                <span class="badge badge-primary" *ngIf="project.status == 1">Dispatched</span>
+                                <span class="badge badge-secondary" *ngIf="project.status == 1">Optimized</span>
 
-                                <span class="badge badge-success" *ngIf="project.status == 2">Completed</span>
+                                <span class="badge badge-primary" *ngIf="project.status == 2">Dispatched</span>
+
+                                <span class="badge badge-success" *ngIf="project.status == 3">Completed</span>
 
                             </td>
 

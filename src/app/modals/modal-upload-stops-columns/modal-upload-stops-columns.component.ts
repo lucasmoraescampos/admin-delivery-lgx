@@ -30,8 +30,8 @@ export class ModalUploadStopsColumnsComponent implements OnInit {
       first_name: [this.columns.indexOf('first_name') != -1 ? 'first_name'  : '', Validators.required],
       last_name:  [this.columns.indexOf('last_name')  != -1 ? 'last_name'   : ''                     ],
       street:     [this.columns.indexOf('street')     != -1 ? 'street'      : '', Validators.required],
-      city:       [this.columns.indexOf('city')       != -1 ? 'city'        : '', Validators.required],
-      zip_code:    [this.columns.indexOf('zip_code')    != -1 ? 'zip_code'     : '', Validators.required],
+      city:       [this.columns.indexOf('city')       != -1 ? 'city'        : '',                    ],
+      zip_code:   [this.columns.indexOf('zip_code')   != -1 ? 'zip_code'    : ''                     ],
       phone:      [this.columns.indexOf('phone')      != -1 ? 'phone'       : '', Validators.required]
     });
 

@@ -26,7 +26,7 @@
 
                     <select class="form-control" formControlName="order_id">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -66,7 +66,7 @@
 
                     <select class="form-control" formControlName="first_name">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -106,7 +106,7 @@
 
                     <select class="form-control" formControlName="last_name">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -146,7 +146,7 @@
 
                     <select class="form-control" formControlName="street">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -186,7 +186,7 @@
 
                     <select class="form-control" formControlName="city">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -208,9 +208,9 @@
                     
                     </span>
 
-                    <span class="text-danger" *ngIf="!formControl.city.value">
+                    <span class="text-secondary" *ngIf="!formControl.city.value">
                         
-                        <i class="ri-error-warning-line"></i> Required
+                        <i class="ri-information-line"></i> Optional
                     
                     </span>
 
@@ -226,7 +226,7 @@
 
                     <select class="form-control" formControlName="zip_code">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 
@@ -248,9 +248,9 @@
                     
                     </span>
 
-                    <span class="text-danger" *ngIf="!formControl.zip_code.value">
+                    <span class="text-secondary" *ngIf="!formControl.zip_code.value">
                         
-                        <i class="ri-error-warning-line"></i> Required
+                        <i class="ri-information-line"></i> Optional
                     
                     </span>
 
@@ -266,7 +266,7 @@
 
                     <select class="form-control" formControlName="phone">
 
-                        <option value disabled hidden></option>
+                        <option value></option>
 
                         <ng-container *ngFor="let column of columns">
 

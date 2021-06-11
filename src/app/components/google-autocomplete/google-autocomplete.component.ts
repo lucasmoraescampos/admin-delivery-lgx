@@ -13,7 +13,7 @@ export class GoogleAutocompleteComponent implements OnInit {
 
   @Output() changeAddress = new EventEmitter();
 
-  public addressList: any[];
+  public addressList: string[];
 
   public enableList: boolean = false;
 
@@ -31,7 +31,7 @@ export class GoogleAutocompleteComponent implements OnInit {
   public addressChanged() {
 
     this.changeAddress.emit({
-      address: null,
+      address: this.address,
       latLng: {
         lat: null,
         lng: null
