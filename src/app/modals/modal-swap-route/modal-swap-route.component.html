@@ -1,0 +1,29 @@
+<div class="modal-header">
+
+    <h4 class="modal-title pull-left">Swap driver {{ driver.name }} route</h4>
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+
+        <span aria-hidden="true">&times;</span>
+
+    </button>
+
+</div>
+
+<div class="modal-body">
+
+    <select class="form-control" (change)="select($event)">
+
+        <option selected hidden disabled value>Select Driver</option>
+
+        <ng-container *ngFor="let d of project.drivers">
+
+            <option [value]="d.id" *ngIf="d.id != driver.id">{{ d.name }}</option>
+
+        </ng-container>
+
+    </select>
+    
+    <button class="btn btn-primary btn-block mt-3 animate__animated animate__fadeIn" *ngIf="to" (click)="save()">Swap Route</button>
+
+</div>

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { AlertService } from 'src/app/services/alert.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { ProjectService } from 'src/app/services/project.service';
@@ -18,8 +19,6 @@ export class ModalStopComponent implements OnInit, OnDestroy {
   @Input() stop: any;
 
   public formGroup: FormGroup;
-
-  public onClose = new Subject();
 
   private unsubscribe = new Subject();
 
@@ -71,6 +70,8 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
       this.loadingSrv.show();
 
+      const project = this.projectSrv.getCurrentProject();
+
       if (this.stop) {
 
         this.stopSrv.update(this.stop.id, this.formGroup.value)
@@ -86,7 +87,11 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              this.onClose.next(res.data);
+              const index = ArrayHelper.getIndexByKey(project.stops, 'id', res.data.id);
+
+              project.stops[index] = res.data;
+
+              this.projectSrv.setCurrentProject(project);
 
               this.bsModalRef.hide();
 
@@ -97,8 +102,6 @@ export class ModalStopComponent implements OnInit, OnDestroy {
       }
 
       else {
-
-        const project = this.projectSrv.getCurrentProject();
 
         const data: any = this.formGroup.value;
 
@@ -117,8 +120,10 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              this.onClose.next(res.data);
+              project.stops.push(res.data);
 
+              this.projectSrv.setCurrentProject(project);
+              
               this.bsModalRef.hide();
 
             }

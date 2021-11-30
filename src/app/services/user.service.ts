@@ -12,20 +12,36 @@ import { HttpResult } from '../models/http-result';
 export class UserService {
 
   private apiUrl = environment.apiUrl;
-
   private currentUserSubject: BehaviorSubject<any>;
-
   public currentUser: Observable<any>;
 
-  constructor(
-    private http: HttpClient
-  ) {
+  constructor( private http: HttpClient )
+  {
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem(ConfigHelper.Storage.CurrentUser)));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
-  public getCurrentUser() {
+  public getCurrentUser()
+  {
     return this.currentUserSubject.value;
+  }
+
+  public getLst()
+  {
+    return JSON.parse( localStorage.getItem( ConfigHelper.Storage.Lst ) );
+  }
+
+  public change( id : number ) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/change/${id}`)
+      .pipe( map( res => {
+        if ( res.success ) {
+          localStorage.setItem(ConfigHelper.Storage.AccessToken, res.token);
+          localStorage.setItem(ConfigHelper.Storage.CurrentUser, JSON.stringify(res.data));
+          localStorage.setItem(ConfigHelper.Storage.Lst, JSON.stringify( res.lst ));
+          this.currentUserSubject.next(res.data);
+        }
+        return res;
+      }));
   }
 
   public authenticate(data: any) {
@@ -34,6 +50,7 @@ export class UserService {
         if (res.success) {
           localStorage.setItem(ConfigHelper.Storage.AccessToken, res.token);
           localStorage.setItem(ConfigHelper.Storage.CurrentUser, JSON.stringify(res.data));
+          localStorage.setItem(ConfigHelper.Storage.Lst, JSON.stringify( res.lst ));
           this.currentUserSubject.next(res.data);
         }
         return res;

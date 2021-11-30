@@ -7,13 +7,14 @@ import { UserService } from 'src/app/services/user.service';
 import { MenuItem } from '../../../../models/menu-item';
 
 @Component({
-  selector: 'app-side-bar1',
-  templateUrl: './side-bar1.component.html',
-  styleUrls: [],
+  selector    : 'app-side-bar1',
+  templateUrl : './side-bar1.component.html',
+  styleUrls   : ['./side-bar1.component.scss'],
 })
 export class SideBar1Component implements OnInit {
 
   public menuItems: MenuItem[] = [
+    /*
     {
       title: '',
       isHeading: true,
@@ -21,25 +22,76 @@ export class SideBar1Component implements OnInit {
       className: '',
       isIconClass: true,
       icon: 'ri-separator'
+    },*/
+    {
+      title      : 'Projects',
+      isHeading  : false,
+      isActive   : false,
+      link       : '/projects',
+      className  : '',
+      isIconClass: true,
+      icon       : 'ri-profile-line'
     },
     {
-      title: 'Projects',
-      isHeading: false,
-      isActive: false,
-      link: '/projects',
-      className: '',
+      title      : 'Drivers',
+      isHeading  : false,
+      isActive   : false,
+      link       : '/drivers',
+      className  : '',
       isIconClass: true,
-      icon: 'ri-profile-line'
+      icon       : 'ri-truck-line'
     },
     {
-      title: 'Drivers',
-      isHeading: false,
-      isActive: false,
-      link: '/drivers',
-      className: '',
+      title      : 'Customers',
+      isHeading  : false,
+      isActive   : false,
+      link       : '/customers',
+      className  : '',
       isIconClass: true,
-      icon: 'ri-truck-line'
+      icon       : 'ri-shopping-bag-line'
     },
+
+    {
+      title      : "Reports",
+      name       : "reports",
+      isHeading  : false,
+      isActive   : false,
+      link       : "",
+      className  : "",
+      isIconClass: true,
+      icon       : "ri-file-chart-line",
+      children   : [
+        {
+          title      : "On Time",
+          isHeading  : false,
+          isActive   : false,
+          link       : "/reports",
+          className  : "",
+          isIconClass: false,
+          icon       : ""
+        },
+        {
+          title      : "Bags",
+          isHeading  : false,
+          isActive   : false,
+          link       : "/reports/bags",
+          className  : "",
+          isIconClass: false,
+          icon       : ""
+        },
+        {
+          title      : "Drivers",
+          isHeading  : false,
+          isActive   : false,
+          link       : "/reports/drivers",
+          className  : "",
+          isIconClass: false,
+          icon       : ""
+        },
+      ]
+    },
+
+
     // {
     //   title: 'Customer Notifications',
     //   isHeading: false,
@@ -59,13 +111,13 @@ export class SideBar1Component implements OnInit {
     //   icon: 'ri-user-settings-line'
     // },
     {
-      title: 'Logout',
-      isHeading: false,
-      isActive: false,
-      className: '',
+      title      : 'Logout',
+      isHeading  : false,
+      isActive   : false,
+      className  : '',
       isIconClass: true,
-      icon: 'ri-login-box-line',
-      onclick: () => {
+      icon       : 'ri-login-box-line',
+      onclick    : () => {
         this.logout();
       } 
     },
@@ -73,22 +125,40 @@ export class SideBar1Component implements OnInit {
 
   private unsubscribe = new Subject();
 
+  public userName : any;
+
+
+
   constructor(
-    private userSrv: UserService,
-    private loadingSrv: LoadingService,
-    private router: Router
-  ) { }
+    private userSrv    : UserService,
+    private loadingSrv : LoadingService,
+    private router     : Router
+  )
+  {
+    this.userName = this.userSrv.getCurrentUser();
+  }
 
-  ngOnInit() {}
 
-  private logout() {
+
+  ngOnInit()
+  {}
+
+
+
+  private logout()
+  {
     this.loadingSrv.show();
+
     this.userSrv.logout()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
+      .pipe( takeUntil( this.unsubscribe ) )
+      .subscribe( res => {
+
         this.loadingSrv.hide();
         this.router.navigateByUrl('/signin');
+
       });
   }
+
+
 
 }

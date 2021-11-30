@@ -31,15 +31,15 @@
 
 .btn-group-clear {
   border: 0px solid #d7dbda;
-  border-top-right-radius: .25rem;
-  border-bottom-right-radius: .25rem;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
   background: #e9edf4;
   font-weight: 500;
   color: var(--primary);
 }
 
 .btn-primary:active {
-  border-color: #FC9D20 !important;
+  border-color: #fc9d20 !important;
 }
 
 .pagination {
@@ -57,4 +57,25 @@ table {
       color: #fff;
     }
   }
+}
+
+li.nav-item.timeline {
+  .nav-link {
+    background-color: #e9edf4;
+    color: #374948;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-left: 10px;
+
+    &.active {
+      background-color: #374948;
+      color: #ffffff;
+    }
+  }
+}
+
+input
+{
+  font-size: 1rem !important;
+  line-height: 1.225 !important;
 }

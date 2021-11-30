@@ -17,6 +17,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class SigninComponent implements OnInit, OnDestroy {
 
+
   public authSlideOptions: OwlOptions =  {
     loop: true,
     mouseDrag: true,
@@ -26,21 +27,14 @@ export class SigninComponent implements OnInit, OnDestroy {
     navSpeed: 700,
     navText: ['', ''],
     responsive: {
-      0: {
-        items: 1
-      },
-      400: {
-        items: 1
-      },
-      740: {
-        items: 1
-      },
-      940: {
-        items: 1
-      }
+      0  : { items: 1 },
+      400: { items: 1 },
+      740: { items: 1 },
+      940: { items: 1 }
     },
     nav: true
   };
+
 
   public authSlides = [
     {
@@ -69,9 +63,13 @@ export class SigninComponent implements OnInit, OnDestroy {
     }
   ];
 
+
+
   public formGroup: FormGroup;
 
   private unsubscribe = new Subject();
+
+
 
   constructor(
     private plugins: PluginsService,
@@ -81,6 +79,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     private loadingSrv: LoadingService,
     private router: Router
   ) { }
+
+
 
   ngOnInit() {
     // Init all plugins...
@@ -94,14 +94,20 @@ export class SigninComponent implements OnInit, OnDestroy {
     });
   }
 
+
+
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
+
+
   public get formControl() {
     return this.formGroup.controls;
   }
+
+
 
   public save() {
 
@@ -110,12 +116,11 @@ export class SigninComponent implements OnInit, OnDestroy {
       if (!UtilsHelper.validateEmail(this.formControl.email.value)) {
 
         this.alertSrv.toast({
-          icon: 'error',
+          icon   : 'error',
           message: 'Enter a valid email address'
         });
 
       }
-
       else {
 
         this.loadingSrv.show();
@@ -126,25 +131,31 @@ export class SigninComponent implements OnInit, OnDestroy {
             
             this.loadingSrv.hide();
 
-            if (res.success) {
-
+            if (res.success)
+            {
               this.alertSrv.toast({
-                icon: 'success',
+                icon   : 'success',
                 message: res.message
               });
 
               this.router.navigateByUrl('/projects');
-
             }
-
-            else {
-
+            else
+            {
               this.alertSrv.toast({
-                icon: 'error',
+                icon   : 'error',
                 message: res.message
               });
-
             }
+
+          }, err => {
+
+            this.loadingSrv.hide();
+
+            this.alertSrv.toast({
+              icon   : 'error',
+              message: err.message
+            });
 
           });
 

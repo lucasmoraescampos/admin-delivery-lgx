@@ -12,6 +12,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/signup/signup.module').then(m => m.SignupModule)
   },
   {
+    path: 'where-is-my-order',
+    loadChildren: () => import('./pages/where-is-my-order/where-is-my-order.module').then(m => m.WhereIsMyOrderModule)
+  },
+  {
     path: '',
     loadChildren: () => import('./pages/layout/layout.module').then(m => m.LayoutModule),
     canActivate: [AuthGuard]

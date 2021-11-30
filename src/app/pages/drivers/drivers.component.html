@@ -78,13 +78,13 @@
 
                             <td class="text-center">
 
-                                <span>{{ driver.start_time | slice:0:5 }}</span>
+                                <span>{{ driver.start_time | time }}</span>
 
                             </td>
 
                             <td class="text-center">
 
-                                <span *ngIf="driver.end_time">{{ driver.end_time | slice:0:5 }}</span>
+                                <span *ngIf="driver.end_time">{{ driver.end_time | time }}</span>
                                 
                                 <span *ngIf="!driver.end_time">-</span>
 

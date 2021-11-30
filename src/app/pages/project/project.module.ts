@@ -14,7 +14,9 @@ import { ModalUploadStopsModule } from 'src/app/modals/modal-upload-stops/modal-
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
 import { ModalDriverModule } from 'src/app/modals/modal-driver/modal-driver.module';
 import { SortablejsModule } from 'ngx-sortablejs';
-import { ClipboardModule } from 'ngx-clipboard';
+import { ModalSwapRouteModule } from 'src/app/modals/modal-swap-route/modal-swap-route.module';
+import { ProjectManagerModule } from 'src/app/components/project-manager/project-manager.module';
+import { ModalDriverTimeModule } from 'src/app/modals/modal-driver-time/modal-driver-time.module';
 
 @NgModule({
   declarations: [ProjectComponent],
@@ -31,10 +33,12 @@ import { ClipboardModule } from 'ngx-clipboard';
     ModalDriverModule,
     FilterModule,
     SortablejsModule,
-    ClipboardModule,
+    ModalSwapRouteModule,
+    ProjectManagerModule,
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ModalDriverTimeModule
   ]
 })
 export class ProjectModule { }

@@ -4,29 +4,44 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as $ from 'jquery';
 import { ProjectService } from 'src/app/services/project.service';
+import { BsDropdownConfig } from "ngx-bootstrap/dropdown";
+import { UserService } from 'src/app/services/user.service';
+import { LoadingService } from 'src/app/services/loading.service';
+import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-nav-bar1',
   templateUrl: './nav-bar1.component.html',
-  styleUrls: []
+  styleUrls: ['./nav-bar1.component.scss'],
+  providers: [
+    {
+      provide: BsDropdownConfig,
+      useValue: { isAnimated: true, autoClose: true }
+    }
+  ]
 })
 export class NavBar1Component implements OnInit, OnDestroy {
 
+  public usr : any;
+  public lst : any;
   public title: string;
-
   public breadCrumbItems: any[];
-
   private unsubscribe = new Subject();
 
   constructor(
-    private router: Router,
-    private projectSrv: ProjectService
-  ) { }
+    private router     : Router,
+    private projectSrv : ProjectService,
+    private usrSrv     : UserService,
+    private loadingSrv : LoadingService,
+    private alertSrv   : AlertService
+  )
+  {
+    this.usr = this.usrSrv.getCurrentUser();
+    this.lst = this.usrSrv.getLst();
+  }
 
   ngOnInit() {
-
     this.setTitle();
-
   }
 
   ngOnDestroy() {
@@ -53,13 +68,22 @@ export class NavBar1Component implements OnInit, OnDestroy {
           this.title = 'All Drivers';
         }
         else if (location.pathname == '/customers') {
-          this.title = 'Customer Profiles';
+          this.title = 'Customer';
         }
         else if (location.pathname == '/notifications') {
           this.title = 'Customer Notifications';
         }
         else if (location.pathname == '/account') {
           this.title = 'My account';
+        }
+        else if (location.pathname == '/reports') {
+          this.title = 'Reports - On Time';
+        }
+        else if (location.pathname == '/reports/bags') {
+          this.title = 'Reports - Bags';
+        }
+        else if (location.pathname == '/reports/drivers') {
+          this.title = 'Reports - Drivers';
         }
         else if (location.pathname == '/project') {
 
@@ -86,5 +110,47 @@ export class NavBar1Component implements OnInit, OnDestroy {
         }
       });
   }
+
+
+  change( id )
+  {
+    this.usrSrv.change( id )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+
+        this.loadingSrv.hide();
+
+        if (res.success)
+        {
+          this.alertSrv.toast({
+            icon   : 'success',
+            message: res.message
+          });
+
+          window.location.href = "/";
+          //window.location.reload();
+          //this.router.navigateByUrl('/projects');
+        }
+        else
+        {
+          this.alertSrv.toast({
+            icon   : 'error',
+            message: res.message
+          });
+        }
+
+      }, err => {
+
+        this.loadingSrv.hide();
+
+        this.alertSrv.toast({
+          icon   : 'error',
+          message: err.message
+        });
+
+      });
+  }
+
+
 
 }

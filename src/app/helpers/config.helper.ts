@@ -4,6 +4,7 @@ export class ConfigHelper {
         AccessToken: 'access_token',
         CurrentUser: 'current_user',
         CurrentProject: 'current_project',
+        Lst: 'lst',
     };
     
 }

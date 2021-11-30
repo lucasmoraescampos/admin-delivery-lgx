@@ -33,7 +33,8 @@ export class DriversComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   public modalDriver(index?: number) {

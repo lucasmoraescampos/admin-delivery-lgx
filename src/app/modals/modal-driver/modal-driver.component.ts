@@ -42,7 +42,7 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
       start_lat: [this.driver?.start_lat ?? '', Validators.required],
       start_lng: [this.driver?.start_lng ?? '', Validators.required],
       start_time: [this.driver?.start_time ?? '08:00', Validators.required],
-      end_time: [this.driver ? this.driver.end_time : '16:00'],
+      end_time: [this.driver ? this.driver.end_time : '16:00', Validators.required],
       project_id: [this.project_id ?? null]
     });
 
@@ -81,11 +81,7 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
       data.start_time = data.start_time.slice(0, 5);
 
-      if (data.end_time) {
-
-        data.end_time = data.end_time.slice(0, 5);
-
-      }
+      data.end_time = data.end_time.slice(0, 5);
 
       if (this.driver) {
 

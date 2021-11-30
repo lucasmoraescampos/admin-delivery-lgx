@@ -15,8 +15,6 @@ export class ModalUploadStopsColumnsComponent implements OnInit {
   public formGroup: FormGroup;
 
   public onClose = new Subject();
-
-  private unsubscribe = new Subject();
   
   constructor(
     private bsModalRef: BsModalRef,

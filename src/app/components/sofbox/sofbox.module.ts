@@ -17,7 +17,7 @@ import { FullCalendarComponent } from './full-calendar/full-calendar.component';
 import {FullCalendarModule} from '@fullcalendar/angular';
 import { CardWithImageComponent } from './card-with-image/card-with-image.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
-
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 
 @NgModule({
@@ -56,7 +56,8 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     NgScrollbarModule,
     RouterModule,
     FullCalendarModule,
-    CollapseModule.forRoot()
+    CollapseModule.forRoot(),
+    BsDropdownModule
   ]
 })
 export class SofboxModule { }

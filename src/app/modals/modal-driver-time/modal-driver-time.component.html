@@ -1,0 +1,70 @@
+
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Driver</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="formGroup" (submit)="save()" >
+
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+                <label class="col-form-label mt-1">Start Address</label>
+                <i class="ri-information-line ml-2"
+                    tooltip="This is where your driver will depart from at the start of their shift."
+                    placement="right"></i>
+            </div>
+
+            <div class="col-sm-8">
+                <app-google-autocomplete [address]="address"
+                    (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+            </div>
+
+        </div>
+
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+                <label for="start_time" class="col-form-label mt-1">Start Time</label>
+                <i class="ri-information-line ml-2"
+                    tooltip="This is your driver's start time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
+                    placement="right"></i>
+            </div>
+
+            <div class="col-sm-8">
+                <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00" formControlName="start_time">
+            </div>
+
+        </div>
+
+
+        <div class="form-group row">
+
+            <div class="col-sm-4">
+                <label for="end_time" class="col-form-label mt-1">End Time</label>
+                <i class="ri-information-line ml-2"
+                    tooltip="This is your driver's end time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
+                    placement="right"></i>
+            </div>
+
+            <div class="col-sm-8">
+                <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00" formControlName="end_time">
+            </div>
+
+        </div>
+
+
+        <div class="form-group row">
+            <div class="col-sm-12 text-right pt-3">
+                <button class="btn btn-primary" [disabled]="formGroup.invalid" >Save</button>
+            </div>
+        </div>
+
+
+    </form>
+</div>

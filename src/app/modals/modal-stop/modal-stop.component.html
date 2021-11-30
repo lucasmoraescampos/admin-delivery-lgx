@@ -87,7 +87,7 @@
 
             <div class="col-sm-9">
 
-                <app-google-autocomplete (changeAddress)="changeAddress($event)"></app-google-autocomplete>
+                <app-google-autocomplete [address]="this.stop?.address" (changeAddress)="changeAddress($event)"></app-google-autocomplete>
 
             </div>
 

@@ -21,10 +21,6 @@ export class StopService {
   public update(id: number, data: any) {
     return this.http.put<HttpResult>(`${this.apiUrl}/user/stop/${id}`, data);
   }
-
-  public delete(id: number) {
-    return this.http.delete<HttpResult>(`${this.apiUrl}/user/stop/${id}`);
-  }
   
   public columnNames(data: FormData) {
     return this.http.post<HttpResult>(`${this.apiUrl}/user/stop/import/columnNames`, data);

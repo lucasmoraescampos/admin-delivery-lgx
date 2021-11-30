@@ -19,16 +19,14 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
 
   public file: File;
 
-  public onClose = new Subject();
-
   private unsubscribe = new Subject();
 
   constructor(
     private bsModalRef: BsModalRef,
     private loadingSrv: LoadingService,
     private alertSrv: AlertService,
-    private stopSrv: StopService,
     private projectSrv: ProjectService,
+    private stopSrv: StopService,
     private modalSrv: BsModalService
   ) { }
 
@@ -111,7 +109,6 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
     this.alertSrv.toast({
       icon: 'warning',
       message: 'This may take a while. Please wait.',
-      position: 'center',
       duration: 60000
     });
 
@@ -130,9 +127,9 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
               message: res.message
             });
 
-            this.onClose.next(res.data);
+            project.stops = res.data;
 
-            this.onClose.complete();
+            this.projectSrv.setCurrentProject(project);
 
             this.bsModalRef.hide();
 

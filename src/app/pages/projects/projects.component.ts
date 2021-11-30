@@ -16,51 +16,69 @@ import { ProjectService } from 'src/app/services/project.service';
 })
 export class ProjectsComponent implements OnInit, OnDestroy {
 
-  readonly today = new Date();
+  public today = new Date();
 
-  public projects: any[] = [];
+  public projects : any[] = [];
+  public customers: any[] = [];
 
-  public name: string;
+  public  name        : string;
+  public  from        : string;
+  public  to          : string;
+  public  formGroup   : FormGroup;
+  private modalRef    : BsModalRef;
 
-  public from: string;
-
-  public to: string;
-
-  public formGroup: FormGroup;
-
-  private modalRef: BsModalRef;
+  public cloneTarget : any;
+  public updateTarget: any;
+  public updateIndex : number;
 
   private unsubscribe = new Subject();
 
+
+
   constructor(
-    private modalSrv: BsModalService,
+    private modalSrv   : BsModalService,
     private formBuilder: FormBuilder,
-    private projectSrv: ProjectService,
-    private loadingSrv: LoadingService,
-    private alertSrv: AlertService,
-    private router: Router
+    private projectSrv : ProjectService,
+    private loadingSrv : LoadingService,
+    private alertSrv   : AlertService,
+    private router     : Router
   ) {}
+
+
 
   ngOnInit() {
 
     this.formGroup = this.formBuilder.group({
-      name: ['', Validators.required],
-      date: ['', Validators.required]
+      name        : ['', Validators.required],
+      date        : ['', Validators.required],
+      start_time  : ['', Validators.required],
+      end_time    : ['', Validators.required],
+      customers_id: ['']
     });
 
     this.initProjects();
-
   }
+
+
 
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
-  public modalDismiss() {
+
+
+  public modalDismiss()
+  {
+    this.today        = new Date();
+    this.updateIndex  = null;
+    this.cloneTarget  = null;
+    this.updateTarget = null;
     this.formGroup.reset();
     this.modalRef.hide();
   }
+
+
 
   public changeDateFilter(date: Date, type: 'from' | 'to') {
 
@@ -71,44 +89,51 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     if (type == 'from') {
       this.from = `${date.getFullYear()}-${month}-${day}`;
     }
-
     else {
       this.to = `${date.getFullYear()}-${month}-${day}`;
     }
 
   }
  
-  public openModal(template: TemplateRef<any>) {
+
+
+  public openModal(template: TemplateRef<any>, i = null)
+  {
+    this.cloneTarget = ( i !== null ) ? this.projects[i] : null;
 
     this.modalRef = this.modalSrv.show(template, {
       class: 'modal-dialog-centered',
       keyboard: false,
       backdrop: 'static'
     });
-
   }
 
-  public changeDate(date: Date) {
 
-    const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate();
 
+  public changeDate(date: Date)
+  {
+    const day   = date.getDate()      > 9 ? date.getDate()      : '0' + date.getDate();
     const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + String(date.getMonth() + 1);
 
     this.formGroup.patchValue({ date: `${date.getFullYear()}-${month}-${day}` });
-
   }
+
+
 
   public openProject(project: any) {
 
     this.projectSrv.setCurrentProject({
       id: project.id,
-      name: project.name
+      name: project.name,
+      status: project.status
     });
 
     this.router.navigateByUrl('/project');
-    
   }
   
+
+
+
   public save() {
     
     if (this.formGroup.valid) {
@@ -124,7 +149,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
           if (res.success) {
 
             this.modalDismiss();
-
             this.projects.unshift(res.data);
 
             this.projects = ArrayHelper.orderbyDesc(this.projects, 'date');
@@ -135,15 +159,20 @@ export class ProjectsComponent implements OnInit, OnDestroy {
             });
 
           }
-
-          else {
-
+          else
+          {
             this.alertSrv.toast({
               icon: 'error',
               message: res.message
             });
-
           }
+
+        }, err => {
+
+          this.alertSrv.toast({
+            icon   : 'error',
+            message: err.error.message
+          });
 
         });
 
@@ -252,13 +281,142 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   }
 
-  private initProjects() {
+
+
+  private initProjects()
+  {
     this.loadingSrv.show();
+
     this.projectSrv.getAll()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
+
         this.loadingSrv.hide();
-        this.projects = res.data;
+        this.projects  = res.data;
+        this.customers = res.customers;
+
       });
   }
+
+
+  post()
+  {
+    if( this.cloneTarget )
+    {
+      this.clone( this.cloneTarget );
+    }
+    else if( this.updateTarget )
+    {
+      this.update( this.updateTarget )
+    }
+    else
+    {
+      this.save();
+    }
+  }
+
+
+  public clone( project )
+  {
+    if (this.formGroup.valid)
+    {
+      this.loadingSrv.show();
+
+      this.projectSrv.cloneProject(project.id, this.formGroup.value)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe( ( res : any ) => {
+
+          this.loadingSrv.hide();
+
+          if (res.success)
+          {
+            this.modalDismiss();
+            this.projects.unshift(res.data);
+            this.projects = ArrayHelper.orderbyDesc(this.projects, 'date');
+
+            this.alertSrv.toast({
+              icon   : 'success',
+              message: res.message
+            });
+          }
+
+        }, ( res : any ) => {
+
+          this.loadingSrv.hide();
+
+          this.alertSrv.toast({
+            icon   : 'error',
+            message: res.error.message
+          });
+
+        });
+    }
+  }
+
+
+  public update( project )
+  {
+    if (this.formGroup.valid)
+    {
+      this.loadingSrv.show();
+
+      this.projectSrv.updateProject(project.id, this.formGroup.value)
+        .pipe(takeUntil(this.unsubscribe))
+        .subscribe( ( res : any ) => {
+
+          this.loadingSrv.hide();
+
+          if (res.success)
+          {
+            this.projects[ this.updateIndex ].name         = res.data.name;
+            this.projects[ this.updateIndex ].start_time   = res.data.start_time;
+            this.projects[ this.updateIndex ].end_time     = res.data.end_time;
+            this.projects[ this.updateIndex ].date         = res.data.date;
+            this.projects[ this.updateIndex ].customers_id = res.data.customers_id;
+
+            this.modalDismiss();
+
+            this.alertSrv.toast({
+              icon   : 'success',
+              message: res.message
+            });
+          }
+
+        }, ( res : any ) => {
+
+          this.loadingSrv.hide();
+
+          this.alertSrv.toast({
+            icon   : 'error',
+            message: res.error.message
+          });
+
+        });
+    }
+  }
+
+
+
+  edit( template: TemplateRef<any>, i = null )
+  {
+    this.updateTarget = ( i !== null ) ? this.projects[i] : null;
+    this.updateIndex  = i;
+    let customer_id   = parseInt( this.updateTarget.customers_id );
+
+    this.formGroup.controls[ 'name'         ].setValue( this.updateTarget.name );
+    this.formGroup.controls[ 'date'         ].setValue( this.updateTarget.date );
+    this.formGroup.controls[ 'start_time'   ].setValue( this.updateTarget.start_time );
+    this.formGroup.controls[ 'end_time'     ].setValue( this.updateTarget.end_time );
+    this.formGroup.controls[ 'customers_id' ].setValue( customer_id );
+
+    this.today = new Date( this.updateTarget.date + ' 00:00' );
+
+    this.modalRef = this.modalSrv.show(template, {
+      class: 'modal-dialog-centered',
+      keyboard: false,
+      backdrop: 'static'
+    });
+  }
+
+
 }

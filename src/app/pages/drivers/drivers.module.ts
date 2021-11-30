@@ -6,6 +6,7 @@ import { SofboxModule } from 'src/app/components/sofbox/sofbox.module';
 import { FormsModule } from '@angular/forms';
 import { ModalDriverModule } from 'src/app/modals/modal-driver/modal-driver.module';
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
+import { TimeModule } from 'src/app/pipes/time/time.module';
 
 @NgModule({
   declarations: [DriversComponent],
@@ -15,7 +16,8 @@ import { FilterModule } from 'src/app/pipes/filter/filter.module';
     SofboxModule,
     FormsModule,
     ModalDriverModule,
-    FilterModule
+    FilterModule,
+    TimeModule
   ]
 })
 export class DriversModule { }
