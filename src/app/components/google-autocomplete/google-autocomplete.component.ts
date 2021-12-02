@@ -11,6 +11,8 @@ export class GoogleAutocompleteComponent implements OnInit {
 
   @Input() address: string;
 
+  @Input() readonly: boolean = false;
+
   @Output() changeAddress = new EventEmitter();
 
   public addressList: string[];

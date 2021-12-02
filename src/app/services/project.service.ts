@@ -34,8 +34,8 @@ export class ProjectService {
     this.currentProjectSubject.next(project);
   }
 
-  public getAll() {
-    return this.http.get<HttpResult>(`${this.apiUrl}/user/project`);
+  public getAll(params?: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/project`, { params: params });
   }
 
   public create(data: any) {

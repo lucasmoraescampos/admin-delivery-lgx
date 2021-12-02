@@ -1,13 +1,15 @@
-<div class="row">
+<div class="row animate__animated animate__fadeIn" *ngIf="projects">
+
     <div class="col-sm-12">
+
         <app-iq-card>
 
-
             <div card-header class="iq-header-title">
+
                 <div class="filters row">
 
-
                     <div class="col-md-2 mt-1 mb-1">
+
                         <div class="input-group">
 
                             <input type="text" placeholder="From" class="form-control" bsDatepicker
@@ -15,15 +17,18 @@
                                 (bsValueChange)="changeDateFilter($event, 'from')" #datefrom>
 
                             <div class="input-group-append">
-                                <button class="btn-group-clear" (click)="datefrom.value = from = ''"
+
+                                <button class="btn-group-clear" (click)="datefrom.value = from = ''; toggleSearch()"
                                     *ngIf="from?.length > 0">clear</button>
+
                             </div>
 
                         </div>
+
                     </div>
 
-
                     <div class="col-md-2 mt-1 mb-1">
+
                         <div class="input-group">
 
                             <input type="text" placeholder="To" class="form-control" bsDatepicker
@@ -31,104 +36,261 @@
                                 #dateto>
 
                             <div class="input-group-append">
-                                <button class="btn-group-clear" (click)="dateto.value = to = ''"
+
+                                <button class="btn-group-clear" (click)="dateto.value = to = ''; toggleSearch()"
                                     *ngIf="to?.length > 0">clear</button>
+
                             </div>
 
                         </div>
+
                     </div>
 
-
                     <div class="col-md-3 mt-1 mb-1">
-                        <input type="text" class="form-control" placeholder="Search Project Name Here"
-                            [(ngModel)]="name">
+
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Search Project Name Here"
+                                [(ngModel)]="name" (ngModelChange)="searchChanged()" #searchname>
+
+                            <div class="input-group-append">
+
+                                <button class="btn-group-clear" (click)="searchname.value = name = ''; toggleSearch()"
+                                    *ngIf="name?.length > 0">clear</button>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-
                     <div class="col-md-3 mt-1 mb-1">
+
                         <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)"><i
                                 class="ri-add-line"></i>New Project</button>
+
                     </div>
 
-
                 </div>
-            </div>
 
+            </div>
 
             <div class="table-responsive">
-                <table id="datatable" class="table table-hover">
 
+                <ng-container *ngIf="!projects_searched">
 
-                    <thead class="thead-primary">
-                        <tr class="text-center">
+                    <table id="datatable" class="table table-hover">
 
-                            <th>Name</th>
-                            <th>Customer</th>
-                            <th>#Of Drivers</th>
-                            <th>#Of Stops</th>
-                            <th>Total Distance</th>
-                            <th>Total Time</th>
-                            <th>Date</th>
-                            <th>Dispatch Status</th>
-                            <th></th>
+                        <thead class="thead-primary">
 
-                        </tr>
-                    </thead>
+                            <tr class="text-center">
 
+                                <th>Name</th>
 
-                    <tbody>
+                                <th>Customer</th>
 
+                                <th>#Of Drivers</th>
 
-                        <tr class="text-center"
-                            *ngFor="let project of ( projects | filter:'name':name ) | filterDateBetween:'date':from:to; let i=index"
-                            (click)="openProject(project)">
+                                <th>#Of Stops</th>
 
-                            <td>{{ project.name }}</td>
-                            <td>{{ project.customer }}</td>
-                            <td>{{ project.drivers.length }}</td>
-                            <td>{{ stops(project) }}</td>
-                            <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
-                            <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
-                            <td>{{ project.date | date }}</td>
-                            <td>
-                                <span class="badge badge-light"     *ngIf="project.status == 0">Waiting</span>
-                                <span class="badge badge-secondary" *ngIf="project.status == 1">Optimized</span>
-                                <span class="badge badge-primary"   *ngIf="project.status == 2">Dispatched</span>
-                                <span class="badge badge-success"   *ngIf="project.status == 3">Completed</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-link" (click)="$event.stopPropagation(); edit(modal, i)">
-                                    <i class="ri-pencil-fill"></i>
-                                </button>
+                                <th>Total Distance</th>
 
-                                <button class="btn btn-link" (click)="$event.stopPropagation(); delete(i)">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
+                                <th>Total Time</th>
 
-                                <button class="btn btn-link" (click)="$event.stopPropagation(); openModal(modal, i)">
-                                    <i class="ri-checkbox-multiple-blank-line"></i>
-                                </button>
-                            </td>
+                                <th>Date</th>
 
-                        </tr>
+                                <th>Dispatch Status</th>
 
+                                <th></th>
 
-                        <tr class="text-center" *ngIf="projects.length == 0">
-                            <td colspan="9">
-                                <i class="ri-search-line"></i> No projects found
-                            </td>
-                        </tr>
+                            </tr>
 
+                        </thead>
 
-                    </tbody>
+                        <tbody>
 
+                            <tr class="text-center animate__animated animate__fadeIn"
+                                *ngFor="let project of projects; let i=index" (click)="openProject(project)">
 
-                </table>
+                                <td>{{ project.name }}</td>
+
+                                <td>{{ project.customer }}</td>
+
+                                <td>{{ project.drivers.length }}</td>
+
+                                <td>{{ stops(project) }}</td>
+
+                                <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
+
+                                <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
+
+                                <td>{{ project.date | date }}</td>
+
+                                <td>
+
+                                    <span class="badge badge-light" *ngIf="project.status == 0">Waiting</span>
+
+                                    <span class="badge badge-secondary" *ngIf="project.status == 1">Optimized</span>
+
+                                    <span class="badge badge-primary" *ngIf="project.status == 2">Dispatched</span>
+
+                                    <span class="badge badge-success" *ngIf="project.status == 3">Completed</span>
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); edit(modal, i)">
+
+                                        <i class="ri-pencil-fill"></i>
+
+                                    </button>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); delete(i)">
+
+                                        <i class="ri-delete-bin-line"></i>
+
+                                    </button>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); openModal(modal, i)">
+
+                                        <i class="ri-checkbox-multiple-blank-line"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            <tr class="text-center animate__animated animate__fadeIn" *ngIf="projects?.length == 0">
+
+                                <td colspan="9">
+
+                                    <i class="ri-search-line"></i> No projects found
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </ng-container>
+
+                <ng-container *ngIf="projects_searched">
+
+                    <table id="datatable" class="table table-hover">
+
+                        <thead class="thead-primary">
+
+                            <tr class="text-center">
+
+                                <th>Name</th>
+
+                                <th>Customer</th>
+
+                                <th>#Of Drivers</th>
+
+                                <th>#Of Stops</th>
+
+                                <th>Total Distance</th>
+
+                                <th>Total Time</th>
+
+                                <th>Date</th>
+
+                                <th>Dispatch Status</th>
+
+                                <th></th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr class="text-center animate__animated animate__fadeIn"
+                                *ngFor="let project of projects_searched; let i=index" (click)="openProject(project)">
+
+                                <td>{{ project.name }}</td>
+
+                                <td>{{ project.customer }}</td>
+
+                                <td>{{ project.drivers.length }}</td>
+
+                                <td>{{ stops(project) }}</td>
+
+                                <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
+
+                                <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
+
+                                <td>{{ project.date | date }}</td>
+
+                                <td>
+
+                                    <span class="badge badge-light" *ngIf="project.status == 0">Waiting</span>
+
+                                    <span class="badge badge-secondary" *ngIf="project.status == 1">Optimized</span>
+
+                                    <span class="badge badge-primary" *ngIf="project.status == 2">Dispatched</span>
+
+                                    <span class="badge badge-success" *ngIf="project.status == 3">Completed</span>
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); edit(modal, i)">
+
+                                        <i class="ri-pencil-fill"></i>
+
+                                    </button>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); delete(i)">
+
+                                        <i class="ri-delete-bin-line"></i>
+
+                                    </button>
+
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); openModal(modal, i)">
+
+                                        <i class="ri-checkbox-multiple-blank-line"></i>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            <tr class="text-center animate__animated animate__fadeIn" *ngIf="projects?.length == 0">
+
+                                <td colspan="9">
+
+                                    <i class="ri-search-line"></i> No projects found
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </ng-container>
+
             </div>
 
+            <pagination previousText="Prev" [totalItems]="total" [itemsPerPage]="per_page" [maxSize]="5"
+                (pageChanged)="pageChanged($event.page)" *ngIf="!projects_searched"></pagination>
+
+            <pagination previousText="Prev" [totalItems]="total_searched" [itemsPerPage]="per_page" [maxSize]="5"
+                (pageChanged)="pageSearchedChanged($event.page)" *ngIf="projects_searched"></pagination>
 
         </app-iq-card>
+
     </div>
+
 </div>
 
 
@@ -140,9 +302,9 @@
     <div class="modal-header">
 
         <h4 class="modal-title pull-left">
-            <span *ngIf="!cloneTarget && !updateTarget" > Create New Project </span>
-            <span *ngIf="cloneTarget  != null" > Duplicate Project - {{cloneTarget.name}} </span>
-            <span *ngIf="updateTarget != null" > Edit Project - {{updateTarget.name}} </span>
+            <span *ngIf="!cloneTarget && !updateTarget"> Create New Project </span>
+            <span *ngIf="cloneTarget  != null"> Duplicate Project - {{cloneTarget.name}} </span>
+            <span *ngIf="updateTarget != null"> Edit Project - {{updateTarget.name}} </span>
         </h4>
 
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
@@ -192,8 +354,8 @@
                 <label for="name" class="col-sm-3 col-form-label">Customer</label>
 
                 <div class="col-sm-9">
-                    <select class="form-control" formControlName="customers_id" placeholder="Select a Customer" >
-                        <option *ngFor=" let custom of customers " value="{{custom.id}}" >{{custom.name}}</option>
+                    <select class="form-control" formControlName="customers_id" placeholder="Select a Customer">
+                        <option *ngFor=" let custom of customers " value="{{custom.id}}">{{custom.name}}</option>
                     </select>
                 </div>
 
@@ -216,5 +378,3 @@
     </div>
 
 </ng-template>
-
-

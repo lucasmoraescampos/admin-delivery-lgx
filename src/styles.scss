@@ -74,8 +74,12 @@ li.nav-item.timeline {
   }
 }
 
-input
-{
-  font-size: 1rem !important;
-  line-height: 1.225 !important;
+input {
+  font-size: 0.9rem !important;
+  line-height: 1.125 !important;
+
+  &:read-only {
+    background: #dadee3 !important;
+    color: #000 !important;
+  }
 }

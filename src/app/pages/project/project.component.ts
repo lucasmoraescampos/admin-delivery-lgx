@@ -17,60 +17,62 @@ import { ProjectService } from 'src/app/services/project.service';
 declare const google: any;
 
 @Component({
-  selector   : 'app-project',
+  selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls  : ['./project.component.scss']
+  styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit, OnDestroy {
 
+  @ViewChild('map', { static: true }) mapElement: ElementRef;
 
-  @ViewChild('map'  , { static: true }) mapElement  : ElementRef;
   @ViewChild('modal', { static: true }) modalElement: ElementRef;
 
-  private lastStopChanged : any = null;
+  private lastStopChanged: any = null;
 
-  public  mapFullscreen: boolean;
-  public  project      : any;
-  private map          : any;
+  public mapFullscreen: boolean;
 
-  public  drivers        : any[] = [];
-  public  driversAux     : any[] = [];
-  public  stops_markers  : any[];
-  public  drivers_markers: any[];
-  private polyline       : any[] = [];
+  public project: any;
+
+  private map: any;
+
+  public drivers: any[] = [];
+
+  public driversAux: any[] = [];
+
+  public stops_markers: any[];
+
+  public drivers_markers: any[];
+
+  private polyline: any[] = [];
 
   public colors = ['#0000cd', '#ff0000', '#2e8b57', '#ffa500', '#c71585', '#ff4500', '#808000', '#1e90ff', '#e9967a', '#2f4f4f', '#8b0000', '#191970', '#ff00ff', '#00ff00', '#ba55d3', '#00fa9a', '#f0e68c', '#dda0dd', '#006400', '#ffd700'];
 
-  private infoWindow  = new google.maps.InfoWindow();
+  private infoWindow = new google.maps.InfoWindow();
   private unsubscribe = new Subject();
 
-  private modalRef  : BsModalRef;
-  private modalStart: string;
-  private modalEnd  : string;
+  private modalRef: BsModalRef;
 
-  formGroupDriverTime : FormGroup;
+  formGroupDriverTime: FormGroup;
 
 
   constructor(
-    private modalSrv    : BsModalService,
-    private loadingSrv  : LoadingService,
-    private alertSrv    : AlertService,
-    private driverSrv   : DriverService,
-    private projectSrv  : ProjectService,
+    private modalSrv: BsModalService,
+    private loadingSrv: LoadingService,
+    private alertSrv: AlertService,
+    private driverSrv: DriverService,
+    private projectSrv: ProjectService,
     private _formBuilder: FormBuilder
-  )
-  {
+  ) {
   }
 
 
-  ngOnInit()
-  {
+  ngOnInit() {
     this.initMap();
     this.initProject();
 
     this.formGroupDriverTime = this._formBuilder.group({
       start_time: [],
-      end_time  : [],
+      end_time: [],
     });
   }
 
@@ -107,23 +109,23 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
           this.projectSrv.deleteProjectDriver(this.project.id, driver.id)
             .pipe(takeUntil(this.unsubscribe))
-            .subscribe( res => {
+            .subscribe(res => {
 
-                this.loadingSrv.hide();
+              this.loadingSrv.hide();
 
-                if (res.success) {
+              if (res.success) {
 
-                  this.alertSrv.toast({
-                    icon: 'success',
-                    message: res.message
-                  });
+                this.alertSrv.toast({
+                  icon: 'success',
+                  message: res.message
+                });
 
-                }
-
-              }, err => {
-                this.loadingSrv.hide();
-                ev.target.checked = !ev.target.checked;
               }
+
+            }, err => {
+              this.loadingSrv.hide();
+              ev.target.checked = !ev.target.checked;
+            }
             );
         },
         onCancel: () => {
@@ -131,60 +133,57 @@ export class ProjectComponent implements OnInit, OnDestroy {
         }
       });
     }
-    else
-    {
-      const initialState = { driver : driver };
+    else {
+      const initialState = { driver: driver };
 
-      this.modalRef = this.modalSrv.show( ModalDriverTimeComponent, {
-        class       : 'modal-dialog-centered',
-        keyboard    : false,
-        backdrop    : 'static',
+      this.modalRef = this.modalSrv.show(ModalDriverTimeComponent, {
+        class: 'modal-dialog-centered',
+        keyboard: false,
+        backdrop: 'static',
         initialState: { initialState }
       });
 
-      this.modalRef.content.onClose.subscribe( res => {
-        if(res == false)
+      this.modalRef.content.onClose.subscribe(res => {
+        if (res == false)
           ev.target.checked = !ev.target.checked;
       });
 
-      this.modalRef.content.onSubmit.subscribe( post => {
-        this.addDriver( driver, ev, post );
+      this.modalRef.content.onSubmit.subscribe(post => {
+        this.addDriver(driver, ev, post);
       });
     }
   }
 
 
 
-  public addDriver( driver: any, ev: any, post: any )
-  {
+  public addDriver(driver: any, ev: any, post: any) {
     this.loadingSrv.show();
 
     this.projectSrv.addProjectDriver(this.project.id, driver.id, post)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe( res => {
+      .subscribe(res => {
 
-          this.loadingSrv.hide();
+        this.loadingSrv.hide();
 
-          if (res.success) {
-            this.alertSrv.toast({
-              icon: 'success',
-              message: res.message
-            });
-          }
-
-        }, err => {
-
-          this.loadingSrv.hide();
-          ev.target.checked = !ev.target.checked;
+        if (res.success) {
+          this.alertSrv.toast({
+            icon: 'success',
+            message: res.message
+          });
         }
+
+      }, err => {
+
+        this.loadingSrv.hide();
+        ev.target.checked = !ev.target.checked;
+      }
 
       );
   }
 
 
 
-  public modalDismiss()
-  {
+  public modalDismiss() {
     //this.formGroup.reset();
     this.modalRef.hide();
   }
@@ -207,7 +206,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
   public modalStop(stop?: any) {
-    this.modalSrv.show(ModalStopComponent, {
+
+    const modal = this.modalSrv.show(ModalStopComponent, {
       keyboard: false,
       class: 'modal-dialog-centered',
       backdrop: 'static',
@@ -215,6 +215,22 @@ export class ProjectComponent implements OnInit, OnDestroy {
         stop: stop
       }
     });
+
+    modal.content.onUpdated.pipe(takeUntil(this.unsubscribe))
+      .subscribe(() => {
+
+        this.loadingSrv.show();
+
+        this.projectSrv.getById(this.project.id)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(res => {
+
+            this.loadingSrv.hide();
+
+          });
+        
+      });
+
   }
 
 
@@ -233,9 +249,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     let content = document.createElement('div');
 
-    const driver_index = stop.driver_id        ? ArrayHelper.getIndexByKey(this.project.drivers, 'id', stop.driver_id) : null;
-    const route_index  = driver_index !== null ? ArrayHelper.getIndexByKey(this.project.drivers[driver_index].pivot.routes, 'end_id', stop.id) : null;
-    const route        = route_index  !== null ? this.project.drivers[driver_index].pivot.routes[route_index] : null;
+    const driver_index = stop.driver_id ? ArrayHelper.getIndexByKey(this.project.drivers, 'id', stop.driver_id) : null;
+    const route_index = driver_index !== null ? ArrayHelper.getIndexByKey(this.project.drivers[driver_index].pivot.routes, 'end_id', stop.id) : null;
+    const route = route_index !== null ? this.project.drivers[driver_index].pivot.routes[route_index] : null;
 
     if (stop.status == 0) {
       content.innerHTML = `
@@ -384,12 +400,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
       </div>
     `;
 
-    if (stop.status == 0)
-    {
-      const buttonEdit = document.createElement('button');
-      buttonEdit.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
-      buttonEdit.innerHTML = '<i class="ri-edit-box-line"></i> Edit';
-      buttonEdit.onclick = () => this.modalStop(stop);
+    const buttonEdit = document.createElement('button');
+    buttonEdit.setAttribute('class', 'btn btn-outline-dark btn-sm m-1');
+    buttonEdit.innerHTML = '<i class="ri-edit-box-line"></i> Edit';
+    buttonEdit.onclick = () => this.modalStop(stop);
+
+    if (stop.status == 0) {
+
       content.appendChild(buttonEdit);
 
       const buttonDelete = document.createElement('button');
@@ -397,11 +414,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
       buttonDelete.innerHTML = '<i class="ri-delete-bin-line"></i> Delete';
       buttonDelete.onclick = () => this.deleteStop(stop);
       content.appendChild(buttonDelete);
+
     }
-    else
-    {
-      if (route.bags)
-      {
+
+    else {
+
+      if (route.bags) {
         content.innerHTML += `
           <div class="d-flex mt-1">
             <div class="flex-shrink-0">
@@ -414,8 +432,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         `;
       }
 
-      if (route.note)
-      {
+      if (route.note) {
         content.innerHTML += `
           <div class="d-flex mt-1">
             <div class="flex-shrink-0">
@@ -428,8 +445,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         `;
       }
 
-      if (route.image)
-      {
+      if (route.image) {
         content.innerHTML += `
           <div class="d-flex mt-1">
             <div class="flex-shrink-0">
@@ -444,6 +460,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
         `;
       }
 
+      content.appendChild(buttonEdit);
+
     }
 
     this.drivers_markers.forEach((driver_marker: any, index: number) => {
@@ -451,7 +469,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     });
 
     this.stops_markers.forEach((stop_marker: any, index: number) => {
-      
+
       if (stop_marker.id == stop.id) {
 
         stop_marker.marker.setZIndex(9999999999);
@@ -460,8 +478,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.infoWindow.setContent(content);
         this.infoWindow.open(this.map, stop_marker.marker);
       }
-      else
-      {
+      else {
         stop_marker.marker.setZIndex((index + 1) * 9);
       }
     });
@@ -486,7 +503,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
             this.loadingSrv.hide();
 
-            if (res.success) {         
+            if (res.success) {
 
               this.alertSrv.toast({
                 icon: 'success',
@@ -529,10 +546,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
           if (index != -1) {
 
-            this.project.drivers[index].name          = result.name;
-            this.project.drivers[index].phone         = result.phone;
-            this.project.drivers[index].start_time    = result.start_time;
-            this.project.drivers[index].end_time      = result.end_time;
+            this.project.drivers[index].name = result.name;
+            this.project.drivers[index].phone = result.phone;
+            this.project.drivers[index].start_time = result.start_time;
+            this.project.drivers[index].end_time = result.end_time;
             this.project.drivers[index].start_address = result.start_address;
 
             this.projectSrv.setCurrentProject(this.project);
@@ -553,14 +570,13 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-  public driverInfo(driver: any)
-  {
+  public driverInfo(driver: any) {
     let content = document.createElement('div');
-    let parts   = [];
+    let parts = [];
 
-    if( driver.pivot?.start_time )
+    if (driver.pivot?.start_time)
       parts = driver.pivot?.start_time.split(':');
-    else if( typeof driver.projectInfo !== 'undefined' && driver.projectInfo.start_time !== null )
+    else if (typeof driver.projectInfo !== 'undefined' && driver.projectInfo.start_time !== null)
       parts = driver.projectInfo.start_time.split(':');
     else
       parts = driver.start_time.split(':');
@@ -574,9 +590,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
       minute: '2-digit'
     });
 
-    if( driver.pivot?.end_time )
+    if (driver.pivot?.end_time)
       parts = driver.pivot?.end_time.split(':');
-    else if( typeof driver.projectInfo !== 'undefined' && driver.projectInfo.end_time !== null )
+    else if (typeof driver.projectInfo !== 'undefined' && driver.projectInfo.end_time !== null)
       parts = driver.projectInfo.end_time.split(':');
     else
       parts = driver.end_time.split(':');
@@ -590,28 +606,27 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     let startAddress = '';
 
-    if( driver.pivot?.start_address )
+    if (driver.pivot?.start_address)
       startAddress = driver.pivot?.start_address;
-    else if( typeof driver.projectInfo !== 'undefined' && driver.projectInfo.start_address !== null )
+    else if (typeof driver.projectInfo !== 'undefined' && driver.projectInfo.start_address !== null)
       startAddress = driver.projectInfo.start_address;
     else
       startAddress = driver.start_address;
 
     let flag = false;
 
-    this.project.drivers.forEach( (drv: any, index: number) => {
-      if( driver.id == drv.id && ( drv.pivot.start_lat == 'null' || drv.pivot.start_lng == 'null' ) )
-      {
+    this.project.drivers.forEach((drv: any, index: number) => {
+      if (driver.id == drv.id && (drv.pivot.start_lat == 'null' || drv.pivot.start_lng == 'null')) {
         flag = true;
 
         this.alertSrv.toast({
-          icon   : 'error',
+          icon: 'error',
           message: 'Driver "' + drv.name + '" : position not found'
         });
       }
     });
 
-    if(flag)
+    if (flag)
       return;
 
     content.innerHTML = `
@@ -684,8 +699,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     this.drivers_markers.forEach((driver_marker: any, index: number) => {
 
-      if (driver_marker.id == driver.id)
-      {
+      if (driver_marker.id == driver.id) {
         driver_marker.marker.setZIndex(9999999999);
 
         this.map.panTo(driver_marker.marker.position);
@@ -693,8 +707,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.infoWindow.setContent(content);
         this.infoWindow.open(this.map, driver_marker.marker);
       }
-      else
-      {
+      else {
         driver_marker.marker.setZIndex((index + 1) * 9);
       }
 
@@ -704,29 +717,27 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-  private updateDriver( driver )
-  {
-    const initialState = { driver : driver };
+  private updateDriver(driver) {
+    const initialState = { driver: driver };
 
-    this.modalRef = this.modalSrv.show( ModalDriverTimeComponent, {
-      class       : 'modal-dialog-centered',
-      keyboard    : false,
-      backdrop    : 'static',
+    this.modalRef = this.modalSrv.show(ModalDriverTimeComponent, {
+      class: 'modal-dialog-centered',
+      keyboard: false,
+      backdrop: 'static',
       initialState: { initialState }
     });
 
-    this.modalRef.content.onSubmit.subscribe( post => {
+    this.modalRef.content.onSubmit.subscribe(post => {
 
       this.loadingSrv.show();
 
       this.projectSrv.editProjectDriver(this.project.id, driver.id, post)
         .pipe(takeUntil(this.unsubscribe))
-        .subscribe( res => {
+        .subscribe(res => {
 
           this.loadingSrv.hide();
 
-          if (res.success)
-          {
+          if (res.success) {
             this.alertSrv.toast({
               icon: 'success',
               message: res.message
@@ -757,8 +768,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         this.loadingSrv.hide();
 
-        if (res.success)
-        {
+        if (res.success) {
           this.alertSrv.toast({
             icon: 'success',
             message: res.message
@@ -811,12 +821,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
   private setMarkers() {
 
     this.drivers_markers = [];
-    this.stops_markers   = [];
+    this.stops_markers = [];
 
     this.project.drivers.forEach((driver: any, driver_index: number) => {
 
-      if (driver.pivot && driver.pivot.stops_order.length > 0)
-      {
+      if (driver.pivot && driver.pivot.stops_order.length > 0) {
         const marker = new google.maps.Marker({
           map: this.map,
           position: new google.maps.LatLng(driver.pivot.routes[0].start_lat, driver.pivot.routes[0].start_lng),
@@ -830,16 +839,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
             scale: 1.3
           }
         });
-  
+
         this.drivers_markers.push({
           id: driver.id,
           marker: marker
         });
-  
+
         google.maps.event.addListener(marker, 'click', (() => this.driverInfo(driver)));
 
         driver.pivot.stops_order.forEach((stop_id: number, route_index: number) => {
-          
+
           const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', stop_id);
 
           const stop = this.project.stops[index];
@@ -879,7 +888,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
       else // if (driver.pivot && driver.pivot.stops_order.length > 0)
       {
 
-        if( driver.pivot.start_lat == 'null' || driver.pivot.start_lng == 'null' )
+        if (driver.pivot.start_lat == 'null' || driver.pivot.start_lng == 'null')
           this.alertSrv.toast({
             icon: 'error',
             message: 'Driver "' + driver.name + '" : position not found'
@@ -898,12 +907,12 @@ export class ProjectComponent implements OnInit, OnDestroy {
             scale: 1.3
           }
         });
-  
+
         this.drivers_markers.push({
           id: driver.id,
           marker: marker
         });
-  
+
         google.maps.event.addListener(marker, 'click', (() => this.driverInfo(driver)));
 
       } // else - if (driver.pivot && driver.pivot.stops_order.length > 0)
@@ -961,12 +970,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     this.project.drivers.forEach((driver: any) => {
 
-      if (driver.pivot && driver.pivot.stops_order.length > 0)
-      {
+      if (driver.pivot && driver.pivot.stops_order.length > 0) {
         bounds.extend(new google.maps.LatLng(driver.pivot.routes[0].start_lat, driver.pivot.routes[0].start_lng));
       }
-      else
-      {
+      else {
         bounds.extend(new google.maps.LatLng(driver.pivot.start_lat, driver.pivot.start_lng));
       }
 
@@ -980,43 +987,36 @@ export class ProjectComponent implements OnInit, OnDestroy {
       this.map.fitBounds(bounds);
     }
 
-    if( this.project.drivers.length > 0 )
-    {
+    if (this.project.drivers.length > 0) {
       let start_lat;
       let start_lng;
       let last = this.project.drivers.slice(-1)[0];
 
-      if( this.lastStopChanged )
-      {
+      if (this.lastStopChanged) {
         start_lat = +this.lastStopChanged.start_lat
         start_lng = +this.lastStopChanged.start_lng
       }
-      else
-      {
+      else {
         start_lat = +last.pivot.start_lat;
         start_lng = +last.pivot.start_lng;
       }
 
-      if( start_lat == 0 && start_lng == 0 )
-      {
-        if( this.project.drivers.length > 0 )
-        {
+      if (start_lat == 0 && start_lng == 0) {
+        if (this.project.drivers.length > 0) {
           start_lat = this.project.drivers[0].start_lat;
           start_lng = this.project.drivers[0].start_lng;
         }
-        else if( this.project.stops.length > 0 )
-        {
+        else if (this.project.stops.length > 0) {
           start_lat = this.project.stops[0].lat;
           start_lng = this.project.stops[0].lng;
         }
       }
 
-      let initialLocation = new google.maps.LatLng( start_lat, start_lng );
+      let initialLocation = new google.maps.LatLng(start_lat, start_lng);
 
       this.map.setCenter(initialLocation);
 
-      if( this.lastStopChanged )
-      {
+      if (this.lastStopChanged) {
         this.map.setZoom(12);
         this.lastStopChanged = null;
       }
@@ -1066,17 +1066,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-  private initDrivers()
-  {
+  private initDrivers() {
     this.loadingSrv.show();
 
     this.driverSrv.getAll()
-      .pipe( takeUntil( this.unsubscribe ) )
-      .subscribe( res => {
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
 
         this.loadingSrv.hide();
 
-        this.drivers    = res.data;
+        this.drivers = res.data;
         this.driversAux = res.data;
 
         this.driveInfo();
@@ -1121,19 +1120,17 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-  private driveInfo()
-  {
+  private driveInfo() {
     this.drivers = this.driversAux.map(x => Object.assign({}, x));
 
-    this.project.drivers.forEach( pd => {
-      this.drivers.forEach( e => {
+    this.project.drivers.forEach(pd => {
+      this.drivers.forEach(e => {
 
-        if( pd.id == e.id )
-        {
+        if (pd.id == e.id) {
           e.projectInfo = {
             'start_address': pd.pivot.start_address,
-            'start_time'   : pd.pivot.start_time,
-            'end_time'     : pd.pivot.end_time,
+            'start_time': pd.pivot.start_time,
+            'end_time': pd.pivot.end_time,
           }
         }
 
@@ -1143,8 +1140,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
 
 
-  public setStopChanged(e)
-  {
+  public setStopChanged(e) {
     this.lastStopChanged = e;
   }
 

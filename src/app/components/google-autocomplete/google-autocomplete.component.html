@@ -1,5 +1,13 @@
-<input type="text" class="form-control" id="start_address" placeholder="Enter a location" maxlength="255"
-    [(ngModel)]="address" (ngModelChange)="addressChanged()" (blur)="setEnableList(false)" (focus)="setEnableList(true)">
+<input 
+    type="text" 
+    class="form-control"
+    placeholder="Enter a location"
+    maxlength="255"
+    [(ngModel)]="address"
+    [readonly]="readonly"
+    (ngModelChange)="addressChanged()"
+    (blur)="setEnableList(false)"
+    (focus)="setEnableList(true)">
 
 <table class="table table-sm table-hover animate__animated animate__fadeIn" *ngIf="addressList?.length > 0 && enableList">
 

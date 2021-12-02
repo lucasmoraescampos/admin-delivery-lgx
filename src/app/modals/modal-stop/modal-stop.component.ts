@@ -18,7 +18,21 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
   @Input() stop: any;
 
+  public project: any;
+
   public formGroup: FormGroup;
+
+  public status: number;
+
+  public image: string | ArrayBuffer;
+
+  public datetime: string;
+
+  public bags: number;
+
+  public note: string;
+
+  public onUpdated = new Subject();
 
   private unsubscribe = new Subject();
 
@@ -33,6 +47,10 @@ export class ModalStopComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+
+    this.status = this.stop?.status ?? 0;
+
+    this.project = this.projectSrv.getCurrentProject();
 
     this.formGroup = this.formBuilder.group({
       order_id: [this.stop?.order_id ?? '', Validators.required],
@@ -64,17 +82,71 @@ export class ModalStopComponent implements OnInit, OnDestroy {
     });
   }
 
+  public chooseFile(files: FileList) {
+
+    this.loadingSrv.show();
+
+    const file = files.item(0);
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+
+      this.image = reader.result;
+
+      this.loadingSrv.hide();
+
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+
+  }
+
   public save() {
 
     if (this.formGroup.valid) {
 
       this.loadingSrv.show();
 
-      const project = this.projectSrv.getCurrentProject();
-
       if (this.stop) {
 
-        this.stopSrv.update(this.stop.id, this.formGroup.value)
+        const data: any = this.formGroup.value;
+
+        if (this.status != this.stop.status && (this.status == 1 || this.status == 2 || this.status == 3)) {
+
+          data.status = this.status;
+
+          data.datetime = new Date(this.datetime);
+
+          if (this.status == 2) {
+
+            if (this.note) {
+              data.note = this.note;
+            }
+
+            if (this.image) {
+              data.image = this.image;
+            }
+            
+            if (this.bags) {
+              data.bags = this.bags;
+            }
+
+          }
+
+          else if (this.status == 3) {
+
+            if (this.note) {
+              data.note = this.note;
+            }
+
+          }
+
+        }
+
+        this.stopSrv.update(this.stop.id, data)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
 
@@ -87,13 +159,15 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              const index = ArrayHelper.getIndexByKey(project.stops, 'id', res.data.id);
+              const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', res.data.id);
 
-              project.stops[index] = res.data;
+              this.project.stops[index] = res.data;
 
-              this.projectSrv.setCurrentProject(project);
+              this.projectSrv.setCurrentProject(this.project);
 
               this.bsModalRef.hide();
+
+              this.onUpdated.next();
 
             }
 
@@ -105,7 +179,7 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
         const data: any = this.formGroup.value;
 
-        data.project_id = project.id;
+        data.project_id = this.project.id;
 
         this.stopSrv.create(data)
           .pipe(takeUntil(this.unsubscribe))
@@ -120,9 +194,9 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              project.stops.push(res.data);
+              this.project.stops.push(res.data);
 
-              this.projectSrv.setCurrentProject(project);
+              this.projectSrv.setCurrentProject(this.project);
               
               this.bsModalRef.hide();
 

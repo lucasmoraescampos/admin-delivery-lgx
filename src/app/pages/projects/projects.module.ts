@@ -8,6 +8,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
 import { FilterDateBetweenModule } from 'src/app/pipes/filter-date-between/filter-date-between.module';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @NgModule({
   declarations: [ProjectsComponent],
@@ -20,7 +21,8 @@ import { FilterDateBetweenModule } from 'src/app/pipes/filter-date-between/filte
     ModalModule.forRoot(),
     ReactiveFormsModule,
     FilterModule,
-    FilterDateBetweenModule
+    FilterDateBetweenModule,
+    PaginationModule
   ]
 })
 export class ProjectsModule { }

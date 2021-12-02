@@ -26,7 +26,7 @@
 
             <div class="col-sm-9">
 
-                <input type="text" class="form-control" id="order_id" placeholder="Order ID" maxlength="20"
+                <input type="text" class="form-control disabled" id="order_id" placeholder="Order ID" maxlength="20"
                     formControlName="order_id">
 
             </div>
@@ -66,8 +66,8 @@
 
             <div class="col-sm-9">
 
-                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309"
-                    maxlength="40" formControlName="phone" [brmasker]="{ type: 'num' }">
+                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
+                    formControlName="phone" [brmasker]="{ type: 'num' }">
 
             </div>
 
@@ -87,7 +87,164 @@
 
             <div class="col-sm-9">
 
-                <app-google-autocomplete [address]="this.stop?.address" (changeAddress)="changeAddress($event)"></app-google-autocomplete>
+                <app-google-autocomplete 
+                    [address]="this.stop?.address" 
+                    [readonly]="project.status != 0"
+                    (changeAddress)="changeAddress($event)">
+                </app-google-autocomplete>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+
+            <div class="col-sm-3">
+
+                <label class="col-form-label mt-1">Status</label>
+
+                <i class="ri-information-line ml-2" tooltip="The order status." placement="right"></i>
+
+            </div>
+
+            <div class="col-sm-9">
+
+                <select class="form-control" id="status" placeholder="Select" [(ngModel)]="status"
+                    [ngModelOptions]="{ standalone: true }">
+
+                    <option [value]="0" [hidden]="stop?.status != 0">Warning</option>
+
+                    <option [value]="1" [hidden]="stop?.status != 0 && stop?.status != 1">Started</option>
+
+                    <option [value]="2" [hidden]="stop?.status == 0">Arrived</option>
+
+                    <option [value]="3" [hidden]="stop?.status == 0">Skipped</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div [hidden]="stop?.status == 1 || status != 1">
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Started at</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <input type="datetime-local" class="form-control" [(ngModel)]="datetime" [ngModelOptions]="{ standalone: true }">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div [hidden]="stop?.status == 2 || status != 2">
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Arrived at</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <input type="datetime-local" class="form-control" [(ngModel)]="datetime" [ngModelOptions]="{ standalone: true }">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Photo</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <input type="file" class="form-control input-file" accept="image/*" (change)="chooseFile($event.target.files)">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Bags</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <input type="number" min="1" class="form-control" [(ngModel)]="bags" [ngModelOptions]="{ standalone: true }">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Note</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <textarea class="form-control" [(ngModel)]="note" [ngModelOptions]="{ standalone: true }"></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div [hidden]="stop?.status == 3 || status != 3">
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Skipped at</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <input type="datetime-local" class="form-control" [(ngModel)]="datetime" [ngModelOptions]="{ standalone: true }">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row animate__animated animate__fadeIn">
+
+                <div class="col-sm-3 text-right">
+
+                    <label class="col-form-label mt-1">Note</label>
+
+                </div>
+
+                <div class="col-sm-9">
+
+                    <textarea class="form-control" [(ngModel)]="note" [ngModelOptions]="{ standalone: true }"></textarea>
+
+                </div>
 
             </div>
 
@@ -97,7 +254,7 @@
 
             <div class="col-sm-12 text-right pt-3">
 
-                <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
+                <button class="btn btn-primary" [disabled]="formGroup.invalid || (status && !datetime)" (click)="save()">Save</button>
 
             </div>
 
