@@ -177,20 +177,35 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy
           duration += route.duration;
 
           date.setHours( Number( splitz[0] ), Number( splitz[1] ), date.getSeconds() + duration, 0 );
+
+          route.date = date.getFullYear() + "-" + ( date.getMonth() + 1 ) + "-" + date.getDate();
+
+          route.time = this.tConvert( date.toLocaleTimeString( "en-US", {
+            timeZone: "America/Los_Angeles",
+            hour    : '2-digit',
+            minute  : '2-digit'
+          } ) );
         }
         else
         {
           duration += route.duration;
+
           date.setHours( Number( split[0] ), Number( split[1] ), date.getSeconds() + duration, 0 );
+
+          route.date = date.getFullYear() + "-" + ( date.getMonth() + 1 ) + "-" + date.getDate();
+
+          let gmt       = date.toISOString();
+          let gmtsplit  = gmt.split("T");
+          let hourSplit = gmtsplit[1].split('.');
+
+          var dtzz = new Date( gmtsplit[0] + 'T' + hourSplit[0] + 'Z' ).toLocaleTimeString('en-US', {
+            timeZone: "America/Los_Angeles",
+            hour    : '2-digit',
+            minute  : '2-digit'
+          });
+
+          route.time = this.tConvert( dtzz );
         }
-
-        route.date = date.getFullYear()  + "-" + ( date.getMonth() + 1 ) + "-" + date.getDate();
-
-        route.time = this.tConvert( date.toLocaleTimeString( "en-US", {
-          timeZone: "America/Los_Angeles",
-          hour    : '2-digit',
-          minute  : '2-digit'
-        } ) );
 
         duration += route.downtime;
       }
