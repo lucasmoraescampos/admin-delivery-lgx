@@ -6,23 +6,16 @@ import { HttpResult } from '../../models/http-result';
 @Injectable({
   providedIn: 'root'
 })
-export class WhereIsMyOrderService
-{
+export class WhereIsMyOrderService {
 
   private apiUrl = environment.apiUrl;
 
-
   constructor(
     private http: HttpClient
-  )
-  {
+  ) { }
+
+  public get(phone: any, order: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/find-my-order/${phone}/${order}`);
   }
-
-
-  public get(phone: any, order: any)
-  {
-    return this.http.get<any>(`${this.apiUrl}/find-my-order/${phone}/${order}`);
-  }
-
 
 }

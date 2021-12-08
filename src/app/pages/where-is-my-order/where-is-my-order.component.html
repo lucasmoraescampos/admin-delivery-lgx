@@ -1,17 +1,18 @@
-<header id="headerz" class="p-3" >
+<header id="headerz" class="p-3">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between">
 
-            <a href="https://www.fariaslgx.com" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+            <a href="https://www.fariaslgx.com"
+                class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                 <img src="https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/logo-02-02-1920w.png">
             </a>
 
             <ul class="nav col-12 col-lg-auto me-lg-auto justify-content-center ">
-                <li><a href="https://www.fariaslgx.com"           class="nav-link px-2"> HOME     </a></li>
-                <li><a href="https://www.fariaslgx.com/about"     class="nav-link px-2"> ABOUT US </a></li>
+                <li><a href="https://www.fariaslgx.com" class="nav-link px-2"> HOME </a></li>
+                <li><a href="https://www.fariaslgx.com/about" class="nav-link px-2"> ABOUT US </a></li>
                 <li><a href="https://www.fariaslgx.com/#SEGMENTS" class="nav-link px-2"> SEGMENTS </a></li>
-                <li><a href="https://www.fariaslgx.com/#CALLUS"   class="nav-link px-2"> CALL US  </a></li>
-                <li><a href="https://www.fariaslgx.com/drivers"   class="nav-link px-2"> DRIVERS  </a></li>
+                <li><a href="https://www.fariaslgx.com/#CALLUS" class="nav-link px-2"> CALL US </a></li>
+                <li><a href="https://www.fariaslgx.com/drivers" class="nav-link px-2"> DRIVERS </a></li>
             </ul>
 
             <a class="btn-w" href="https://app.fariaslgx.com/where-is-my-order">WHERE'S MY ORDER</a>
@@ -23,12 +24,12 @@
 
 
 
-<div id="wimo" >
+<div id="wimo">
 
 
-    <div class="container" >
-        <div class="row justify-content-center" >
-            <form class="col-md-8" [formGroup]="formGroup" >
+    <div class="container">
+        <div class="row justify-content-center">
+            <form class="col-md-8" [formGroup]="formGroup">
 
                 <h1>TRACK MY ORDER</h1>
                 <p>For phone number, use only numbers, no dashes or spaces.</p>
@@ -36,19 +37,21 @@
                 <div class="row justify-content-center pt-4">
 
                     <div class="col-md-6 mb-3">
-                        <label for="order" class="form-label" >Order ID:</label>
-                        <input type="text" class="form-control" id="order" placeholder="e.g.: 99999" formControlName="order">
+                        <label for="order" class="form-label">Order ID:</label>
+                        <input type="text" class="form-control" id="order" placeholder="e.g.: 99999"
+                            formControlName="order">
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" id="phone" placeholder="e.g.: 99999999999" formControlName="phone" >
+                        <input type="text" class="form-control" id="phone" placeholder="e.g.: 99999999999"
+                            formControlName="phone">
                     </div>
 
                 </div> <!-- .row -->
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" (click)="save()" >MY ORDER</button>
+                    <button type="submit" class="btn btn-primary" (click)="send()">MY ORDER</button>
                 </div>
 
             </form>
@@ -56,60 +59,83 @@
     </div> <!-- .container -->
 
 
-    <div class="orange" *ngIf="routez != null" >
-        <div class="container" >
-            <div class="row justify-content-center" >
-                <div class="col-md-8" >
+    <div class="orange" id="info-content" [hidden]="!stop">
+
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class="col-md-8">
 
                     <div class="row justify-content-center pt-4">
 
                         <div class="col-md-6 mb-3">
-                            <img *ngIf="routez.image" src="{{routez.image}}">
+
+                            <img *ngIf="stop?.image" [src]="stop?.image">
+
                         </div>
 
                         <div class="col-md-6 mb-3">
 
                             <h2>MY ORDER</h2>
 
-                            <p> Name:     {{project.name}}    </p>
-                            <p> Address:  {{project.address}} </p>
-                            <p> Order Id: {{project.order_id}} </p>
+                            <p>Name: &nbsp; {{ stop?.name }}</p>
+
+                            <p>Address: &nbsp; {{ stop?.address }}</p>
+
+                            <p>Order Id: &nbsp; {{ stop?.order_id }}</p>
+
                             <p>
-                                Status:
-                                <container-element [ngSwitch]="routez.status">
-                                    <span *ngSwitchCase="0" > Waiting    </span>
-                                    <span *ngSwitchCase="1" > Dispatched </span>
-                                    <span *ngSwitchCase="2" > Delivered  </span>
-                                    <span *ngSwitchCase="3" > Skipped    </span>
-                                    <span *ngSwitchCase="4" > Completed  </span>
+                                Status: &nbsp;
+
+                                <container-element [ngSwitch]="stop?.status">
+
+                                    <span *ngSwitchCase="0">Waiting</span>
+
+                                    <span *ngSwitchCase="1">Dispatched</span>
+
+                                    <span *ngSwitchCase="2">Delivered</span>
+
+                                    <span *ngSwitchCase="3">Skipped</span>
+
+                                    <span *ngSwitchCase="4">Completed</span>
+
                                 </container-element>
+
                             </p>
-                            <p *ngIf=" routez.status == 0 " > Delivery ETA: {{routez.date}} | {{routez.time}} Pacific Standard Time (PST) </p>
-                            <p *ngIf=" routez.status == 1 " > Started at:   {{routez.date}} | {{routez.time}} Pacific Standard Time (PST) </p>
-                            <p *ngIf=" routez.status == 3 " > Skipped At:   {{routez.date}} | {{routez.time}} Pacific Standard Time (PST) </p>
-                            <p *ngIf=" routez.status == 2 || routez.status == 4 " >
-                                Delivered at: {{routez.date}} | {{routez.time}} Pacific Standard Time (PST)
-                            </p>
+
+                            <p *ngIf=" stop?.status == 0 ">Delivery ETA: &nbsp; {{ stop?.datetime | date:'MMM d, y — h:mm a'  }} Pacific Standard
+                                Time (PST)</p>
+
+                            <p *ngIf=" stop?.status == 1 ">Started at: &nbsp; {{ stop?.datetime | date:'MMM d, y — h:mm a' }} Pacific Standard
+                                Time (PST)</p>
+
+                            <p *ngIf=" stop?.status == 3 ">Skipped At: &nbsp; {{ stop?.datetime | date:'MMM d, y — h:mm a' }} Pacific Standard
+                                Time (PST)</p>
+
+                            <p *ngIf=" stop?.status == 2 || stop?.status == 4 ">Delivered at: &nbsp; {{ stop?.datetime | date:'MMM d, y — h:mm a' }} Pacific Standard Time (PST)</p>
 
                         </div>
 
                     </div>
 
                 </div> <!-- .col-md-8 -->
-            </div> <!-- .row -->
-        </div> <!-- .container -->
-    </div> <!-- .orange -->
 
+            </div> <!-- .row -->
+
+        </div> <!-- .container -->
+
+    </div> <!-- .orange -->
 
 </div> <!-- #wimo -->
 
 
 
 
-<div class="phone-info" >
-    <div class="container" >
-        <div class="row justify-content-center" >
-            <div class="col-md-8 text-center" >
+<div class="phone-info">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
 
                 <div>
                     <strong>QUICK & RELIABLE</strong> We are available <strong>24/7</strong>
@@ -132,13 +158,14 @@
 
 
 <footer>
-    <div class="container" >
-        <div class="row justify-content-center" >
-            <div class="col-md-9" >
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9">
                 <div class="row">
 
 
-                    <div class="col-12 col-lg-3 d-flex flex-column justify-content-center justify-content-md-start align-items-center mb-4" >
+                    <div
+                        class="col-12 col-lg-3 d-flex flex-column justify-content-center justify-content-md-start align-items-center mb-4">
 
                         <div class="mb-3">
                             <img src="https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/Asset+1-3x-1920w.png">
@@ -152,25 +179,27 @@
                     </div>
 
 
-                    <div class="col-6 col-lg-2 mb-4" >
+                    <div class="col-6 col-lg-2 mb-4">
 
                         <h5>Navigation</h5>
 
                         <div class="list-group list-group-flush">
-                            <a class="list-group-item" href="https://www.fariaslgx.com"                   > HOME             </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/about"             > ABOUT US         </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/services"          > SERVICES         </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/contact"           > CALL US          </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/drivers"           > DRIVERS          </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/privacy-policy"    > PRIVACY POLICY   </a>
-                            <a class="list-group-item" href="https://www.fariaslgx.com/#SEGMENTS"         > SEGMENTS         </a>
-                            <a class="list-group-item" href="https://app.fariaslgx.com/where-is-my-order" > WHERE'S MY ORDER </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com"> HOME </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/about"> ABOUT US </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/services"> SERVICES </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/contact"> CALL US </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/drivers"> DRIVERS </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/privacy-policy"> PRIVACY POLICY
+                            </a>
+                            <a class="list-group-item" href="https://www.fariaslgx.com/#SEGMENTS"> SEGMENTS </a>
+                            <a class="list-group-item" href="https://app.fariaslgx.com/where-is-my-order"> WHERE'S MY
+                                ORDER </a>
                         </div>
 
                     </div>
 
 
-                    <div class="col-6 col-lg-3 mb-4" >
+                    <div class="col-6 col-lg-3 mb-4">
 
                         <h5>Services</h5>
 
@@ -189,13 +218,22 @@
                     </div>
 
 
-                    <div class="col-12 col-lg-4 mb-4" >
+                    <div class="col-12 col-lg-4 mb-4">
 
                         <h5>Working Hours</h5>
 
-                        <div class="row"> <div class="col-4">Mon-Wed </div> <div class="col-8 or"> 9:00 am - 9:00 pm </div> </div>
-                        <div class="row"> <div class="col-4">Thu-Sat </div> <div class="col-8 or"> 9:00 am - 9:00 pm </div> </div>
-                        <div class="row"> <div class="col-4">Sunday  </div> <div class="col-8 or"> 9:00 am - 9:00 pm </div> </div>
+                        <div class="row">
+                            <div class="col-4">Mon-Wed </div>
+                            <div class="col-8 or"> 9:00 am - 9:00 pm </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Thu-Sat </div>
+                            <div class="col-8 or"> 9:00 am - 9:00 pm </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">Sunday </div>
+                            <div class="col-8 or"> 9:00 am - 9:00 pm </div>
+                        </div>
 
                     </div>
 
@@ -205,5 +243,3 @@
         </div> <!-- .row -->
     </div> <!-- .container -->
 </footer> <!-- .footer -->
-
-
