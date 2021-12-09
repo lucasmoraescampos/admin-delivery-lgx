@@ -78,8 +78,6 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
         this.project = project;
 
-        this.setTime();
-
         this.unscheduled = this.project.stops.filter((stop: any) => {
           return stop.driver_id == null;
         });
