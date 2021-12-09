@@ -124,7 +124,7 @@
 
                                 <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
 
-                                <td>{{ project.date | date }}</td>
+                                <td>{{ project.date.replace(' ', 'T') | date }}</td>
 
                                 <td>
 
@@ -225,7 +225,7 @@
 
                                 <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
 
-                                <td>{{ project.date | date }}</td>
+                                <td>{{ project.date.replace(' ', 'T') | date }}</td>
 
                                 <td>
 
