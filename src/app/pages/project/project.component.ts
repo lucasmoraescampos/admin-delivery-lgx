@@ -31,13 +31,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public drivers: any[] = [];
 
-  public driversAux: any[] = [];
+  public stops_markers: any[];
 
-  public stops_markers: any[] = [];
+  public drivers_markers: any[];
 
-  public drivers_markers: any[] = [];
-
-  private polyline: any[] = [];
+  private polyline: any[];
 
   public colors = ['#0000cd', '#ff0000', '#2e8b57', '#ffa500', '#c71585', '#ff4500', '#808000', '#1e90ff', '#e9967a', '#2f4f4f', '#8b0000', '#191970', '#ff00ff', '#00ff00', '#ba55d3', '#00fa9a', '#f0e68c', '#dda0dd', '#006400', '#ffd700'];
 
@@ -840,6 +838,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.drivers_markers = [];
+
+    this.stops_markers = [];
+
     this.project.drivers.forEach((driver: any, driver_index: number) => {
 
       this.timezone = driver.pivot.timezone_time;
@@ -977,9 +979,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
     /*
      * Set Polyline
      */
-    this.polyline.forEach(line => {
+    this.polyline?.forEach(line => {
       line.setMap(null);
     });
+
+    this.polyline = [];
 
     this.project.drivers.forEach((driver: any, index: number) => {
 
@@ -1051,7 +1055,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.drivers = res.data;
-        this.driversAux = res.data;
       });
   }
 
