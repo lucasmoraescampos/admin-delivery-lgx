@@ -1,12 +1,10 @@
-<div class="row">
+<div class="row animate__animated animate__fadeIn">
     <div class="col-sm-12">
         <app-iq-card>
-
-
             <div card-header class="iq-header-title">
                 <form class="filters row justify-content-center" [formGroup]="formGroup" (ngSubmit)="submit()" >
 
-                    <div class="col-md-2 mt-1 mb-1 text-right" *ngIf="arr.length > 0" >
+                    <div class="col-md-2 mt-1 mb-1 text-right" *ngIf="report?.length > 0" >
                         <button type="button" class="btn btn-primary btn-block" (click)="download()" >
                             <i class="ri-save-line"></i> Export
                         </button>
@@ -16,7 +14,6 @@
                         <div class="input-group">
 
                             <input type="text" placeholder="From" class="form-control" bsDatepicker
-                                [ngClass]="{ 'error' : formGroup.get('from')?.errors?.required }"
                                 [bsConfig]="{ showWeekNumbers : false, dateInputFormat: 'YYYY-MM-DD' }"
                                 formControlName="from" #datefrom >
 
@@ -33,7 +30,6 @@
                         <div class="input-group">
 
                             <input type="text" placeholder="To" class="form-control" bsDatepicker
-                                [ngClass]="{ 'error' : formGroup.get('to')?.errors?.required }"
                                 [bsConfig]="{ showWeekNumbers : false, dateInputFormat: 'YYYY-MM-DD' }"
                                 formControlName="to" #dateto >
 
@@ -56,7 +52,7 @@
             </div>
 
 
-            <div class="table-responsive" *ngIf="arr.length > 0" >
+            <div class="table-responsive animate__animated animate__fadeIn" *ngIf="report?.length > 0" >
                 <table id="datatable" class="table table-hover">
 
 
@@ -78,7 +74,7 @@
 
                     <tbody>
 
-                        <tr class="text-center" *ngFor="let ar of arr; let i=index" >
+                        <tr class="text-center" *ngFor="let ar of report; let i=index" >
                             <td> {{ ar.date            }}  </td>
                             <td> {{ ar.early.value     }}  </td>
                             <td> {{ ar.late.value      }}  </td>
@@ -89,7 +85,7 @@
                             <td> {{ ar.on_time.percent }}% </td>
                         </tr>
 
-                        <tr class="text-center" *ngIf="arr.length == 0">
+                        <tr class="text-center" *ngIf="report?.length == 0">
                             <td colspan="8">
                                 <i class="ri-search-line"></i> Not found
                             </td>

@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { ProjectService } from 'src/app/services/project.service';
-import { StopService } from 'src/app/services/stop.service';
+import { ApiService } from 'src/app/services/api.service';
 import { ModalUploadStopsColumnsComponent } from '../modal-upload-stops-columns/modal-upload-stops-columns.component';
 
 @Component({
@@ -15,18 +13,20 @@ import { ModalUploadStopsColumnsComponent } from '../modal-upload-stops-columns/
 })
 export class ModalUploadStopsComponent implements OnInit, OnDestroy {
 
+  @Input() project: any;
+
   public columnNames: any;
 
   public file: File;
+
+  public onClose = new Subject();
 
   private unsubscribe = new Subject();
 
   constructor(
     private bsModalRef: BsModalRef,
-    private loadingSrv: LoadingService,
     private alertSrv: AlertService,
-    private projectSrv: ProjectService,
-    private stopSrv: StopService,
+    private apiSrv: ApiService,
     private modalSrv: BsModalService
   ) { }
 
@@ -43,19 +43,15 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
 
   public chooseFile(files: FileList) {
 
-    this.loadingSrv.show();
-
     this.file = files.item(0);
 
     const data = new FormData();
 
     data.append('file', this.file);
 
-    this.stopSrv.columnNames(data)
+    this.apiSrv.columnNamesImport(data)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
-
-        this.loadingSrv.hide();
 
         if (res.success) {
 
@@ -93,13 +89,9 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
 
   private import() {
 
-    this.loadingSrv.show();
-
-    const project = this.projectSrv.getCurrentProject();
-
     const data = new FormData();
 
-    data.append('project_id', String(project.id));
+    data.append('project_id', String(this.project.id));
     data.append('file', this.file);
 
     for (let key in this.columnNames) {
@@ -112,13 +104,11 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
       duration: 60000
     });
 
-    this.stopSrv.import(data)
+    this.apiSrv.importStops(data)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(
 
         res => {
-
-          this.loadingSrv.hide();
 
           if (res.success) {
 
@@ -127,9 +117,9 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
               message: res.message
             });
 
-            project.stops = res.data;
+            this.project.stops = res.data;
 
-            this.projectSrv.setCurrentProject(project);
+            this.onClose.next(this.project);
 
             this.bsModalRef.hide();
 
@@ -149,8 +139,6 @@ export class ModalUploadStopsComponent implements OnInit, OnDestroy {
         },
 
         err => {
-
-          this.loadingSrv.hide();
 
           this.alertSrv.toast({
             icon: 'error',

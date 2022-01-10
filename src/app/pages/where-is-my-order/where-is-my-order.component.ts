@@ -1,11 +1,12 @@
+import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { UtilsHelper } from 'src/app/helpers/utils.helper';
 import { AlertService } from 'src/app/services/alert.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { WhereIsMyOrderService } from './where-is-my-order.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-where-is-my-order',
@@ -21,11 +22,10 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
   public stop: any;
 
   constructor(
+    private apiSrv: ApiService,
     private formBuilder: FormBuilder,
     private alertSrv: AlertService,
-    private loadingSrv: LoadingService,
-    public router: Router,
-    public whereIsMyOrderService: WhereIsMyOrderService
+    public router: Router
   ) { }
 
   ngOnInit() {
@@ -70,17 +70,15 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
       
       else {
 
-        this.loadingSrv.show();
-
-        this.whereIsMyOrderService.get(this.formControl.phone.value, this.formControl.order.value)
+        this.apiSrv.findMyOrder(this.formControl.phone.value, this.formControl.order.value)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
-
-            this.loadingSrv.hide();
 
             if (!res.message) {
 
               this.stop = res.data;
+
+              this.stop.datetime = formatDate(this.stop.timestamp, 'MMM d, y — h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.stop.timezone_time * -3600));
 
               setTimeout(() => {
 
@@ -92,13 +90,6 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
               }, 100);
 
             }
-
-          }, (err) => {
-
-            this.alertSrv.toast({
-              icon: 'error',
-              message: 'No records were found for this phone and order id'
-            });
 
           });
 

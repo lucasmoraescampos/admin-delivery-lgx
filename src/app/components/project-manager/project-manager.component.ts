@@ -5,10 +5,11 @@ import { takeUntil } from 'rxjs/operators';
 import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { ModalSwapRouteComponent } from 'src/app/modals/modal-swap-route/modal-swap-route.component';
 import { AlertService } from 'src/app/services/alert.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { ProjectService } from 'src/app/services/project.service';
 import { environment } from 'src/environments/environment';
+import { ApiService } from 'src/app/services/api.service';
 import * as md5 from 'md5';
+import { formatDate } from '@angular/common';
+import { UtilsHelper } from 'src/app/helpers/utils.helper';
 
 @Component({
   selector: 'app-project-manager',
@@ -17,26 +18,32 @@ import * as md5 from 'md5';
 })
 export class ProjectManagerComponent implements OnInit, OnDestroy {
 
+  @Input() project: any;
+
   @Input() colors: string[];
 
-  @Output() driverInfo     = new EventEmitter();
-  @Output() stopInfo       = new EventEmitter();
-  @Output() setStopChanged = new EventEmitter();
+  @Output() driverInfo = new EventEmitter();
 
-  public collapse         : boolean = true;
-  public tooltip          : boolean = true;
-  public options          : any;
-  public project          : any;
-  public unscheduled      : any[] = [];
+  @Output() stopInfo = new EventEmitter();
+
+  @Output() projectChanged = new EventEmitter();
+
+  public collapse: boolean = true;
+
+  public tooltip: boolean = true;
+
+  public options: any;
+
+  public unscheduled: any[] = [];
+
   public unscheduled_order: any[] = [];
 
   private unsubscribe = new Subject();
 
   constructor(
-    private projectSrv : ProjectService,
-    private loadingSrv : LoadingService,
-    private alertSrv   : AlertService,
-    private modalSrv   : BsModalService
+    private apiSrv: ApiService,
+    private alertSrv: AlertService,
+    private modalSrv: BsModalService
   ) { }
 
   ngOnInit() {
@@ -50,43 +57,14 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
         this.tooltip = true;
       },
       onAdd: (event: any) => {
-
-        if( event.from.id && typeof this.project?.drivers[event.from.id].pivot?.routes[event.oldIndex] !== 'undefined' )
-        {
-          this.setStopChanged.emit({
-            start_lat : this.project?.drivers[event.from.id].pivot?.routes[event.oldIndex].start_lat,
-            start_lng : this.project?.drivers[event.from.id].pivot?.routes[event.oldIndex].start_lng,
-          });
-        }
-        else
-        {
-          this.setStopChanged.emit({
-            start_lat : this.unscheduled[event.oldIndex].lat,
-            start_lng : this.unscheduled[event.oldIndex].lng,
-          });
-        }
-
-        this.reorder( this.project.drivers[event.to.id] );
+        this.reorder(this.project.drivers[event.to.id]);
       },
       onUpdate: (event: any) => {
         this.reorder(this.project.drivers[event.to.id]);
       }
     }
 
-    this.projectSrv.currentProject.pipe(takeUntil(this.unsubscribe))
-      .subscribe(project => {
-
-        this.project = project;
-
-        this.unscheduled = this.project.stops.filter((stop: any) => {
-          return stop.driver_id == null;
-        });
-    
-        this.unscheduled_order = this.unscheduled.map((stop: any) => {
-          return stop.id;
-        });
-
-      });
+    this.setProject(this.project);
 
   }
 
@@ -97,13 +75,9 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   public downloadSummary() {
 
-    this.loadingSrv.show();
-
-    this.projectSrv.downloadSummary(this.project.id)
+    this.apiSrv.projectDownloadSummary(this.project.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
-
-        this.loadingSrv.hide();
 
         let binaryData = [];
 
@@ -127,13 +101,9 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   public downloadSolution() {
 
-    this.loadingSrv.show();
-
-    this.projectSrv.downloadSolution(this.project.id)
+    this.apiSrv.projectDownloadSolution(this.project.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
-
-        this.loadingSrv.hide();
 
         let binaryData = [];
 
@@ -157,13 +127,9 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   public downloadRoute() {
 
-    this.loadingSrv.show();
-
-    this.projectSrv.downloadRoute(this.project.id)
+    this.apiSrv.projectDownloadRoute(this.project.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
-
-        this.loadingSrv.hide();
 
         let binaryData = [];
         binaryData.push(data);
@@ -179,6 +145,32 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   }
 
+  public driverTime(pivot: any) {
+
+    if (pivot.routes[0]?.started_at) {
+
+      return formatDate(pivot.routes[0].started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.timezone_time * -3600));
+
+    }
+
+    else {
+
+      const [hours, min] = pivot.start_time.split(':');
+
+      return formatDate(new Date().setHours(hours, min), 'h:mm a', 'en-US');
+
+    }
+
+  }
+
+  public stopTime(route: any, timezone: number) {
+
+    const value = route.arrived_at ?? route.skipped_at ?? route.forecast;
+
+    return formatDate(value, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(timezone * -3600));
+
+  }
+
   public stopInfoById(id: number) {
 
     const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', id);
@@ -186,6 +178,8 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
     const stop = this.project.stops[index];
 
     this.stopInfo.emit(stop);
+
+    this.collapse = true;
 
   }
 
@@ -196,22 +190,22 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
     if (index == -1) return;
 
     const driver = this.project.drivers[index];
-    
+
     this.driverInfo.emit(driver);
+
+    this.collapse = true;
 
   }
 
   public dispatch() {
 
-    this.loadingSrv.show();
-
-    this.projectSrv.dispatch(this.project.id)
+    this.apiSrv.dispatch(this.project.id)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
 
-        this.loadingSrv.hide();
-
         if (res.success) {
+
+          this.setProject(res.data);
 
           this.alertSrv.toast({
             icon: 'success',
@@ -226,7 +220,7 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   public modalSwapRoute(driver: any) {
 
-    this.modalSrv.show(ModalSwapRouteComponent, {
+    const modal = this.modalSrv.show(ModalSwapRouteComponent, {
       keyboard: false,
       class: 'modal-dialog-centered modal-sm',
       backdrop: 'static',
@@ -235,6 +229,13 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
         project: this.project
       }
     });
+
+    modal.content.onClose.pipe(takeUntil(this.unsubscribe))
+      .subscribe((project: any) => {
+        if (project) {
+          this.setProject(project);
+        }
+      });
 
   }
 
@@ -245,27 +246,58 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
       message: `Reverse driver ${driver.name} route?`,
       onConfirm: () => {
 
-        this.loadingSrv.show();
-
-        this.projectSrv.reverseRoute(this.project.id, { driver_id: driver.id })
+        this.apiSrv.reverseRoute(this.project.id, { driver_id: driver.id })
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
 
-            this.loadingSrv.hide();
-
             if (res.success) {
+
+              this.setProject(res.data);
 
               this.alertSrv.toast({
                 icon: 'success',
                 message: res.message
               });
-    
+
             }
 
           });
 
       }
     });
+
+  }
+
+  private reorder(driver: any) {
+
+    const data = {
+      driver_id: driver.id,
+      stops_order: driver.pivot.stops_order
+    }
+
+    this.apiSrv.reorder(this.project.id, data)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+
+        if (res.success) {
+
+          this.setProject(res.data);
+
+          this.alertSrv.toast({
+            icon: 'success',
+            message: res.message
+          });
+
+        }
+
+      }, (res: any) => {
+
+        this.alertSrv.toast({
+          icon: 'error',
+          message: res.error.message
+        });
+
+      });
 
   }
 
@@ -282,20 +314,11 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   }
 
-  private reorder(driver: any) {
+  public sendSms(driver_id: number) {
 
-    this.loadingSrv.show();
-
-    const data = {
-      driver_id: driver.id,
-      stops_order: driver.pivot.stops_order
-    }
-
-    this.projectSrv.reorder(this.project.id, data)
+    this.apiSrv.sendSms(this.project.id, driver_id)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
-
-        this.loadingSrv.hide();
+      .subscribe((res: any) => {
 
         if (res.success) {
 
@@ -306,177 +329,54 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
         }
 
-      }, ( res : any ) => {
-
-        this.loadingSrv.hide();
+      }, err => {
 
         this.alertSrv.toast({
-          icon   : 'error',
-          message: res.error.message
+          icon: 'error',
+          message: err.error.message
         });
 
       });
-
   }
 
-  private setTime() {
+  public sendSmsAll() {
 
-    this.project.drivers.forEach((driver: any) => {
-
-      let duration = 0;
-      let start_time : string = '';
-
-      if( driver.pivot?.routes.length > 0 && typeof driver.pivot?.routes[0].started_at != 'undefined' && driver.pivot?.routes[0].started_at != null )
-      {
-        let do_ = new Date( driver.pivot?.routes[0].started_at );
-        start_time = do_.getHours() + ':' + do_.getMinutes();
-      }
-      else if( driver.pivot?.start_time )
-        start_time = driver.pivot?.start_time;
-      else
-        start_time = driver.start_time;
-
-      let split : any = start_time.split(':');
-      let date = new Date();
-      date.setHours(split[0], split[1], 0, 0);
-
-      driver.time = date.toLocaleTimeString(navigator.language, {
-        hour  : '2-digit',
-        minute: '2-digit'
-      });
-
-      let last : any     = null; // ultimo registro realizado
-      let lf   : boolean = false; //
-
-      driver.pivot.routes?.forEach((route: any) => {
-
-        // if 'completo' ou 'skipped'
-        if( route.status == 2 || route.status == 3 )
-        {
-          const dt = new Date( ( route.status == 2 ) ? route.arrived_at : route.skipped_at );
-
-          route.time = dt.toLocaleTimeString(navigator.language, {
-            hour  : '2-digit',
-            minute: '2-digit'
-          });
-
-          last = route;
-        }
-        else // se stop em espera
-        {
-          // se ultimo stop foi atendido calcula previsão de entrega a partir da ultima stop
-          if( last )
-          {
-            // se a ultima stop foi atendida zera a duração
-            if( !lf )
-            {
-              lf = true;
-              duration = 0;
-            }
-
-            date = new Date();
-
-            let dtz   : any = ( last.status == 2 ) ? last.arrived_at : last.skipped_at;
-            let doz_  : any = new Date( dtz );
-            let timez : any = doz_.getHours() + ':' + doz_.getMinutes();
-            let splitz: any = timez.split(':');
-
-            duration += route.duration;
-
-            date.setHours(Number(splitz[0]), Number(splitz[1]), date.getSeconds() + duration, 0);
-          }
-          else
-          {
-            duration += route.duration;
-            date.setHours(Number(split[0]), Number(split[1]), date.getSeconds() + duration, 0);
-          }
-
-          route.time = date.toLocaleTimeString(navigator.language, {
-            hour  : '2-digit',
-            minute: '2-digit'
-          });
-
-          duration += route.downtime;
-        }
-
-      });
-
-    });
-
-  }
-  
-
-
-  sendSms( driverId )
-  {
-    this.loadingSrv.show();
-
-    this.projectSrv.sendSms(this.project.id, driverId)
+    this.apiSrv.sendSmsAll(this.project.id)
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe( ( res : any ) => {
+      .subscribe((res: any) => {
 
-        this.loadingSrv.hide();
-
-        if (res.success)
-        {
+        if (res.success) {
           this.alertSrv.toast({
-            icon   : 'success',
+            icon: 'success',
             message: res.message
           });
         }
 
-      }, ( res : any ) => {
-
-        this.loadingSrv.hide();
+      }, (res: any) => {
 
         this.alertSrv.toast({
-          icon   : 'error',
+          icon: 'error',
           message: res.error.message
         });
 
       });
+
   }
 
+  private setProject(project: any) {
 
-  sendSms2All()
-  {
-    this.loadingSrv.show();
+    this.project = project;
 
-    let driversIdsArr = [];
-    let driversIds    = '';
+    this.projectChanged.emit(this.project);
 
-    this.project.drivers.forEach( ar => {
-      driversIdsArr.push(ar.id);
+    this.unscheduled = this.project.stops.filter((stop: any) => {
+      return stop.driver_id == null;
     });
 
-    driversIds = driversIdsArr.join(',');
-
-    this.projectSrv.sendSms2All(this.project.id, driversIds)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe( ( res : any ) => {
-
-        this.loadingSrv.hide();
-
-        if (res.success)
-        {
-          this.alertSrv.toast({
-            icon   : 'success',
-            message: res.message
-          });
-        }
-
-      }, ( res : any ) => {
-
-        this.loadingSrv.hide();
-
-        this.alertSrv.toast({
-          icon   : 'error',
-          message: res.error.message
-        });
-
-      });
+    this.unscheduled_order = this.unscheduled.map((stop: any) => {
+      return stop.id;
+    });
 
   }
-
 
 }

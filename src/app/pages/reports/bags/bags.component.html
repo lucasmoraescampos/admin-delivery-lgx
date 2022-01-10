@@ -1,93 +1,55 @@
-<div class="row">
+<div class="row animate__animated animate__fadeIn">
     <div class="col-sm-12">
         <app-iq-card>
-
-
             <div card-header class="iq-header-title">
                 <form class="filters row justify-content-center" [formGroup]="formGroup" (ngSubmit)="submit()" >
-
-                    <div class="col-md-2 mt-1 mb-1 text-right" *ngIf="arr.length > 0" >
+                    <div class="col-md-2 mt-1 mb-1 text-right" *ngIf="report?.length > 0" >
                         <button type="button" class="btn btn-primary btn-block" (click)="download()" >
                             <i class="ri-save-line"></i> Export
                         </button>
                     </div>
-
                     <div class="col-md-2 mt-1 mb-1">
                         <div class="input-group">
-
                             <input type="text" placeholder="From" class="form-control" bsDatepicker
-                                [ngClass]="{ 'error' : formGroup.get('from')?.errors?.required }"
                                 [bsConfig]="{ showWeekNumbers : false, dateInputFormat: 'YYYY-MM-DD' }"
                                 formControlName="from" #datefrom >
-
-                            <!--
-                            <div class="input-group-append">
-                                <button class="btn-group-clear" (click)="from = ''" *ngIf="from?.length > 0">clear</button>
-                            </div>
-                            -->
-
                         </div>
                     </div>
-
                     <div class="col-md-2 mt-1 mb-1">
                         <div class="input-group">
-
                             <input type="text" placeholder="To" class="form-control" bsDatepicker
-                                [ngClass]="{ 'error' : formGroup.get('to')?.errors?.required }"
                                 [bsConfig]="{ showWeekNumbers : false, dateInputFormat: 'YYYY-MM-DD' }"
                                 formControlName="to" #dateto >
-
-                            <!--
-                            <div class="input-group-append">
-                                <button class="btn-group-clear" (click)="to = ''" *ngIf="to?.length > 0">clear</button>
-                            </div>
-                            -->
-
                         </div>
                     </div>
-
                     <div class="col-md-2 mt-1 mb-1">
                         <button type="submit" class="btn btn-primary btn-block" >
                             <i class="ri-search-line"></i> Search
                         </button>
                     </div>
-
                 </form>
             </div>
-
-
-            <div class="table-responsive" *ngIf="arr.length > 0" >
+            <div class="table-responsive animate__animated animate__fadeIn" *ngIf="report?.length > 0" >
                 <table id="datatable" class="table table-hover">
-
-
                     <thead class="thead-primary">
-                        <tr>
-                            <th class="text-center" width="25%" >DATE</th>
-                            <th class="text-left" >BAGS</th>
+                        <tr class="text-center">
+                            <th width="50%">DATE</th>
+                            <th width="50%">BAGS</th>
                         </tr>
                     </thead>
-
-
                     <tbody>
-
-                        <tr *ngFor="let ar of arr; let i=index" >
-                            <td class="text-center"> {{ ar.date }} </td>
-                            <td class="text-left"> {{ ar.bags }} </td>
+                        <tr class="text-center" *ngFor="let ar of report; let i=index" >
+                            <td width="50%"> {{ ar.date }} </td>
+                            <td width="50%"> {{ ar.bags }} </td>
                         </tr>
-
-                        <tr class="text-center" *ngIf="arr.length == 0">
-                            <td colspan="8">
+                        <tr class="text-center" *ngIf="report?.length == 0">
+                            <td colspan="2">
                                 <i class="ri-search-line"></i> Not found
                             </td>
                         </tr>
-
                     </tbody>
-
-
                 </table>
             </div>
-
-
         </app-iq-card>
     </div>
 </div>

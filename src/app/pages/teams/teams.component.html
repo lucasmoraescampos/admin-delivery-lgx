@@ -1,0 +1,217 @@
+<div class="row animate__animated animate__fadeIn">
+
+    <div class="col-sm-12">
+
+        <app-iq-card>
+
+            <div card-header class="iq-header-title">
+
+                <div class="filters row">
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Search Team Name" [(ngModel)]="search">
+
+                            <div class="input-group-append" *ngIf="search">
+
+                                <button class="btn-group-clear" (click)="search = ''">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)">
+                            
+                            <i class="ri-add-line"></i>New Team
+                        
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead class="thead-primary">
+
+                        <tr class="text-center">
+
+                            <th>Name</th>
+
+                            <th>#Managers</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr class="text-center animate__animated animate__fadeIn" *ngFor="let team of teams | filter:'name':search; let i=index">
+
+                            <td>{{ team.name }}</td>
+
+                            <td>
+
+                                <button class="btn btn-link no-link" (click)="openManagers(modalManagers, i)">
+
+                                    <i class="ri-user-star-line"></i> {{ team.managers.length }}
+                                
+                                </button>
+
+                            </td>
+
+                            <td class="text-right">
+
+                                <button class="btn btn-link" (click)="openModal(modal, i)">
+
+                                    <i class="ri-pencil-fill"></i>
+
+                                </button>
+
+                                <button class="btn btn-link" (click)="delete(i)">
+
+                                    <i class="ri-delete-bin-line"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="text-center animate__animated animate__fadeIn" *ngIf="teams?.length == 0">
+
+                            <td colspan="7">
+
+                                <i class="ri-search-line"></i> No teams found
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </app-iq-card>
+
+    </div>
+
+</div>
+
+<ng-template #modal>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left" *ngIf="teamIndex === undefined">Create New Team</h4>
+
+        <h4 class="modal-title pull-left" *ngIf="teamIndex !== undefined">Edit Team</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body">
+
+        <form>
+
+            <div class="form-group row">
+
+                <label for="name" class="col-sm-3 col-form-label">Name</label>
+
+                <div class="col-sm-9">
+
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Team name" maxlength="100" [(ngModel)]="teamName">
+                
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-12 text-right pt-3">
+
+                    <button class="btn btn-primary" [disabled]="!teamName" (click)="save()">Save</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</ng-template>
+
+<ng-template #modalManagers>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left">Managers</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body table-responsive">
+
+        <table class="table">
+
+            <tbody>
+
+                <tr *ngFor="let manager of managers; let i=index">
+
+                    <td class="border-0 pl-0">{{ manager.name }}</td>
+
+                    <td class="border-0 pr-0 text-right">
+
+                        <div class="custom-control custom-switch ml-2">
+                                    
+                            <input type="checkbox" [id]="'manager' + i" [checked]="isManagerChecked(manager.id)" class="custom-control-input" (change)="toggleManager(manager.id, $event)">
+                            
+                            <label [for]="'manager' + i" class="custom-control-label"></label>
+                        
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr class="text-center animate__animated animate__fadeIn" *ngIf="managers?.length == 0">
+
+                    <td class="border-0 pl-0" colspan="7">
+
+                        <i class="ri-search-line"></i> No managers found
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</ng-template>

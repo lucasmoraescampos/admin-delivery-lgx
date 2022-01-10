@@ -1,6 +1,11 @@
-.table-scroll-y {
+.drivers-table-scroll-y {
     overflow-y: auto;
-    max-height: calc(100vh - 288px);
+    max-height: calc(100vh - 260px);
+}
+
+.stops-table-scroll-y {
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
 }
 
 .map {

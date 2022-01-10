@@ -1,6 +1,7 @@
 <ul [class]="listClass">
   <li *ngFor="let listItem of listItems"
-    [class]="(listItem.isHeading ? 'iq-menu-title' : activeLink(listItem) && listItem.children ? 'active' : activeLink(listItem) ? 'active' : '')">
+    [class]="(listItem.isHeading ? 'iq-menu-title' : activeLink(listItem) && listItem.children ? 'active' : activeLink(listItem) ? 'active' : '')"
+    [hidden]="listItem.hidden">
 
     <!-- Heading Menu Items -->
     <i *ngIf=listItem.isHeading [class]="listItem.icon"></i>
@@ -15,14 +16,28 @@
       <i *ngIf="listItem.children" class="ri-arrow-right-s-line iq-arrow-right"></i>
     </a>
 
-    <a href="javascript:void(0)" *ngIf=!listItem.isHeading&&!listItem.children class="iq-waves-effect"
-      [routerLink]="listItem.link != '' ? [listItem.link] : []" routerLinkActive="active"
-      [routerLinkActiveOptions]="{exact: true}" (click)="listItem.onclick ? listItem.onclick() : null">
+
+
+    <a href="javascript:void(0)" class="iq-waves-effect" [routerLink]="[listItem.link]" routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}" *ngIf="!listItem.isHeading && !listItem.children && listItem.link">
       <i *ngIf=listItem.isIconClass [class]="listItem.icon"></i><span>{{ listItem.title }}</span>
       <small *ngIf="listItem.append" class="badge badge-pill badge-primary float-right font-weight-normal ml-auto">{{
         listItem.append }}</small>
       <i *ngIf="listItem.children" class="ri-arrow-right-s-line iq-arrow-right"></i>
     </a>
+
+
+
+    <a href="javascript:void(0)" class="iq-waves-effect" (click)="listItem.onclick()"
+      *ngIf="!listItem.isHeading && !listItem.children && listItem.onclick">
+      <i *ngIf=listItem.isIconClass [class]="listItem.icon"></i><span>{{ listItem.title }}</span>
+      <small *ngIf="listItem.append" class="badge badge-pill badge-primary float-right font-weight-normal ml-auto">{{
+        listItem.append }}</small>
+      <i *ngIf="listItem.children" class="ri-arrow-right-s-line iq-arrow-right"></i>
+    </a>
+
+
+
     <!-- Child Menu Items -->
     <app-list-style1 *ngIf="listItem.children" listClass="iq-submenu"
       [class]="'collapse '+(activeLink(listItem) && listItem.children ? 'show' : activeLink(listItem) ? 'show' : '')"

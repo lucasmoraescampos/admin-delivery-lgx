@@ -1,127 +1,201 @@
-<div class="row">
+<div class="row animate__animated animate__fadeIn">
+
     <div class="col-sm-12">
+
         <app-iq-card>
 
             <div card-header class="iq-header-title">
+
                 <div class="filters row">
 
-                    <div class="col-md-4 mt-1 mb-1">
-                        <input type="text" class="form-control" placeholder="Search Project Here"
-                            #filter (keyup)="updateFilter($event)" >
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Search Customer Name" [(ngModel)]="search">
+
+                            <div class="input-group-append" *ngIf="search">
+
+                                <button class="btn-group-clear" (click)="search = ''">clear</button>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="col-md-3 mt-1 mb-1">
-                        <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)">
-                            <i class="ri-add-line"></i> Add Customer
+
+                        <button type="button" class="btn btn-primary btn-block" (click)="create(modal)">
+
+                            <i class="ri-add-line"></i>New Customer
+
                         </button>
+
                     </div>
 
                 </div>
+
             </div>
 
             <div class="table-responsive">
-                <table id="datatable" class="table table-hover">
+
+                <table class="table">
 
                     <thead class="thead-primary">
-                        <tr>
+
+                        <tr class="text-center">
 
                             <th>Name</th>
+
                             <th>Email</th>
-                            <th>Date</th>
+
+                            <th>Status</th>
+
+                            <th></th>
 
                         </tr>
+
                     </thead>
 
                     <tbody>
-                        <tr *ngFor=" let customer of customers " (click)="edit( customer, modal )" >
 
-                            <td>{{customer.name}}</td>
-                            <td>{{customer.email}}</td>
-                            <td>{{customer.created_at|date}}</td>
+                        <tr class="text-center animate__animated animate__fadeIn"
+                            *ngFor="let customer of customers | filter:'name':search; let i=index">
+
+                            <td>{{ customer.name }}</td>
+
+                            <td>{{ customer.email }}</td>
+
+                            <td>
+
+                                <div class="custom-control custom-switch ml-2">
+                                    
+                                    <input type="checkbox" [id]="'status' + i" [checked]="customer.status" class="custom-control-input" (change)="changeStatus($event, i)">
+                                    
+                                    <label [for]="'status' + i" class="custom-control-label"></label>
+                                
+                                </div>
+                                
+                            </td>
+
+                            <td class="text-right">
+
+                                <button class="btn btn-link" (click)="edit(modal, i)">
+
+                                    <i class="ri-pencil-fill"></i>
+
+                                </button>
+
+                                <button class="btn btn-link" (click)="delete(i)">
+
+                                    <i class="ri-delete-bin-line"></i>
+
+                                </button>
+
+                            </td>
 
                         </tr>
+
+                        <tr class="text-center animate__animated animate__fadeIn" *ngIf="customers?.length == 0 || (customers | filter:'name':search).length == 0">
+
+                            <td colspan="4">
+
+                                <i class="ri-search-line"></i> No customers found
+
+                            </td>
+
+                        </tr>
+
                     </tbody>
 
                 </table>
+
             </div>
 
         </app-iq-card>
+
     </div>
+
 </div>
-
-
 
 <ng-template #modal>
 
     <div class="modal-header">
 
-        <h4 class="modal-title pull-left" *ngIf="formNew"  >Add Customer</h4>
-        <h4 class="modal-title pull-left" *ngIf="!formNew" >Update Customer</h4>
+        <h4 class="modal-title pull-left" *ngIf="customerIndex === undefined">Create New Customer</h4>
+
+        <h4 class="modal-title pull-left" *ngIf="customerIndex >= 0">Edit Customer</h4>
 
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+
             <span aria-hidden="true">&times;</span>
+
         </button>
 
     </div>
 
-    <form class="modal-body" [formGroup]="formGroup" >
+    <div class="modal-body">
 
-        <div class="form-group row">
+        <form [formGroup]="formGroup">
 
-            <label for="name" class="col-sm-2 col-form-label" triggers="mouseenter:mouseleave"
-                popover="The name of your customer">Name</label>
+            <div class="form-group row">
 
-            <div class="col-sm-10">
-                <input type="text" class="form-control" formControlName="name" id="name" placeholder="Name">
-                <div *ngIf="formGroup.get('name').hasError('required')" >
-                    <small>Required</small>
+                <label for="name" class="col-sm-3 col-form-label">Name<span>*</span></label>
+
+                <div class="col-sm-9">
+
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Customer name"
+                        maxlength="200" formControlName="name">
+
                 </div>
+
             </div>
 
-        </div>
+            <div class="form-group row">
 
-        <div class="form-group row">
+                <label for="name" class="col-sm-3 col-form-label">Email<span>*</span></label>
 
-            <label for="email" class="col-sm-2 col-form-label" >Email</label>
+                <div class="col-sm-9">
 
-            <div class="col-sm-10">
-                <input type="email" class="form-control" formControlName="email" id="email"
-                    placeholder="Enter a Email">
-                <div *ngIf="formGroup.get('email').hasError('required')" >
-                    <small>Required</small>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Customer email"
+                        maxlength="255" formControlName="email">
+                        
                 </div>
-                <div *ngIf="!formGroup.get('email').hasError('required') &&
-                            formGroup.get('email').hasError('email')">
-                    <small>Invalid Email</small>
-                </div>
+
             </div>
 
-        </div>
+            <div class="form-group row" [hidden]="customerIndex >= 0 && !togglePassword">
 
-        <div class="form-group row">
+                <label for="name" class="col-sm-3 col-form-label">Password<span
+                        [hidden]="customerIndex >= 0">*</span></label>
 
-            <label for="password" class="col-sm-2 col-form-label" >Password</label>
+                <div class="col-sm-9">
 
-            <div class="col-sm-10">
-                <input type="password" class="form-control" formControlName="password" id="password"
-                    placeholder="Enter a Password" [required]="formNew" >
-                <div *ngIf="formGroup.get('password').hasError('required')" >
-                    <small>Required</small>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Customer password"
+                        maxlength="255" formControlName="password">
+
                 </div>
-                <div *ngIf="formGroup.get('password').hasError('minlength')">
-                    <small>Minlength 6 characters</small>
-                </div>
+
             </div>
 
-        </div>
+            <div class="form-group row">
 
-        <div class="form-group row">
-            <div class="col-sm-12 text-right pt-3">
-                <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
+                <div class="col-sm-12 text-right pt-3"
+                    [ngClass]="{ 'd-flex justify-content-between': customerIndex >= 0 }">
+
+                    <button class="btn" [ngClass]="{ 'btn-outline-secondary': !togglePassword, 'btn-outline-primary': togglePassword }"
+                        (click)="togglePassword = !togglePassword" *ngIf="customerIndex >= 0">Change Password</button>
+
+                    <button class="btn btn-primary" [disabled]="formGroup.invalid"
+                        (click)="save()">Save</button>
+
+                </div>
+
             </div>
-        </div>
 
+        </form>
 
-    </form>
+    </div>
 
 </ng-template>

@@ -1,6 +1,8 @@
 <div class="modal-header">
 
-    <h4 class="modal-title pull-left">Driver</h4>
+    <h4 class="modal-title pull-left" *ngIf="activeIndex == 0">Driver</h4>
+
+    <h4 class="modal-title pull-left" *ngIf="activeIndex == 1">Select driver teams</h4>
 
     <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
 
@@ -12,22 +14,120 @@
 
 <div class="modal-body">
 
-    <form [formGroup]="formGroup">
+    <div class="animate__animated animate__fadeIn" *ngIf="activeIndex == 0">
 
-        <div class="form-group row">
+        <form [formGroup]="formGroup">
 
-            <div class="col-sm-4">
+            <div class="form-group row">
 
-                <label for="name" class="col-form-label mt-1">Name</label>
+                <div class="col-sm-4">
 
-                <i class="ri-information-line ml-2" tooltip="This is the name of your driver." placement="right"></i>
+                    <label for="name" class="col-form-label mt-1">Name</label>
+
+                </div>
+
+                <div class="col-sm-8">
+
+                    <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
+                        formControlName="name">
+
+                </div>
 
             </div>
 
-            <div class="col-sm-8">
+            <div class="form-group row">
 
-                <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
-                    formControlName="name">
+                <div class="col-sm-4">
+
+                    <label for="phone" class="col-form-label mt-1">Phone</label>
+
+                </div>
+
+                <div class="col-sm-8">
+
+                    <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
+                        formControlName="phone" [brmasker]="{ type: 'num' }">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-4">
+
+                    <label class="col-form-label mt-1">Start Address</label>
+
+                </div>
+
+                <div class="col-sm-8">
+
+                    <app-google-autocomplete [address]="formControl.start_address.value"
+                        (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-4">
+
+                    <label for="start_time" class="col-form-label mt-1">Start Time</label>
+
+                </div>
+
+                <div class="col-sm-8">
+
+                    <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00"
+                        formControlName="start_time">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-4">
+
+                    <label for="end_time" class="col-form-label mt-1">End Time</label>
+
+                </div>
+
+                <div class="col-sm-8">
+
+                    <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00"
+                        formControlName="end_time">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-12 text-center pt-3">
+
+                    <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="activeIndex = 1">Select
+                        teams</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="animate__animated animate__fadeIn" *ngIf="activeIndex == 1">
+
+        <div class="form-group">
+
+            <div class="custom-control custom-checkbox" *ngFor="let team of teams; let i=index">
+
+                <input type="checkbox" class="custom-control-input" [value]="team.id" [id]="'checkbox-' + i"
+                    [checked]="selectedTeams.indexOf(team.id) != -1" (change)="addTeam($event)">
+
+                <label [for]="'checkbox-' + i" class="custom-control-label">{{ team.name }}</label>
 
             </div>
 
@@ -35,96 +135,21 @@
 
         <div class="form-group row">
 
-            <div class="col-sm-4">
+            <div class="col-sm-6 pt-3">
 
-                <label for="phone" class="col-form-label mt-1">Phone</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="Your driver’s mobile number is required if you want to dispatch the routes to them using the Routific’s driver app."
-                    placement="right"></i>
+                <button class="btn btn-secondary" (click)="activeIndex = 0">Voltar</button>
 
             </div>
 
-            <div class="col-sm-8">
+            <div class="col-sm-6 text-right pt-3">
 
-                <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
-                    formControlName="phone" [brmasker]="{ type: 'num' }">
+                <button class="btn btn-primary" [disabled]="formGroup.invalid || selectedTeams?.length == 0"
+                    (click)="save()">Save</button>
 
             </div>
 
         </div>
 
-        <div class="form-group row">
-
-            <div class="col-sm-4">
-
-                <label class="col-form-label mt-1">Start Address</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="This is where your driver will depart from at the start of their shift."
-                    placement="right"></i>
-
-            </div>
-
-            <div class="col-sm-8">
-
-                <app-google-autocomplete [address]="formControl.start_address.value"
-                    (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
-
-            </div>
-
-        </div>
-
-        <div class="form-group row">
-
-            <div class="col-sm-4">
-
-                <label for="start_time" class="col-form-label mt-1">Start Time</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="This is your driver's start time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                    placement="right"></i>
-
-            </div>
-
-            <div class="col-sm-8">
-
-                <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00" formControlName="start_time">
-
-            </div>
-
-        </div>
-
-        <div class="form-group row">
-
-            <div class="col-sm-4">
-
-                <label for="end_time" class="col-form-label mt-1">End Time</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="This is your driver's end time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                    placement="right"></i>
-
-            </div>
-
-            <div class="col-sm-8">
-
-                <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00" formControlName="end_time">
-
-            </div>
-
-        </div>
-
-        <div class="form-group row">
-
-            <div class="col-sm-12 text-right pt-3">
-
-                <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
-
-            </div>
-
-        </div>
-
-    </form>
+    </div>
 
 </div>

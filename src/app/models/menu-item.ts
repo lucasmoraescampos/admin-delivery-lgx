@@ -9,5 +9,6 @@ export class MenuItem {
   icon: string;
   children?: MenuItem[];
   append?: string;
+  hidden?: boolean;
   onclick?: () => void
 }

@@ -83,3 +83,31 @@ input {
     color: #000 !important;
   }
 }
+
+.col-form-label {
+  display: flex;
+  align-items: center;
+
+  small {
+    display: contents;
+  }
+
+  span {
+    margin-left: 5px;
+    color: var(--primary);
+  }
+}
+
+table tr th {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+table tr td {
+  font-size: 0.8rem;
+  vertical-align: middle !important;
+}
+
+.no-link {
+  text-decoration: none !important;
+}

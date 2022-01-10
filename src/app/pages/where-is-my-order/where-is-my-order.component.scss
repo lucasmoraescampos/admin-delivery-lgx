@@ -1,25 +1,21 @@
-
-#headerz
-{
-    background: url(https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/headerback-1920w.jpg) center center no-repeat;
+#headerz {
+    background: url(https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/headerback-1920w.jpg) center center
+        no-repeat;
     background-size: cover;
 
-    .nav-link
-    {
+    .nav-link {
         font-size: 16px !important;
         font-weight: bold !important;
         color: #000 !important;
 
         &:hover,
         &:focus,
-        &:active
-        {
+        &:active {
             color: #fa9615 !important;
         }
     }
 
-    .btn-w
-    {
+    .btn-w {
         font-size: 18px !important;
         color: #fa9615 !important;
         font-weight: bold !important;
@@ -33,13 +29,11 @@
     }
 }
 
-#wimo
-{
+#wimo {
     width: 100%;
     background: #fff;
 
-    form
-    {
+    form {
         margin: 0;
         padding: 200px 40px 200px;
 
@@ -62,15 +56,16 @@
         }
     }
 
-    .orange
-    {
+    .orange {
         background: #ce7c00 !important;
         color: #fff;
         margin: 0;
         padding: 100px 40px 100px;
         text-align: left;
 
-        img { max-width: 100%; }
+        img {
+            max-width: 100%;
+        }
 
         h2 {
             color: #fff;
@@ -86,18 +81,16 @@
     }
 }
 
-
-.phone-info
-{
-    background: url(https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/Asset+2-3x-58b91f2f-1920w.png) center center no-repeat;
+.phone-info {
+    background: url(https://lirp.cdn-website.com/8e4e8459/dms3rep/multi/opt/Asset+2-3x-58b91f2f-1920w.png) center center
+        no-repeat;
     background-size: cover;
     color: #fff;
     font-size: 30px;
     line-height: 150%;
     padding: 30px 0;
 
-    .btn
-    {
+    .btn {
         color: #fff !important;
         border-color: #fff !important;
         border-radius: 50px;
@@ -108,39 +101,34 @@
 
         &:hover,
         &:focus,
-        &:active
-        {
+        &:active {
             background: none;
         }
     }
 }
 
-
-footer
-{
+footer {
     padding: 50px 0;
     background: #fff;
     color: #818181;
 
-    h5
-    {
+    h5 {
         color: #818181;
         font-weight: bold;
         margin-bottom: 15px;
     }
 
-    img { max-width: 150px; }
+    img {
+        max-width: 150px;
+    }
 
-    .ltxt
-    {
+    .ltxt {
         font-size: 14px;
         font-weight: bold;
     }
 
-    .list-group
-    {
-        .list-group-item
-        {
+    .list-group {
+        .list-group-item {
             padding: 2px 0;
             margin: 0;
             border: 0;
@@ -149,6 +137,7 @@ footer
         }
     }
 
-    .or { color: #fa9615; }
+    .or {
+        color: #fa9615;
+    }
 }
-

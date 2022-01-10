@@ -1,6 +1,6 @@
 <tabset type="pills">
 
-    <tab customClass="timeline" heading="TIMELINE">
+    <tab customClass="timeline" heading="TIMELINE" (selectTab)="collapse = false">
 
         <div class="tab-header">
 
@@ -13,12 +13,16 @@
                 </button>
 
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
                     <a class="dropdown-item" href="javascript:void(0);" (click)="downloadSolution()">Solution Download</a>
+
                     <a class="dropdown-item" href="javascript:void(0);" (click)="downloadSummary()">Summary Download</a>
+
                     <a class="dropdown-item" href="javascript:void(0);" (click)="downloadRoute()">Route Details Download</a>
+
                 </div>
 
-                <button class="btn btn-dark btn-sm" *ngIf="!collapse" (click)="collapse = true">
+                <button class="btn btn-dark btn-sm" *ngIf="!collapse" (click)="collapse = true"> 
                     <i class="ri-arrow-down-s-line"></i> Collapse
                 </button>
 
@@ -31,89 +35,143 @@
         </div>
 
         <div class="tab-content" *ngIf="!collapse">
-            <div class="table-responsive">
-                <table class="table" width="100%">
 
-                    <thead>
-                        <th class="table-col-a" >Driver</th>
-                        <th class="table-col-b" ></th>
-                        <th>Stops</th>
-                    </thead>
+            <table class="table" width="100%">
+
+                <thead>
+
+                    <th width="220px">Driver</th>
+
+                    <th width="100px"></th>
+
+                    <th>Stops</th>
+
+                </thead>
+
+                <tbody>
+
+                    <tr class="unscheduled" *ngIf="unscheduled.length > 0">
+
+                        <td width="220px" colspan="2">
+
+                            <span class="badge badge-light">Unscheduled</span>
+
+                        </td>
+
+                        <td>
+
+                            <div style="display: flex;">
+
+                                <ul [sortablejs]="unscheduled_order"
+                                    [sortablejsOptions]="{ group: { name: 'stops', put: false }, sort: false }">
+
+                                    <li *ngFor="let stop of unscheduled; let i=index;">
+
+                                        <button class="card" (click)="stopInfoById(stop.id)">{{ i+1 }}</button>
+
+                                    </li>
+
+                                </ul>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    
+                </tbody>
+
+            </table>
+
+            <div class="table-responsive table-scroll">
+
+                <table class="table" width="100%">
 
                     <tbody>
 
-                        <tr class="unscheduled" *ngIf="unscheduled.length > 0">
-
-                            <td colspan="2">
-                                <span class="badge badge-light">Unscheduled</span>
-                            </td>
-
-                            <td>
-                                <div style="display: flex;">
-                                    <ul [sortablejs]="unscheduled_order" [sortablejsOptions]="{ group: { name: 'stops', put: false }, sort: false }">
-                                        <li *ngFor="let stop of unscheduled; let i=index;">
-                                            <button class="card" (click)="stopInfoById(stop.id)">{{ i+1 }}</button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-
-                        </tr>
-
                         <tr *ngFor="let driver of project?.drivers; let i=index;">
 
-                            <td>{{ driver.name }}</td>
+                            <td width="220px">{{ driver.name }}</td>
 
-                            <td>
+                            <td width="100px">
 
-                                <a href="javascript:void(0);" tooltip="Swap route" [adaptivePosition]="false" (click)="modalSwapRoute(driver)">
+                                <a href="javascript:void(0);" tooltip="Swap route" [adaptivePosition]="false"
+                                    (click)="modalSwapRoute(driver)">
+
                                     <i class="ri-swap-line"></i>
+
                                 </a>
 
-                                <a class="ml-3" href="javascript:void(0);" tooltip="Reverse route" [adaptivePosition]="false" (click)="reverseRoute(driver)">
+                                <a class="ml-3" href="javascript:void(0);" tooltip="Reverse route"
+                                    [adaptivePosition]="false" (click)="reverseRoute(driver)">
+
                                     <i class="ri-exchange-line"></i>
+                                    
                                 </a>
 
                             </td>
 
                             <td>
+
                                 <div style="display: flex;">
 
                                     <ul>
-                                        <li [tooltip]="'2021-12-01 ' + driver.pivot.start_time.replace(' ', 'T') | date:'h:mm a'" [adaptivePosition]="false">
-                                            <button class="card" [style.background]="colors[i]" [style.color]="'white'" (click)="driverInfoById(driver.id)">
+
+                                        <li [tooltip]="driverTime(driver.pivot)" [adaptivePosition]="false">
+
+                                            <button class="card" [style.background]="colors[i]" [style.color]="'white'"
+                                                (click)="driverInfoById(driver.id)">
+
                                                 <i class="ri-truck-line"></i>
+
                                             </button>
+
                                         </li>
+
                                     </ul>
 
                                     <ul class="unsortable">
+
                                         <ng-container *ngFor="let route of driver.pivot.routes; let i=index;">
 
-                                            <li [tooltip]="route.forecast.replace(' ', 'T') | date:'h:mm a'" [adaptivePosition]="false" *ngIf="route.status == 1">
+                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 1">
+
                                                 <button class="card dispatched" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
+
                                             </li>
 
-                                            <li [tooltip]="route.forecast.replace(' ', 'T') | date:'h:mm a'" [adaptivePosition]="false" *ngIf="route.status == 2">
+                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 2">
+
                                                 <button class="completed card" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
+
                                             </li>
 
-                                            <li [tooltip]="route.forecast.replace(' ', 'T') | date:'h:mm a'" [adaptivePosition]="false" *ngIf="route.status == 3">
+                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 3">
+
                                                 <button class="card skipped" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
+
                                             </li>
 
                                         </ng-container>
+
                                     </ul>
 
                                     <ul class="sortable" [sortablejs]="driver.pivot.stops_order" [sortablejsOptions]="options" [id]="i">
+
                                         <ng-container *ngFor="let route of driver.pivot.routes; let i=index;">
-                                            <li [tooltip]="route.forecast.replace(' ', 'T') | date:'h:mm a'" [isDisabled]="!tooltip" [adaptivePosition]="false" *ngIf="route.status == 0">
+
+                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [isDisabled]="!tooltip" [adaptivePosition]="false" *ngIf="route.status == 0">
+
                                                 <button class="card" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
+
                                             </li>
+
                                         </ng-container>
+
                                     </ul>
 
                                 </div>
+
                             </td>
 
                         </tr>
@@ -121,12 +179,14 @@
                     </tbody>
 
                 </table>
+
             </div>
+
         </div>
 
     </tab>
 
-    <tab customClass="timeline" heading="DISPATCH">
+    <tab customClass="timeline" heading="DISPATCH" (selectTab)="collapse = false">
 
         <div class="tab-header">
 
@@ -138,7 +198,7 @@
                     <i class="ri-send-plane-line"></i> Publish Changes
                 </button>
 
-                <button class="btn btn-dark btn-sm mr-1" (click)="sendSms2All()" >
+                <button class="btn btn-dark btn-sm mr-1" (click)="sendSmsAll()">
                     <i class="fa fa-paper-plane"></i> SMS to All
                 </button>
 
@@ -155,32 +215,46 @@
         </div>
 
         <div class="tab-content" *ngIf="!collapse">
-            <div class="table-responsive">
+
+            <table class="table" width="100%">
+
+                <thead>
+
+                    <th width="250px">Driver</th>
+
+                    <th class="text-center" width="100px">Stops</th>
+
+                    <th width="200px">Status</th>
+
+                    <th width="200px">Phone</th>
+
+                    <th *ngIf="project.status > 1"></th>
+
+                </thead>
+
+            </table>
+
+            <div class="table-responsive table-scroll">
+
                 <table class="table" width="100%">
 
-                    <thead>
-
-                        <th>Driver</th>
-                        <th>Stops</th>
-                        <th>Status</th>
-                        <th>Phone</th>
-                        <th *ngIf="project.status > 1"></th>
-
-                    </thead>
-
                     <tbody>
+
                         <tr *ngFor="let driver of project?.drivers; let i=index;">
 
-                            <td width="200px">{{ driver.name }}</td>
+                            <td width="250px">{{ driver.name }}</td>
 
-                            <td>{{ driver.pivot.stops_order?.length }}</td>
+                            <td class="text-center" width="100px">{{ driver.pivot.stops_order?.length }}</td>
 
-                            <td>
+                            <td width="200px">
+
                                 <span class="badge badge-primary" *ngIf="project.status == 1">READY FOR DISPATCH</span>
-                                <span class="badge badge-dark"    *ngIf="project.status == 2">DISPATCHED</span>
+
+                                <span class="badge badge-dark" *ngIf="project.status == 2">DISPATCHED</span>
+
                             </td>
 
-                            <td>{{ driver.phone }}</td>
+                            <td width="200px">{{ driver.phone }}</td>
 
                             <td class="text-right" *ngIf="project.status > 1">
 
@@ -195,10 +269,13 @@
                             </td>
 
                         </tr>
+
                     </tbody>
 
                 </table>
+
             </div>
+
         </div>
 
     </tab>

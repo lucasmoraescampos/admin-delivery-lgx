@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row animate__animated animate__fadeIn" [hidden]="!drivers">
 
     <div class="col-sm-12">
 
@@ -104,7 +104,7 @@
 
                         <tr class="text-center" *ngIf="drivers?.length == 0">
 
-                            <td colspan="4">
+                            <td colspan="6">
 
                                 <i class="ri-search-line"></i> No drivers found
 

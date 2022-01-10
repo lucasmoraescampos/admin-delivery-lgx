@@ -12,7 +12,6 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalStopModule } from 'src/app/modals/modal-stop/modal-stop.module';
 import { ModalUploadStopsModule } from 'src/app/modals/modal-upload-stops/modal-upload-stops.module';
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
-import { ModalDriverModule } from 'src/app/modals/modal-driver/modal-driver.module';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { ModalSwapRouteModule } from 'src/app/modals/modal-swap-route/modal-swap-route.module';
 import { ProjectManagerModule } from 'src/app/components/project-manager/project-manager.module';
@@ -30,7 +29,6 @@ import { ModalDriverTimeModule } from 'src/app/modals/modal-driver-time/modal-dr
     BrMaskerModule,
     ModalStopModule,
     ModalUploadStopsModule,
-    ModalDriverModule,
     FilterModule,
     SortablejsModule,
     ModalSwapRouteModule,

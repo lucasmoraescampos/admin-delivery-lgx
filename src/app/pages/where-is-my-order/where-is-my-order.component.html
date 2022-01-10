@@ -104,16 +104,13 @@
 
                             </p>
 
-                            <p *ngIf=" stop?.status == 0 ">Delivery ETA: &nbsp; {{ stop?.datetime.replace(' ', 'T') | date:'MMM d, y — h:mm a'  }} Pacific Standard
-                                Time (PST)</p>
+                            <p *ngIf=" stop?.status == 0 ">Delivery ETA: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
 
-                            <p *ngIf=" stop?.status == 1 ">Started at: &nbsp; {{ stop?.datetime.replace(' ', 'T') | date:'MMM d, y — h:mm a' }} Pacific Standard
-                                Time (PST)</p>
+                            <p *ngIf=" stop?.status == 1 ">Started at: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
 
-                            <p *ngIf=" stop?.status == 3 ">Skipped At: &nbsp; {{ stop?.datetime.replace(' ', 'T') | date:'MMM d, y — h:mm a' }} Pacific Standard
-                                Time (PST)</p>
+                            <p *ngIf=" stop?.status == 3 ">Skipped At: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
 
-                            <p *ngIf=" stop?.status == 2 || stop?.status == 4 ">Delivered at: &nbsp; {{ stop?.datetime.replace(' ', 'T') | date:'MMM d, y — h:mm a' }} Pacific Standard Time (PST)</p>
+                            <p *ngIf=" stop?.status == 2 || stop?.status == 4 ">Delivered at: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
 
                         </div>
 

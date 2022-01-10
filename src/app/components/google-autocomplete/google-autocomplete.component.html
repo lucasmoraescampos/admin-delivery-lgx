@@ -5,11 +5,9 @@
     maxlength="255"
     [(ngModel)]="address"
     [readonly]="readonly"
-    (ngModelChange)="addressChanged()"
-    (blur)="setEnableList(false)"
-    (focus)="setEnableList(true)">
+    (ngModelChange)="addressChanged()">
 
-<table class="table table-sm table-hover animate__animated animate__fadeIn" *ngIf="addressList?.length > 0 && enableList">
+<table class="table table-sm table-hover animate__animated animate__fadeIn" *ngIf="addressList?.length > 0">
 
     <tbody>
 

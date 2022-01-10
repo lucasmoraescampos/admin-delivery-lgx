@@ -1,10 +1,11 @@
-import { Component, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { AlertService } from 'src/app/services/alert.service';
-import { DriverService } from 'src/app/services/driver.service';
+import { ApiService } from 'src/app/services/api.service';
 import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
@@ -16,7 +17,11 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
   @Input() driver: any;
 
-  @Input() project_id: number;
+  public activeIndex: number = 0;
+
+  public teams: any[];
+
+  public selectedTeams: any[];
 
   public formGroup: FormGroup;
 
@@ -25,12 +30,11 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private ngZone: NgZone,
+    private apiSrv: ApiService,
     private formBuilder: FormBuilder,
     private bsModalRef: BsModalRef,
     private alertSrv: AlertService,
-    private loadingSrv: LoadingService,
-    private driverSrv: DriverService
+    private loadingSrv: LoadingService
   ) { }
 
   ngOnInit() {
@@ -42,9 +46,12 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
       start_lat: [this.driver?.start_lat ?? '', Validators.required],
       start_lng: [this.driver?.start_lng ?? '', Validators.required],
       start_time: [this.driver?.start_time ?? '08:00', Validators.required],
-      end_time: [this.driver ? this.driver.end_time : '16:00', Validators.required],
-      project_id: [this.project_id ?? null]
+      end_time: [this.driver ? this.driver.end_time : '16:00', Validators.required]
     });
+
+    this.initTeams();
+
+    this.initSelectedTeams();
 
   }
 
@@ -62,18 +69,26 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
   }
 
   public changeStartAddress(event: any) {
-    this.ngZone.run(() => {
-      this.formGroup.patchValue({
-        start_address: event.address,
-        start_lat: String(event.latLng.lat),
-        start_lng: String(event.latLng.lng),
-      });
+    this.formGroup.patchValue({
+      start_address: event.address,
+      start_lat: String(event.latLng.lat),
+      start_lng: String(event.latLng.lng),
     });
+  }
+
+  public addTeam(event: any) {
+    if (event.target.checked) {
+      this.selectedTeams.push(event.target.value);
+    }
+    else {
+      const index = ArrayHelper.getIndexByKey(this.selectedTeams, 'id', event.target.value);
+      this.selectedTeams = ArrayHelper.removeItem(this.selectedTeams, index);
+    }
   }
 
   public save() {
 
-    if (this.formGroup.valid) {
+    if (this.activeIndex == 1 && this.selectedTeams.length > 0) {
 
       this.loadingSrv.show();
 
@@ -83,9 +98,11 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
       data.end_time = data.end_time.slice(0, 5);
 
+      data.teams = this.selectedTeams;
+
       if (this.driver) {
 
-        this.driverSrv.update(this.driver.id, data)
+        this.apiSrv.updateDriver(this.driver.id, data)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
 
@@ -119,7 +136,7 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
       else {
 
-        this.driverSrv.create(data)
+        this.apiSrv.createDriver(data)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
 
@@ -153,6 +170,23 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
     }
 
+  }
+
+  private initTeams() {
+    this.apiSrv.getAllTeams()
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+        if (res.success) {
+          this.teams = res.data;
+        }
+      });
+  }
+
+  private initSelectedTeams() {
+    this.selectedTeams = [];
+    this.driver?.teams.forEach((team: any) => {
+      this.selectedTeams.push(team.id);
+    });
   }
 
 }

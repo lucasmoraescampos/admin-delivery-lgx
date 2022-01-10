@@ -3,16 +3,14 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as $ from 'jquery';
-import { ProjectService } from 'src/app/services/project.service';
 import { BsDropdownConfig } from "ngx-bootstrap/dropdown";
-import { UserService } from 'src/app/services/user.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
   selector: 'app-nav-bar1',
   templateUrl: './nav-bar1.component.html',
-  styleUrls: ['./nav-bar1.component.scss'],
+  styleUrls: [],
   providers: [
     {
       provide: BsDropdownConfig,
@@ -22,23 +20,17 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class NavBar1Component implements OnInit, OnDestroy {
 
-  public usr : any;
-  public lst : any;
+  public usr: any;
+  public lst: any;
   public title: string;
   public breadCrumbItems: any[];
   private unsubscribe = new Subject();
 
   constructor(
-    private router     : Router,
-    private projectSrv : ProjectService,
-    private usrSrv     : UserService,
-    private loadingSrv : LoadingService,
-    private alertSrv   : AlertService
-  )
-  {
-    this.usr = this.usrSrv.getCurrentUser();
-    this.lst = this.usrSrv.getLst();
-  }
+    private router: Router,
+    private loadingSrv: LoadingService,
+    private alertSrv: AlertService
+  ) { }
 
   ngOnInit() {
     this.setTitle();
@@ -87,9 +79,9 @@ export class NavBar1Component implements OnInit, OnDestroy {
         }
         else if (location.pathname == '/project') {
 
-          const project = this.projectSrv.getCurrentProject();
+          // const project = this.projectSrv.getCurrentProject();
 
-          this.title = project.name;
+          // this.title = project.name;
 
           this.breadCrumbItems = [
             {
@@ -99,7 +91,7 @@ export class NavBar1Component implements OnInit, OnDestroy {
             },
             {
               isActive: true,
-              label: project.name,
+              // label: project.name,
               link: '/project'
             }
           ];
@@ -110,47 +102,5 @@ export class NavBar1Component implements OnInit, OnDestroy {
         }
       });
   }
-
-
-  change( id )
-  {
-    this.usrSrv.change( id )
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
-
-        this.loadingSrv.hide();
-
-        if (res.success)
-        {
-          this.alertSrv.toast({
-            icon   : 'success',
-            message: res.message
-          });
-
-          window.location.href = "/";
-          //window.location.reload();
-          //this.router.navigateByUrl('/projects');
-        }
-        else
-        {
-          this.alertSrv.toast({
-            icon   : 'error',
-            message: res.message
-          });
-        }
-
-      }, err => {
-
-        this.loadingSrv.hide();
-
-        this.alertSrv.toast({
-          icon   : 'error',
-          message: err.message
-        });
-
-      });
-  }
-
-
 
 }

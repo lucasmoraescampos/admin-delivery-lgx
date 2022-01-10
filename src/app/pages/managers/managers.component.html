@@ -1,0 +1,269 @@
+<div class="row animate__animated animate__fadeIn">
+
+    <div class="col-sm-12">
+
+        <app-iq-card>
+
+            <div card-header class="iq-header-title">
+
+                <div class="filters row">
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Search Manager Name" [(ngModel)]="search">
+
+                            <div class="input-group-append" *ngIf="search">
+
+                                <button class="btn-group-clear" (click)="search = ''">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <button type="button" class="btn btn-primary btn-block" (click)="create(modal)">
+
+                            <i class="ri-add-line"></i>New Manager
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead class="thead-primary">
+
+                        <tr class="text-center">
+
+                            <th>Name</th>
+
+                            <th>Email</th>
+
+                            <th>Enable</th>
+
+                            <th>#Teams</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr class="text-center animate__animated animate__fadeIn"
+                            *ngFor="let manager of managers | filter:'name':search; let i=index">
+
+                            <td>{{ manager.name }}</td>
+
+                            <td>{{ manager.email }}</td>
+
+                            <td>
+
+                                <div class="custom-control custom-switch ml-2">
+                                    
+                                    <input type="checkbox" [id]="'enabled' + i" [checked]="manager.enabled" class="custom-control-input" (change)="changeEnabled($event, i)">
+                                    
+                                    <label [for]="'enabled' + i" class="custom-control-label"></label>
+                                
+                                </div>
+                                
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-link no-link" (click)="openTeams(modalTeams, i)">
+
+                                    <i class="ri-git-branch-line"></i> {{ manager.teams.length }}
+
+                                </button>
+
+                            </td>
+
+                            <td class="text-right">
+
+                                <button class="btn btn-link" (click)="edit(modal, i)">
+
+                                    <i class="ri-pencil-fill"></i>
+
+                                </button>
+
+                                <button class="btn btn-link" (click)="delete(i)">
+
+                                    <i class="ri-delete-bin-line"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="text-center animate__animated animate__fadeIn" *ngIf="managers?.length == 0 || (managers | filter:'name':search).length == 0">
+
+                            <td colspan="4">
+
+                                <i class="ri-search-line"></i> No managers found
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </app-iq-card>
+
+    </div>
+
+</div>
+
+<ng-template #modal>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left" *ngIf="!managerIndex">Create New Manager</h4>
+
+        <h4 class="modal-title pull-left" *ngIf="managerIndex >= 0">Edit Manager</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body">
+
+        <form [formGroup]="formGroup">
+
+            <div class="form-group row">
+
+                <label for="name" class="col-sm-3 col-form-label">Name<span>*</span></label>
+
+                <div class="col-sm-9">
+
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Manager name"
+                        maxlength="200" formControlName="name">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <label for="name" class="col-sm-3 col-form-label">Email<span>*</span></label>
+
+                <div class="col-sm-9">
+
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Manager email"
+                        maxlength="255" formControlName="email">
+                        
+                </div>
+
+            </div>
+
+            <div class="form-group row" [hidden]="managerIndex >= 0 && !togglePassword">
+
+                <label for="name" class="col-sm-3 col-form-label">Password<span
+                        [hidden]="managerIndex >= 0">*</span></label>
+
+                <div class="col-sm-9">
+
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Manager password"
+                        maxlength="255" formControlName="password">
+
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-sm-12 text-right pt-3"
+                    [ngClass]="{ 'd-flex justify-content-between': managerIndex >= 0 }">
+
+                    <button class="btn" [ngClass]="{ 'btn-outline-secondary': !togglePassword, 'btn-outline-primary': togglePassword }"
+                        (click)="togglePassword = !togglePassword" *ngIf="managerIndex >= 0">Change Password</button>
+
+                    <button class="btn btn-primary" [disabled]="formGroup.invalid"
+                        (click)="save()">Save</button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</ng-template>
+
+<ng-template #modalTeams>
+
+    <div class="modal-header">
+
+        <h4 class="modal-title pull-left">Teams</h4>
+
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+
+            <span aria-hidden="true">&times;</span>
+
+        </button>
+
+    </div>
+
+    <div class="modal-body table-responsive">
+
+        <table class="table">
+
+            <tbody>
+
+                <tr *ngFor="let team of teams; let i=index">
+
+                    <td class="border-0 pl-0">{{ team.name }}</td>
+
+                    <td class="border-0 pr-0 text-right">
+
+                        <div class="custom-control custom-switch ml-2">
+                                    
+                            <input type="checkbox" [id]="'team' + i" [checked]="isTeamChecked(team.id)" class="custom-control-input" (change)="toggleTeam(team.id, $event)">
+                            
+                            <label [for]="'team' + i" class="custom-control-label"></label>
+                        
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr class="text-center animate__animated animate__fadeIn" *ngIf="teams?.length == 0">
+
+                    <td class="border-0 pl-0" colspan="7">
+
+                        <i class="ri-search-line"></i> No teams found
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</ng-template>

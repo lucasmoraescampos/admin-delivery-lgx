@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FilterModule } from 'src/app/pipes/filter/filter.module';
 import { FilterDateBetweenModule } from 'src/app/pipes/filter-date-between/filter-date-between.module';
-
 import { ReportsComponent } from './percent/reports.component';
 import { BagsComponent } from './bags/bags.component';
 import { DriversComponent } from './drivers/drivers.component';

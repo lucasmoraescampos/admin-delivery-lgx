@@ -17,8 +17,6 @@ export class GoogleAutocompleteComponent implements OnInit {
 
   public addressList: string[];
 
-  public enableList: boolean = false;
-
   private googleAutocomplete = new google.maps.places.AutocompleteService();
 
   private geocoder = new google.maps.Geocoder();
@@ -31,14 +29,6 @@ export class GoogleAutocompleteComponent implements OnInit {
   }
 
   public addressChanged() {
-
-    this.changeAddress.emit({
-      address: this.address,
-      latLng: {
-        lat: null,
-        lng: null
-      }
-    });
 
     if (this.address.trim().length < 3) {
 
@@ -92,10 +82,6 @@ export class GoogleAutocompleteComponent implements OnInit {
 
     });
 
-  }
-
-  public setEnableList(value: boolean) {
-    setTimeout(() => this.enableList = value, 300);
   }
 
 }

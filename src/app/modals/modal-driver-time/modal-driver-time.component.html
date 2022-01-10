@@ -1,70 +1,69 @@
-
 <div class="modal-header">
+
     <h4 class="modal-title pull-left">Driver</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
-        <span aria-hidden="true">&times;</span>
-    </button>
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()"><span
+            aria-hidden="true">&times;</span></button>
+
 </div>
 
 <div class="modal-body">
-    <form [formGroup]="formGroup" (submit)="save()" >
 
-
-        <div class="form-group row">
-
-            <div class="col-sm-4">
-                <label class="col-form-label mt-1">Start Address</label>
-                <i class="ri-information-line ml-2"
-                    tooltip="This is where your driver will depart from at the start of their shift."
-                    placement="right"></i>
-            </div>
-
-            <div class="col-sm-8">
-                <app-google-autocomplete [address]="address"
-                    (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
-            </div>
-
-        </div>
-
+    <form [formGroup]="formGroup" (submit)="send()">
 
         <div class="form-group row">
 
             <div class="col-sm-4">
-                <label for="start_time" class="col-form-label mt-1">Start Time</label>
-                <i class="ri-information-line ml-2"
-                    tooltip="This is your driver's start time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                    placement="right"></i>
+
+                <label class="col-form-label mt-1">Start Address<span>*</span></label>
+
             </div>
 
             <div class="col-sm-8">
-                <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00" formControlName="start_time">
+
+                <app-google-autocomplete
+                    [address]="formControl.start_address.value"
+                    (changeAddress)="changeAddress($event)">
+                </app-google-autocomplete>
+
             </div>
 
         </div>
 
-
         <div class="form-group row">
 
-            <div class="col-sm-4">
-                <label for="end_time" class="col-form-label mt-1">End Time</label>
-                <i class="ri-information-line ml-2"
-                    tooltip="This is your driver's end time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                    placement="right"></i>
-            </div>
+            <label class="col-sm-4 col-form-label" for="start_time">Start Time<span>*</span></label>
 
             <div class="col-sm-8">
-                <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00" formControlName="end_time">
+
+                <timepicker id="start_time" placeholder="e.g. 08:00" formControlName="start_time" [showSpinners]="false" [mousewheel]="false"></timepicker>
+
             </div>
 
         </div>
 
+        <div class="form-group row">
+
+            <label class="col-sm-4 col-form-label" for="end_time">End Time<span>*</span></label>
+
+            <div class="col-sm-8">
+
+                <timepicker id="end_time" placeholder="e.g. 04:00" formControlName="end_time" [showSpinners]="false" [mousewheel]="false"></timepicker>
+
+            </div>
+
+        </div>
 
         <div class="form-group row">
+
             <div class="col-sm-12 text-right pt-3">
-                <button class="btn btn-primary" [disabled]="formGroup.invalid" >Save</button>
-            </div>
-        </div>
 
+                <button class="btn btn-primary" [disabled]="formGroup.invalid">Save</button>
+
+            </div>
+
+        </div>
 
     </form>
+
 </div>

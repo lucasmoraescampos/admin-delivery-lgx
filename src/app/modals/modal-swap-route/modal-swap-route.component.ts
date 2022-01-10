@@ -3,8 +3,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
+import { ApiService } from 'src/app/services/api.service';
 import { LoadingService } from 'src/app/services/loading.service';
-import { ProjectService } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-modal-swap-route',
@@ -19,11 +19,13 @@ export class ModalSwapRouteComponent implements OnInit, OnDestroy {
 
   public to: any;
 
+  public onClose = new Subject();
+
   private unsubscribe = new Subject();
 
   constructor(
+    private apiSrv: ApiService,
     private bsModalRef: BsModalRef,
-    private projectSrv: ProjectService,
     private loadingSrv: LoadingService,
     private alertSrv: AlertService
   ) { }
@@ -54,13 +56,15 @@ export class ModalSwapRouteComponent implements OnInit, OnDestroy {
       to: this.to
     }
 
-    this.projectSrv.swapRoute(this.project.id, data)
+    this.apiSrv.swapRoute(this.project.id, data)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
 
         this.loadingSrv.hide();
 
         if (res.success) {
+
+          this.onClose.next(res.data);
 
           this.alertSrv.toast({
             icon: 'success',

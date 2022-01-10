@@ -19,8 +19,16 @@ tab {
 }
 
 .tab-content {
+    .table-scroll {
+        max-height: 200px;
+    }
+
     table {
         margin: 0;
+
+        tr {
+            height: 44px;
+        }
 
         tr.unscheduled {
             background: var(--warning);
@@ -140,6 +148,3 @@ tab {
         }
     }
 }
-
-.table-col-a { width: 250px; }
-.table-col-b { width: 100px; }

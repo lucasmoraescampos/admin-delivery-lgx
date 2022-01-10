@@ -1,90 +1,70 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { AlertService } from 'src/app/services/alert.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { ReportsService } from 'src/app/services/reports.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-bags',
   templateUrl: './bags.component.html',
   styleUrls: ['./bags.component.scss']
 })
-export class BagsComponent implements OnInit, OnDestroy
-{
+export class BagsComponent implements OnInit, OnDestroy {
+
+  public report: any[];
+  
+  public formGroup: FormGroup;
 
   private unsubscribe = new Subject();
-  public  formGroup : FormGroup;
-
-  private post : any = null;
-
-  arr  : any = [];
 
   constructor(
-    private modalSrv      : BsModalService,
-    private formBuilder   : FormBuilder,
-    private reportsService: ReportsService,
-    private loadingSrv    : LoadingService,
-    private alertSrv      : AlertService,
-    private router        : Router
-  )
-  {
-  }
+    private apiSrv: ApiService,
+    private formBuilder: FormBuilder,
+    private alertSrv: AlertService
+  ) { }
 
+  ngOnInit() {
 
-  ngOnInit(): void
-  {
     this.formGroup = this.formBuilder.group({
       from: ['', Validators.required],
-      to  : ['', Validators.required],
+      to: ['', Validators.required],
     });
+
   }
 
-
-  ngOnDestroy()
-  {
+  ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
+  public submit() {
 
-  submit()
-  {
-    if (this.formGroup.invalid)
-    {
+    if (this.formGroup.invalid) {
+
       this.alertSrv.toast({
-        icon   : 'error',
+        icon: 'error',
         message: 'Please enter a valid date range'
       });
 
       return;
+
     }
 
-    this.loadingSrv.show();
-
-    const post = {
-      'from' : this.formatDate( this.formGroup.value.from ),
-      'to'   : this.formatDate( this.formGroup.value.to   ),
+    const data = {
+      'from': this.formatDate(this.formGroup.value.from),
+      'to': this.formatDate(this.formGroup.value.to),
     };
 
-    this.post = post
+    this.apiSrv.reportBags(data)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
 
-    this.reportsService.getBags( post )
-      .pipe( takeUntil( this.unsubscribe ) )
-      .subscribe( res => {
-
-        this.loadingSrv.hide();
-
-        if (res.success)
-        {
-          this.arr = res.data
+        if (res.success) {
+          this.report = res.data
         }
-        else
-        {
+
+        else {
           this.alertSrv.toast({
             icon: 'error',
             message: res.message
@@ -94,24 +74,34 @@ export class BagsComponent implements OnInit, OnDestroy
       }, err => {
 
         this.alertSrv.toast({
-          icon   : 'error',
+          icon: 'error',
           message: err.error.message
         });
 
       });
+
   }
 
+  public download() {
 
+    if (this.formGroup.invalid) {
 
-  download()
-  {
-    this.loadingSrv.show();
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'Please enter a valid date range'
+      });
 
-    this.reportsService.getDownloadBags( this.post )
+      return;
+
+    }
+
+    const from = this.formatDate(this.formGroup.value.from);
+
+    const to = this.formatDate(this.formGroup.value.to);
+
+    this.apiSrv.reportBagsDownload({ from, to })
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(data => {
-
-        this.loadingSrv.hide();
 
         let binaryData = [];
         binaryData.push(data);
@@ -119,7 +109,7 @@ export class BagsComponent implements OnInit, OnDestroy
         const download = document.createElement('a');
         download.style.display = 'none';
         download.href = window.URL.createObjectURL(new Blob(binaryData, { type: data.type }));
-        download.setAttribute('download', 'bags.xls');
+        download.setAttribute('download', `bags-from-${from}-to-${to}.xls`);
         document.body.appendChild(download);
         download.click();
 
@@ -127,21 +117,14 @@ export class BagsComponent implements OnInit, OnDestroy
 
   }
 
+  public formatDate(date: Date) {
 
+    const day = (`0${date.getDate()}`).slice(-2);
 
-
-
-
-  public formatDate( date: Date )
-  {
-    date = new Date( date );
-    const day   = date.getDate()      > 9 ? date.getDate()      : '0' + date.getDate();
-    const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + String(date.getMonth() + 1);
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
 
     return `${date.getFullYear()}-${month}-${day}`;
+
   }
-
-
-
 
 }

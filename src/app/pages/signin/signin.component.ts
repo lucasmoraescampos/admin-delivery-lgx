@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ConfigHelper } from 'src/app/helpers/config.helper';
 import { UtilsHelper } from 'src/app/helpers/utils.helper';
 import { PluginsService } from 'src/app/plugins.service';
 import { AlertService } from 'src/app/services/alert.service';
-import { LoadingService } from 'src/app/services/loading.service';
-import { UserService } from 'src/app/services/user.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-signin',
@@ -17,9 +17,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class SigninComponent implements OnInit, OnDestroy {
 
-
-  public authSlideOptions: OwlOptions =  {
-    loop: true,
+  public authSlideOptions: OwlOptions = {
+    loop: false,
     mouseDrag: true,
     touchDrag: true,
     pullDrag: true,
@@ -27,7 +26,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     navSpeed: 700,
     navText: ['', ''],
     responsive: {
-      0  : { items: 1 },
+      0: { items: 1 },
       400: { items: 1 },
       740: { items: 1 },
       940: { items: 1 }
@@ -35,52 +34,17 @@ export class SigninComponent implements OnInit, OnDestroy {
     nav: true
   };
 
-
-  public authSlides = [
-    {
-      id: 1,
-      image: '/assets/images/login/1.png',
-      title: 'Manage your orders',
-      description: 'It is a long established fact that a reader will be distracted by the readable content.'
-    },
-    {
-      id: 2,
-      image: '/assets/images/login/1.png',
-      title: 'Manage your orders',
-      description: 'It is a long established fact that a reader will be distracted by the readable content.'
-    },
-    {
-      id: 3,
-      image: '/assets/images/login/1.png',
-      title: 'Manage your orders',
-      description: 'It is a long established fact that a reader will be distracted by the readable content.'
-    },
-    {
-      id: 4,
-      image: '/assets/images/login/1.png',
-      title: 'Manage your orders',
-      description: 'It is a long established fact that a reader will be distracted by the readable content.'
-    }
-  ];
-
-
-
   public formGroup: FormGroup;
 
   private unsubscribe = new Subject();
 
-
-
   constructor(
+    private apiSrv: ApiService,
     private plugins: PluginsService,
     private formBuilder: FormBuilder,
     private alertSrv: AlertService,
-    private userSrv: UserService,
-    private loadingSrv: LoadingService,
     private router: Router
   ) { }
-
-
 
   ngOnInit() {
     // Init all plugins...
@@ -94,20 +58,14 @@ export class SigninComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
-
-
   public get formControl() {
     return this.formGroup.controls;
   }
-
-
 
   public save() {
 
@@ -116,46 +74,27 @@ export class SigninComponent implements OnInit, OnDestroy {
       if (!UtilsHelper.validateEmail(this.formControl.email.value)) {
 
         this.alertSrv.toast({
-          icon   : 'error',
+          icon: 'error',
           message: 'Enter a valid email address'
         });
 
       }
+
       else {
 
-        this.loadingSrv.show();
-
-        this.userSrv.authenticate(this.formGroup.value)
+        this.apiSrv.authenticate(this.formGroup.value)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
-            
-            this.loadingSrv.hide();
 
-            if (res.success)
-            {
-              this.alertSrv.toast({
-                icon   : 'success',
-                message: res.message
-              });
-
-              this.router.navigateByUrl('/projects');
-            }
-            else
-            {
-              this.alertSrv.toast({
-                icon   : 'error',
-                message: res.message
-              });
-            }
-
-          }, err => {
-
-            this.loadingSrv.hide();
+            localStorage.setItem(ConfigHelper.Storage.AccessToken, res.token);
+            localStorage.setItem(ConfigHelper.Storage.CurrentUser, JSON.stringify(res.data));
 
             this.alertSrv.toast({
-              icon   : 'error',
-              message: err.message
+              icon: 'success',
+              message: res.message
             });
+
+            this.router.navigateByUrl('/home');
 
           });
 

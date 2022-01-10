@@ -1,174 +1,230 @@
-<div class="row">
+<div class="row" [hidden]="!project">
 
   <div class="col-xl-6" *ngIf="!mapFullscreen">
+
     <app-iq-card [isCardHeader]="false">
+
       <tabset type="pills" [justified]="true">
 
-
-
         <tab class="animate__animated animate__fadeIn" heading="Drivers ({{ project?.drivers.length || '0' }})">
+
           <div class="row">
 
-            <div class="col-md-12 text-right mt-3">
-              <button type="button" class="btn btn-primary btn-sm" (click)="modalDriver()">
-                <i class="ri-add-line"></i>
-                Add Drivers
-              </button>
-            </div>
-
-            <div class="col-md-12 mt-3">
+            <div class="col-md-12 mt-4" *ngIf="project">
 
               <table class="table table-hover table-sm m-0">
-                <thead class="thead-primary">
-                  <tr>
 
-                    <th width="40px"></th>
-                    <th width="220px">Name</th>
-                    <th>Start Address</th>
-                    <th width="100px">Start Time</th>
-                    <th width="100px">End Time</th>
+                <thead class="thead-primary">
+
+                  <tr class="text-center">
+
+                    <th width="28px"></th>
+
+                    <th>Name</th>
+
+                    <th>Address</th>
+
+                    <th width="130px">Time</th>
 
                   </tr>
+
                 </thead>
+
               </table>
 
-              <div class="table-responsive table-scroll-y">
+              <div class="table-responsive drivers-table-scroll-y">
+
                 <table class="table table-hover table-sm">
+
                   <tbody>
 
-                    <tr *ngFor="let driver of drivers; let i=index" (click)="driverInfo(driver)">
+                    <tr class="text-center" *ngFor="let driver of drivers; let i=index" (click)="driverInfo(driver)">
 
-                      <td width="40px">
-                        <input type="checkbox" [checked]="isDriverchecked(driver)"
-                          (input)="checkDriver(driver, $event)" (click)="$event.stopPropagation()">
+                      <td width="28px">
+
+                        <input type="checkbox" [checked]="isDriverchecked(driver)" (input)="checkDriver(driver, $event)"
+                          (click)="$event.stopPropagation()">
+
                       </td>
 
-                      <td width="220px"><span>{{ driver.name }}</span></td>
+                      <td>
 
-                      <td><span>{{               ( driver?.projectInfo?.start_address ) ? driver.projectInfo.start_address : driverAddress(driver) }}</span></td>
-                      <td width="100px"><span>{{ ( driver?.projectInfo?.start_time    ) ? driver.projectInfo.start_time    : driver.start_time     }}</span></td>
-                      <td width="100px"><span>{{ ( driver?.projectInfo?.end_time      ) ? driver.projectInfo.end_time      : driver.end_time       }}</span></td>
+                        <span>{{ driver.name }}</span>
+
+                      </td>
+
+                      <td>
+
+                        <span>{{ driverStartAddress(driver) }}</span>
+
+                      </td>
+
+                      <td width="130px">
+
+                        <span>{{ driverStartTime(driver) }} ~ {{ driverEndTime(driver) }}</span>
+
+                      </td>
 
                     </tr>
 
                     <tr class="text-center" *ngIf="drivers.length == 0">
-                      <td colspan="6">
+
+                      <td colspan="4">
+
                         <i class="ri-search-line"></i> No drivers found
+
                       </td>
+
                     </tr>
 
                   </tbody>
+
                 </table>
+
               </div>
 
             </div>
 
           </div>
+
         </tab>
 
-
-
-
         <tab class="animate__animated animate__fadeIn" heading="Stops ({{ project?.stops.length || '0' }})">
-          <div class="row">
 
+          <div class="row">
 
             <div class="col-md-12 mt-3 text-right">
 
               <button type="button" class="btn btn-primary btn-sm mr-1" (click)="modalStop()">
+
                 <i class="ri-add-line"></i>
+
                 Add Stops
+
               </button>
 
               <button type="button" class="btn btn-primary btn-sm" (click)="modalUploadStops()">
+
                 <i class="ri-upload-line"></i>
-                Upload a List of Stops
+
+                Upload Stops
+
               </button>
 
             </div>
 
-
             <div class="col-md-12 mt-3">
 
               <table class="table table-hover table-sm m-0">
+
                 <thead class="thead-primary">
-                  <tr>
+
+                  <tr class="text-center">
 
                     <th width="30%">Name</th>
-                    <th width="44%">Address</th>
-                    <th width="26%">Status</th>
+
+                    <th width="45%">Address</th>
+
+                    <th width="25%">Status</th>
 
                   </tr>
+
                 </thead>
+
               </table>
 
-              <div class="table-responsive table-scroll-y">
+              <div class="table-responsive stops-table-scroll-y">
+
                 <table class="table table-hover table-sm">
+
                   <tbody>
 
-                    <tr *ngFor="let stop of project?.stops" (click)="stopInfo(stop)">
+                    <tr class="text-center" *ngFor="let stop of project?.stops" (click)="stopInfo(stop)">
 
                       <td width="30%">
+
                         <span>{{ stop.name }}</span>
+
                       </td>
 
                       <td width="45%">
+
                         <span>{{ stop.address }}</span>
+
                       </td>
 
                       <td width="25%">
-                        <span class="badge badge-light"   *ngIf="stop.status == 0">Waiting</span>
+
+                        <span class="badge badge-light" *ngIf="stop.status == 0">Waiting</span>
+
                         <span class="badge badge-primary" *ngIf="stop.status == 1">Dispatch</span>
+
                         <span class="badge badge-success" *ngIf="stop.status == 2">Delivered</span>
-                        <span class="badge badge-danger"  *ngIf="stop.status == 3">Skipped</span>
+
+                        <span class="badge badge-danger" *ngIf="stop.status == 3">Skipped</span>
+
                       </td>
 
                     </tr>
 
                     <tr class="text-center" *ngIf="project?.stops.length == 0">
+
                       <td colspan="3">
+
                         <i class="ri-search-line"></i> No stops found
+
                       </td>
+
                     </tr>
 
                   </tbody>
+
                 </table>
+
               </div>
 
             </div>
 
           </div>
+
         </tab>
 
-
-
       </tabset>
+
     </app-iq-card>
+
   </div>
-
-
-
 
   <div [class]="!mapFullscreen ? 'col-xl-6' : 'col-xl-12'">
 
-    <div class="map-header animate__animated animate__fadeIn" *ngIf="project?.stops.length > 0 && project?.drivers.length > 0">
+    <div class="map-header animate__animated animate__fadeIn"
+      *ngIf="project?.stops.length > 0 && project?.drivers.length > 0">
 
-      <button class="btn btn-light animate__animated animate__fadeIn" (click)="mapFullscreen = false" *ngIf="mapFullscreen">
+      <button class="btn btn-light animate__animated animate__fadeIn" (click)="mapFullscreen = false"
+        *ngIf="mapFullscreen">
+
         <i class="ri-menu-line"></i> Drivers And Stops
+
       </button>
 
       <button class="btn btn-light animate__animated animate__fadeIn" (click)="mapFullscreen = true"
         *ngIf="project?.status > 0 && !mapFullscreen">
+
         Continue Routing <i class="ri-arrow-right-line"></i>
+
       </button>
 
       <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()" *ngIf="project?.status == 0">
+
         <i class="ri-flashlight-line"></i> Optimize Route
+
       </button>
 
       <button class="btn btn-light animate__animated animate__fadeIn" (click)="optimize()"
         *ngIf="project?.status > 0 && mapFullscreen">
+
         <i class="ri-flashlight-line"></i> Reoptimize Route
+
       </button>
 
     </div>
@@ -176,75 +232,17 @@
     <div class="map animate__animated animate__fadeIn" #map></div>
 
     <div class="map-footer animate__animated animate__fadeInUp" *ngIf="project?.status > 0 && mapFullscreen">
+
       <app-project-manager
-        [colors]="colors"        
+        [project]="project" 
+        [colors]="colors"
         (stopInfo)="stopInfo($event)"
-        (setStopChanged)="setStopChanged($event)"
-        (driverInfo)="driverInfo($event)">
+        (driverInfo)="driverInfo($event)"
+        (projectChanged)="setProject($event)">
       </app-project-manager>
+
     </div>
 
   </div>
 
-
-
 </div>
-
-
-
-
-
-
-<ng-template #modal>
-
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Driver Time</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-
-  <div class="modal-body">
-    <form [formGroup]="formGroupDriverTime">
-
-      <div class="form-group row">
-
-        <div class="col-sm-4">
-          <label for="start_time" class="col-form-label mt-1">Start Time</label>
-          <i class="ri-information-line ml-2"
-                tooltip="This is your driver's start time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                placement="right"></i>
-        </div>
-
-        <div class="col-sm-8">
-          <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00" formControlName="start_time">
-        </div>
-
-      </div>
-
-      <div class="form-group row">
-
-        <div class="col-sm-4">
-          <label for="end_time" class="col-form-label mt-1">End Time</label>
-          <i class="ri-information-line ml-2"
-                tooltip="This is your driver's end time. Please note that times must be entered using the 24-hour clock (also known as 'Military Time')."
-                placement="right"></i>
-        </div>
-
-        <div class="col-sm-8">
-          <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00" formControlName="end_time">
-        </div>
-
-      </div>
-
-
-      <div class="form-group row">
-        <div class="col-sm-12 text-right pt-3">
-          <button class="btn btn-primary" >Save</button>
-        </div>
-      </div>
-
-    </form>
-  </div>
-
-</ng-template>

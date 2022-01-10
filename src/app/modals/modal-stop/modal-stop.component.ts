@@ -3,11 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { AlertService } from 'src/app/services/alert.service';
+import { ApiService } from 'src/app/services/api.service';
 import { LoadingService } from 'src/app/services/loading.service';
-import { ProjectService } from 'src/app/services/project.service';
-import { StopService } from 'src/app/services/stop.service';
 
 @Component({
   selector: 'app-modal-stop',
@@ -18,7 +16,7 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
   @Input() stop: any;
 
-  public project: any;
+  @Input() project: any;
 
   public formGroup: FormGroup;
 
@@ -32,33 +30,29 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
   public note: string;
 
-  public onUpdated = new Subject();
+  public onClose = new Subject();
 
   private unsubscribe = new Subject();
 
   constructor(
+    private apiSrv: ApiService,
     private formBuilder: FormBuilder,
     private bsModalRef: BsModalRef,
-    private ngZone: NgZone,
-    private alertSrv: AlertService,
-    private loadingSrv: LoadingService,
-    private stopSrv: StopService,
-    private projectSrv: ProjectService
+    private alertSrv: AlertService ,
+    private loadingSrv: LoadingService   
   ) { }
 
   ngOnInit() {
 
     this.status = this.stop?.status ?? 0;
 
-    this.project = this.projectSrv.getCurrentProject();
-
     this.formGroup = this.formBuilder.group({
-      order_id: [this.stop?.order_id ?? '', Validators.required],
-      name: [this.stop?.name ?? '', Validators.required],
-      phone: [this.stop?.phone ?? '', Validators.required],
-      address: [this.stop?.address ?? '', Validators.required],
-      lat: [this.stop?.lat ?? '', Validators.required],
-      lng: [this.stop?.lng ?? '', Validators.required]
+      order_id: [this.stop?.order_id  ?? '',  Validators.required],
+      name:     [this.stop?.name      ?? '',  Validators.required],
+      phone:    [this.stop?.phone     ?? '',  Validators.required],
+      address:  [this.stop?.address   ?? '',  Validators.required],
+      lat:      [this.stop?.lat       ?? '',  Validators.required],
+      lng:      [this.stop?.lng       ?? '',  Validators.required]
     });
 
   }
@@ -73,12 +67,10 @@ export class ModalStopComponent implements OnInit, OnDestroy {
   }
 
   public changeAddress(event: any) {
-    this.ngZone.run(() => {
-      this.formGroup.patchValue({
-        address: event.address,
-        lat: String(event.latLng.lat),
-        lng: String(event.latLng.lng),
-      });
+    this.formGroup.patchValue({
+      address: event.address,
+      lat: event.latLng.lat,
+      lng: event.latLng.lng,
     });
   }
 
@@ -107,8 +99,6 @@ export class ModalStopComponent implements OnInit, OnDestroy {
   public save() {
 
     if (this.formGroup.valid) {
-
-      this.loadingSrv.show();
 
       if (this.stop) {
 
@@ -146,11 +136,9 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
         }
 
-        this.stopSrv.update(this.stop.id, data)
+        this.apiSrv.updateStop(this.stop.id, data)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
-
-            this.loadingSrv.hide();
 
             if (res.success) {
 
@@ -159,15 +147,9 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              const index = ArrayHelper.getIndexByKey(this.project.stops, 'id', res.data.id);
-
-              this.project.stops[index] = res.data;
-
-              this.projectSrv.setCurrentProject(this.project);
+              this.onClose.next(res.data);
 
               this.bsModalRef.hide();
-
-              this.onUpdated.next();
 
             }
 
@@ -181,11 +163,9 @@ export class ModalStopComponent implements OnInit, OnDestroy {
 
         data.project_id = this.project.id;
 
-        this.stopSrv.create(data)
+        this.apiSrv.createStop(data)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
-
-            this.loadingSrv.hide();
 
             if (res.success) {
 
@@ -194,9 +174,7 @@ export class ModalStopComponent implements OnInit, OnDestroy {
                 message: res.message
               });
 
-              this.project.stops.push(res.data);
-
-              this.projectSrv.setCurrentProject(this.project);
+              this.onClose.next(res.data);
               
               this.bsModalRef.hide();
 

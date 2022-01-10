@@ -5,8 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { ModalDriverComponent } from 'src/app/modals/modal-driver/modal-driver.component';
 import { AlertService } from 'src/app/services/alert.service';
-import { DriverService } from 'src/app/services/driver.service';
-import { LoadingService } from 'src/app/services/loading.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-drivers',
@@ -22,8 +21,7 @@ export class DriversComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private loadingSrv: LoadingService,
-    private driverSrv: DriverService,
+    private apiSrv: ApiService,
     private modalSrv: BsModalService,
     private alertSrv: AlertService
   ) { }
@@ -38,6 +36,7 @@ export class DriversComponent implements OnInit, OnDestroy {
   }
 
   public modalDriver(index?: number) {
+
     const modal = this.modalSrv.show(ModalDriverComponent, {
       keyboard: false,
       class: 'modal-dialog-centered',
@@ -56,6 +55,7 @@ export class DriversComponent implements OnInit, OnDestroy {
           this.drivers.unshift(driver);
         }
       });
+
   }
 
   public delete(index: number) {
@@ -66,12 +66,10 @@ export class DriversComponent implements OnInit, OnDestroy {
       icon: 'warning',
       message: `This will permanently delete the driver "${driver.name}". Continue?`,
       onConfirm: () => {
-        this.loadingSrv.show();
-        this.driverSrv.delete(driver.id)
+
+        this.apiSrv.deleteDriver(driver.id)
           .pipe(takeUntil(this.unsubscribe))
           .subscribe(res => {
-
-            this.loadingSrv.hide();
 
             if (res.success) {
 
@@ -91,11 +89,9 @@ export class DriversComponent implements OnInit, OnDestroy {
   }
 
   private initDrivers() {
-    this.loadingSrv.show();
-    this.driverSrv.getAll()
+    this.apiSrv.getAllDrivers()
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
-        this.loadingSrv.hide();
         this.drivers = res.data;
       });
   }

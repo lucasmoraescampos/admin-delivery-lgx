@@ -16,13 +16,7 @@
 
         <div class="form-group row">
 
-            <div class="col-sm-3">
-
-                <label for="order_id" class="col-form-label mt-1">Order ID</label>
-
-                <i class="ri-information-line ml-2" tooltip="The order identification." placement="right"></i>
-
-            </div>
+            <label for="order_id" class="col-sm-3 col-form-label mt-1">Order ID<span>*</span></label>
 
             <div class="col-sm-9">
 
@@ -35,13 +29,7 @@
 
         <div class="form-group row">
 
-            <div class="col-sm-3">
-
-                <label for="name" class="col-form-label mt-1">Name</label>
-
-                <i class="ri-information-line ml-2" tooltip="The name of your customer." placement="right"></i>
-
-            </div>
+            <label for="name" class="col-sm-3 col-form-label mt-1">Name<span>*</span></label>
 
             <div class="col-sm-9">
 
@@ -54,15 +42,7 @@
 
         <div class="form-group row">
 
-            <div class="col-sm-3">
-
-                <label for="phone" class="col-form-label mt-1">Phone</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="Customer’s mobile number, which can be used to send automated customer notifications."
-                    placement="right"></i>
-
-            </div>
+            <label for="phone" class="col-sm-3 col-form-label mt-1">Phone<span>*</span></label>
 
             <div class="col-sm-9">
 
@@ -75,21 +55,13 @@
 
         <div class="form-group row">
 
-            <div class="col-sm-3">
-
-                <label class="col-form-label mt-1">Address</label>
-
-                <i class="ri-information-line ml-2"
-                    tooltip="Address for the delivery. After inputting the address, select a suggestion from the dropdown menu."
-                    placement="right"></i>
-
-            </div>
+            <label class="col-sm-3 col-form-label mt-1">Address<span>*</span></label>
 
             <div class="col-sm-9">
 
                 <app-google-autocomplete 
                     [address]="this.stop?.address" 
-                    [readonly]="project.status != 0"
+                    [readonly]="status != 0"
                     (changeAddress)="changeAddress($event)">
                 </app-google-autocomplete>
 
@@ -97,15 +69,9 @@
 
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row" *ngIf="project.status > 1">
 
-            <div class="col-sm-3">
-
-                <label class="col-form-label mt-1">Status</label>
-
-                <i class="ri-information-line ml-2" tooltip="The order status." placement="right"></i>
-
-            </div>
+            <label class="col-sm-3 col-form-label mt-1">Status</label>
 
             <div class="col-sm-9">
 
@@ -130,11 +96,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Started at</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Started at</label>
 
                 <div class="col-sm-9">
 
@@ -150,11 +112,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Arrived at</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Arrived at</label>
 
                 <div class="col-sm-9">
 
@@ -166,11 +124,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Photo</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Photo</label>
 
                 <div class="col-sm-9">
 
@@ -182,11 +136,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Bags</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Bags</label>
 
                 <div class="col-sm-9">
 
@@ -198,11 +148,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Note</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Note</label>
 
                 <div class="col-sm-9">
 
@@ -218,11 +164,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Skipped at</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Skipped at</label>
 
                 <div class="col-sm-9">
 
@@ -234,11 +176,7 @@
 
             <div class="form-group row animate__animated animate__fadeIn">
 
-                <div class="col-sm-3 text-right">
-
-                    <label class="col-form-label mt-1">Note</label>
-
-                </div>
+                <label class="col-sm-3 text-right col-form-label mt-1">Note</label>
 
                 <div class="col-sm-9">
 

@@ -111,7 +111,7 @@ NOTE: This file contains the styling for responsive Template.
 	.iq-sidebar { display: inline-block; z-index: 99; left: -260px; }
 	.iq-top-navbar .iq-navbar-custom .navbar-breadcrumb { display: none; }
 	.iq-sidebar-logo { width: auto; }
-	.iq-top-navbar .iq-navbar-custom .iq-menu-bt { display: inline-block; position: absolute; right: 0; opacity: 1; }
+	.iq-top-navbar .iq-navbar-custom .iq-menu-bt { display: inline-block; position: absolute; right: 85px; opacity: 1; }
 	body.sidebar-main .iq-top-navbar .iq-sidebar-logo a span { opacity: 1; display: inline-block; }
 	body.sidebar-main .iq-sidebar { width: 260px; left: 0; }
 	body.sidebar-main .iq-sidebar .iq-sidebar-menu .iq-menu li a span { display: inline-block; opacity: 1; }
@@ -163,7 +163,7 @@ NOTE: This file contains the styling for responsive Template.
 	.iq-top-navbar .navbar-toggler { display: block; right: 85px; top: 18px; position: absolute; color: #FC9D20; background: #e5f2ff; border: none; padding: 7px 10px; border-radius: 5px; font-size: 24px; }
 	.navbar-collapse { position: absolute; top: 75px; left: 0; width: 100%; background: #fff; -webkit-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); -moz-box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); box-shadow: 0px 5px 12px 0px rgba(55, 73, 72, 0.15); }
 	.navbar-nav.navbar-list { float: right; display: inline-block; }
-	.iq-top-navbar .iq-navbar-custom .iq-menu-bt { right: 0; top: 18px; }
+	.iq-top-navbar .iq-navbar-custom .iq-menu-bt { right: 85px; top: 18px; }
 	.animation-card .an-img .bodymovin { margin-bottom: 0; margin-left: 0; width: 100%; }
 	.iq-footer, .iq-footer .col-lg-6.text-right { text-align: center !important; }
 	.iq-booking-index { overflow-x: scroll; }

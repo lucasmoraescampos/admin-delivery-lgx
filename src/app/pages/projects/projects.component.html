@@ -66,7 +66,7 @@
 
                     <div class="col-md-3 mt-1 mb-1">
 
-                        <button type="button" class="btn btn-primary btn-block" (click)="openModal(modal)"><i
+                        <button type="button" class="btn btn-primary btn-block" (click)="create(modal)"><i
                                 class="ri-add-line"></i>New Project</button>
 
                     </div>
@@ -77,7 +77,7 @@
 
             <div class="table-responsive">
 
-                <ng-container *ngIf="!projects_searched">
+                <ng-container *ngIf="!projectsSearched">
 
                     <table id="datatable" class="table table-hover">
 
@@ -89,17 +89,17 @@
 
                                 <th>Customer</th>
 
-                                <th>#Of Drivers</th>
+                                <th>#Drivers</th>
 
-                                <th>#Of Stops</th>
+                                <th>#Stops</th>
 
-                                <th>Total Distance</th>
+                                <th>Distance</th>
 
-                                <th>Total Time</th>
+                                <th>Duration</th>
 
                                 <th>Date</th>
 
-                                <th>Dispatch Status</th>
+                                <th>Status</th>
 
                                 <th></th>
 
@@ -110,21 +110,30 @@
                         <tbody>
 
                             <tr class="text-center animate__animated animate__fadeIn"
-                                *ngFor="let project of projects; let i=index" (click)="openProject(project)">
+                                *ngFor="let project of projects; let i=index" [routerLink]="['/project', project.id]">
 
                                 <td>{{ project.name }}</td>
 
-                                <td>{{ project.customer }}</td>
+                                <td>{{ project?.customer?.name }}</td>
 
                                 <td>{{ project.drivers.length }}</td>
 
-                                <td>{{ stops(project) }}</td>
+                                <td>{{ numberStops(project) }}</td>
 
                                 <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
 
                                 <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
 
-                                <td>{{ project.date.replace(' ', 'T') | date }}</td>
+                                <td>
+
+                                    <span>{{ project.date.replace(' ', 'T') | date }}</span>
+
+                                    <br>
+
+                                    <span>{{ project.date + 'T' + project.start_time | date:'h:mm a' }} ~ {{
+                                        project.date + 'T' + project.end_time | date:'h:mm a' }}</span>
+
+                                </td>
 
                                 <td>
 
@@ -152,7 +161,7 @@
 
                                     </button>
 
-                                    <button class="btn btn-link" (click)="$event.stopPropagation(); openModal(modal, i)">
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); clone(modal, i)">
 
                                         <i class="ri-checkbox-multiple-blank-line"></i>
 
@@ -178,7 +187,7 @@
 
                 </ng-container>
 
-                <ng-container *ngIf="projects_searched">
+                <ng-container *ngIf="projectsSearched">
 
                     <table id="datatable" class="table table-hover">
 
@@ -211,21 +220,31 @@
                         <tbody>
 
                             <tr class="text-center animate__animated animate__fadeIn"
-                                *ngFor="let project of projects_searched; let i=index" (click)="openProject(project)">
+                                *ngFor="let project of projectsSearched; let i=index"
+                                [routerLink]="['/project', project.id]">
 
                                 <td>{{ project.name }}</td>
 
-                                <td>{{ project.customer }}</td>
+                                <td>{{ project?.customer?.name }}</td>
 
                                 <td>{{ project.drivers.length }}</td>
 
-                                <td>{{ stops(project) }}</td>
+                                <td>{{ numberStops(project) }}</td>
 
                                 <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
 
                                 <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
 
-                                <td>{{ project.date.replace(' ', 'T') | date }}</td>
+                                <td>
+
+                                    <span>{{ project.date.replace(' ', 'T') | date }}</span>
+
+                                    <br>
+
+                                    <span>{{ project.date + 'T' + project.start_time | date:'h:mm a' }} ~ {{
+                                        project.date + 'T' + project.end_time | date:'h:mm a' }}</span>
+
+                                </td>
 
                                 <td>
 
@@ -253,17 +272,17 @@
 
                                     </button>
 
-                                    <button class="btn btn-link" (click)="$event.stopPropagation(); openModal(modal, i)">
+                                    <button class="btn btn-link" (click)="$event.stopPropagation(); clone(modal, i)">
 
                                         <i class="ri-checkbox-multiple-blank-line"></i>
 
                                     </button>
 
                                 </td>
-
+                                
                             </tr>
 
-                            <tr class="text-center animate__animated animate__fadeIn" *ngIf="projects?.length == 0">
+                            <tr class="text-center animate__animated animate__fadeIn" *ngIf="projectsSearched?.length == 0">
 
                                 <td colspan="9">
 
@@ -281,11 +300,11 @@
 
             </div>
 
-            <pagination previousText="Prev" [totalItems]="total" [itemsPerPage]="per_page" [maxSize]="5"
-                (pageChanged)="pageChanged($event.page)" *ngIf="!projects_searched"></pagination>
+            <pagination previousText="Prev" [totalItems]="total" [itemsPerPage]="perPage" [maxSize]="5"
+                (pageChanged)="pageChanged($event.page)" *ngIf="!projectsSearched"></pagination>
 
-            <pagination previousText="Prev" [totalItems]="total_searched" [itemsPerPage]="per_page" [maxSize]="5"
-                (pageChanged)="pageSearchedChanged($event.page)" *ngIf="projects_searched"></pagination>
+            <pagination previousText="Prev" [totalItems]="totalSearched" [itemsPerPage]="perPage" [maxSize]="5"
+                (pageChanged)="pageSearchedChanged($event.page)" *ngIf="projectsSearched"></pagination>
 
         </app-iq-card>
 
@@ -293,85 +312,144 @@
 
 </div>
 
-
-
-
-
 <ng-template #modal>
 
     <div class="modal-header">
 
-        <h4 class="modal-title pull-left">
-            <span *ngIf="!cloneTarget && !updateTarget"> Create New Project </span>
-            <span *ngIf="cloneTarget  != null"> Duplicate Project - {{cloneTarget.name}} </span>
-            <span *ngIf="updateTarget != null"> Edit Project - {{updateTarget.name}} </span>
-        </h4>
+        <h4 class="modal-title pull-left" *ngIf="selectedUpdateIndex === undefined && selectedCloneIndex === undefined">
+            Create New
+            Project</h4>
+
+        <h4 class="modal-title pull-left" *ngIf="selectedCloneIndex !== undefined">Duplicate Project</h4>
+
+        <h4 class="modal-title pull-left" *ngIf="selectedUpdateIndex !== undefined">Edit Project</h4>
 
         <button type="button" class="close pull-right" aria-label="Close" (click)="modalDismiss()">
+
             <span aria-hidden="true">&times;</span>
+
         </button>
 
     </div>
 
     <div class="modal-body">
+
         <form [formGroup]="formGroup">
 
-            <div class="form-group row">
+            <div class="row">
 
-                <label for="name" class="col-sm-3 col-form-label">Name</label>
+                <div class="col-md-7">
 
-                <div class="col-sm-9">
-                    <input type="text" class="form-control" id="name" placeholder="Project name" maxlength="100"
-                        formControlName="name">
+                    <div class="form-group row" [hidden]="selectedCloneIndex !== undefined">
+
+                        <label for="name" class="col-sm-4 col-form-label">Team <span>*</span></label>
+        
+                        <div class="col-sm-8">
+        
+                            <select class="form-control" formControlName="team_id">
+        
+                                <option value="" hidden>Select a team</option>
+        
+                                <option *ngFor=" let team of teams " value="{{ team.id }}">{{ team.name }}</option>
+        
+                            </select>
+        
+                        </div>
+        
+                    </div>
+        
+                    <div class="form-group row" [hidden]="selectedCloneIndex !== undefined">
+        
+                        <label for="name" class="col-sm-4 col-form-label">Customer</label>
+        
+                        <div class="col-sm-8">
+        
+                            <select class="form-control" formControlName="customer_id" placeholder="Select a Customer">
+        
+                                <option value="" hidden>Select a customer</option>
+        
+                                <option *ngFor=" let custom of customers " value="{{custom.id}}">{{custom.name}}</option>
+        
+                            </select>
+        
+                        </div>
+        
+                    </div>
+        
+                    <div class="form-group row">
+        
+                        <label for="name" class="col-sm-4 col-form-label">Name <span>*</span></label>
+        
+                        <div class="col-sm-8">
+        
+                            <input type="text" class="form-control" id="name" placeholder="Project name" maxlength="100"
+                                formControlName="name">
+        
+                        </div>
+        
+                    </div>
+
+                    <div class="form-group row">
+        
+                        <label for="name" class="col-sm-4 col-form-label">Time zone <span>*</span></label>
+        
+                        <div class="col-sm-8">
+
+                            <select class="form-control" id="name" formControlName="utc_offset">
+
+                                <option value="" hidden>Select a timezone</option>
+
+                                <option [value]="timezone.offset" *ngFor="let timezone of timezones">{{ timezone.name }} — {{ timezone.id }}</option>
+
+                            </select>
+        
+                        </div>
+        
+                    </div>
+        
+                    <div class="form-group row">
+        
+                        <label class="col-sm-4 col-form-label">Start Time<span>*</span></label>
+        
+                        <div class="col-sm-8">
+        
+                            <timepicker formControlName="start_time" [showSpinners]="false" [mousewheel]="false"></timepicker>
+        
+                        </div>
+        
+                    </div>
+        
+                    <div class="form-group row">
+        
+                        <label class="col-sm-4 col-form-label">End Time<span>*</span></label>
+        
+                        <div class="col-sm-8">
+        
+                            <timepicker formControlName="end_time" [showSpinners]="false" [mousewheel]="false"></timepicker>
+        
+                        </div>
+        
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="col-md-5">
 
-            <div class="form-group row">
+                    <div class="form-group text-right">
+        
+                        <bs-datepicker-inline [bsConfig]="{ showWeekNumbers: false }" [bsValue]="date" useUtc="true"
+                            [minDate]="date" (bsValueChange)="changeDate($event)"></bs-datepicker-inline>
+        
+                    </div>
 
-                <label for="name" class="col-sm-3 col-form-label">Start at</label>
-
-                <div class="col-sm-9">
-                    <input type="time" class="form-control" id="start_time" placeholder="Start at" maxlength="100"
-                        formControlName="start_time">
                 </div>
 
-            </div>
+                <div class="col-md-12 text-right pt-3">
 
-            <div class="form-group row">
+                    <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="save()">Save</button>
 
-                <label for="name" class="col-sm-3 col-form-label">Finish at</label>
-
-                <div class="col-sm-9">
-                    <input type="time" class="form-control" id="end_time" placeholder="Finish at" maxlength="100"
-                        formControlName="end_time">
                 </div>
 
-            </div>
-
-            <div class="form-group row">
-
-                <label for="name" class="col-sm-3 col-form-label">Customer</label>
-
-                <div class="col-sm-9">
-                    <select class="form-control" formControlName="customers_id" placeholder="Select a Customer">
-                        <option *ngFor=" let custom of customers " value="{{custom.id}}">{{custom.name}}</option>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group justify-content-end row">
-                <div class="col-sm-9 pt-2">
-                    <bs-datepicker-inline [bsConfig]="{ showWeekNumbers: false }" [bsValue]="today" useUtc="true"
-                        [minDate]="today" (bsValueChange)="changeDate($event)"></bs-datepicker-inline>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-12 text-right pt-3">
-                    <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="post()">Save</button>
-                </div>
             </div>
 
         </form>

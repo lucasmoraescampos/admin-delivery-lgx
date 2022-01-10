@@ -3,9 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CustomersComponent } from './customers.component';
 import { CustomersRoutingModule } from './customers-routing.module';
 import { SofboxModule } from 'src/app/components/sofbox/sofbox.module';
-import { PopoverModule } from 'ngx-bootstrap/popover';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { FilterModule } from 'src/app/pipes/filter/filter.module';
 
 @NgModule({
   declarations: [CustomersComponent],
@@ -13,9 +12,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     CustomersRoutingModule,
     SofboxModule,
-    PopoverModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FilterModule
   ]
 })
 export class CustomersModule { }

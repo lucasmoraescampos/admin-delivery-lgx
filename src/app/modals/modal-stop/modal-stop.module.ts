@@ -17,8 +17,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     ReactiveFormsModule,
     GoogleAutocompleteModule,
     BrMaskerModule,
-    ModalModule.forRoot(),
-    TooltipModule.forRoot()
+    ModalModule.forRoot()
   ]
 })
 export class ModalStopModule { }

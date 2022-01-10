@@ -4,10 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://api.fariaslgx.com',
-  driverUrl: 'https://driver.fariaslgx.com',
-  // apiUrl: 'http://fariaslgx.test',
-  // driverUrl: 'http://localhost:8100'
+  apiUrl: 'http://api.fariaslgx.localhost',
+  driverUrl: 'https://driver.fariaslgx.com'
 };
 
 /*
