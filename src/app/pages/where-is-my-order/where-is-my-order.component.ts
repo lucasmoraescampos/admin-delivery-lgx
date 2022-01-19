@@ -78,7 +78,7 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
 
               this.stop = res.data;
 
-              this.stop.datetime = formatDate(this.stop.timestamp, 'MMM d, y — h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.stop.timezone_time * -3600));
+              this.stop.datetime = formatDate(this.stop.timestamp, 'MMM d, y — h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.stop.utc_offset));
 
               setTimeout(() => {
 

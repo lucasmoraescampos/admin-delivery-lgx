@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { formatDate } from '@angular/common';
 import { UtilsHelper } from 'src/app/helpers/utils.helper';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 declare const google: any;
 
@@ -39,7 +40,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public colors = ['#0000cd', '#ff0000', '#2e8b57', '#ffa500', '#c71585', '#ff4500', '#808000', '#1e90ff', '#e9967a', '#2f4f4f', '#8b0000', '#191970', '#ff00ff', '#00ff00', '#ba55d3', '#00fa9a', '#f0e68c', '#dda0dd', '#006400', '#ffd700'];
 
-  private timezone: number;
+  private timezones: any[];
 
   private infoWindow = new google.maps.InfoWindow();
 
@@ -52,7 +53,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
     private modalSrv: BsModalService,
     private alertSrv: AlertService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
@@ -73,6 +75,20 @@ export class ProjectComponent implements OnInit, OnDestroy {
   public setProject(project: any) {
 
     this.project = project;
+
+    this.navbarSrv.setTitle(project.name);
+
+    this.navbarSrv.setBreadcrumb([
+      {
+        isActive: false,
+        label: 'Projects',
+        link: '/projects'
+      },
+      {
+        isActive: true,
+        label: project.name
+      }
+    ]);
 
     this.loadMapComponents();
 
@@ -116,7 +132,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
       if (pivot.routes[0]?.started_at) {
 
-        return formatDate(pivot.routes[0].started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.timezone_time * -3600));
+        return formatDate(pivot.routes[0].started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.utc_offset));
   
       }
   
@@ -161,7 +177,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         const end_time = last.arrived_at ?? last.skipped_at;
 
-        return formatDate(end_time, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.timezone_time * -3600));
+        return formatDate(end_time, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.utc_offset));
   
       }
   
@@ -214,7 +230,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
           start_lat:      this.driverStartLat(driver),
           start_lng:      this.driverStartLng(driver),
           start_time:     this.driverStartTime(driver),
-          end_time:       this.driverEndTime(driver)
+          end_time:       this.driverEndTime(driver),
+          utc_offset:     this.project.utc_offset,
+          timezones:      this.timezones
         }
       });
 
@@ -222,8 +240,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
         .subscribe((data: any) => {
 
           if (data) {
-
-            data.timezone_time = new Date().getTimezoneOffset() / 60;
 
             this.apiSrv.addProjectDriver(this.project.id, driver.id, data)
               .pipe(takeUntil(this.unsubscribe))
@@ -501,7 +517,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     else if (stop.status == 1) {
 
-      const started_at = formatDate(route.started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.timezone * -3600));
+      const started_at = formatDate(route.started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.project.utc_offset));
 
       content.innerHTML = `
         <div class="d-flex mt-1">
@@ -526,7 +542,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     else if (stop.status == 2) {
 
-      const arrived_at = formatDate(route.arrived_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.timezone * -3600));
+      const arrived_at = formatDate(route.arrived_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.project.utc_offset));
 
       content.innerHTML = `
         <div class="d-flex mt-1">
@@ -551,7 +567,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
     else if (stop.status == 3) {
 
-      const skipped_at = formatDate(route.skipped_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.timezone * -3600));
+      const skipped_at = formatDate(route.skipped_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.project.utc_offset));
 
       content.innerHTML = `
         <div class="d-flex mt-1">
@@ -844,8 +860,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     this.project.drivers.forEach((driver: any, driver_index: number) => {
 
-      this.timezone = driver.pivot.timezone_time;
-
       const marker = new google.maps.Marker({
         map: this.map,
         position: new google.maps.LatLng(driver.pivot.start_lat, driver.pivot.start_lng),
@@ -1034,9 +1048,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
 
-        this.mapFullscreen = res.data.status == 2 ? true : false;
+        this.mapFullscreen = res.data.status >= 2 ? true : false;
 
         this.setProject(res.data);
+
+        this.initTimezones(res.data.date);
 
       }, err => {
 
@@ -1055,6 +1071,16 @@ export class ProjectComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.drivers = res.data;
+      });
+  }
+
+  private initTimezones(date: any) {
+    this.apiSrv.getTimezones({ date: formatDate(date, 'yyyy-MM-dd', 'en-US') })
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+        if (res.success) {
+          this.timezones = res.data;
+        }
       });
   }
 

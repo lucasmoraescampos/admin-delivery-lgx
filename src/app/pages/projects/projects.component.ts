@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 @Component({
   selector: 'app-projects',
@@ -59,10 +60,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private apiSrv: ApiService,
     private modalSrv: BsModalService,
     private formBuilder: FormBuilder,
-    private alertSrv: AlertService
+    private alertSrv: AlertService,
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
+
+    this.navbarSrv.setTitle('Projects');
+
+    this.navbarSrv.setBreadcrumb([]);
 
     this.initProjects();
 

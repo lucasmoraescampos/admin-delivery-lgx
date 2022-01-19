@@ -8,17 +8,24 @@
     input {
         height: 35px;
         border-radius: 0.25rem !important;
+
+        &:read-only {
+            background: #e9edf4 !important;
+            border: 0px solid #d7dbda !important;
+        }
     }
 }
 
-.modal-header {
-    border-bottom: 0;
+td img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
 }
 
 @media (min-width: 768px) {
     .filters {
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
 
         div {
             &:not(:last-child) {

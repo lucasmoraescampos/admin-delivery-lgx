@@ -1,11 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as $ from 'jquery';
 import { BsDropdownConfig } from "ngx-bootstrap/dropdown";
-import { LoadingService } from 'src/app/services/loading.service';
-import { AlertService } from 'src/app/services/alert.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 @Component({
   selector: 'app-nav-bar1',
@@ -27,13 +25,21 @@ export class NavBar1Component implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private router: Router,
-    private loadingSrv: LoadingService,
-    private alertSrv: AlertService
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
-    this.setTitle();
+    
+    this.navbarSrv.title.pipe(takeUntil(this.unsubscribe))
+      .subscribe(title => {
+        this.title = title;
+      });
+
+    this.navbarSrv.breadcrumb.pipe(takeUntil(this.unsubscribe))
+      .subscribe(breadCrumbItems => {
+        this.breadCrumbItems = breadCrumbItems;
+      });
+      
   }
 
   ngOnDestroy() {
@@ -45,62 +51,6 @@ export class NavBar1Component implements OnInit, OnDestroy {
     if (countTicketBooking > 0) {
       $('.iq-sidebar-right-menu').addClass('film-side');
     }
-  }
-
-  private setTitle() {
-    this.router.events.pipe(takeUntil(this.unsubscribe))
-      .subscribe(() => {
-
-        this.breadCrumbItems = [];
-
-        if (location.pathname == '/projects') {
-          this.title = 'All Projects';
-        }
-        else if (location.pathname == '/drivers') {
-          this.title = 'All Drivers';
-        }
-        else if (location.pathname == '/customers') {
-          this.title = 'Customer';
-        }
-        else if (location.pathname == '/notifications') {
-          this.title = 'Customer Notifications';
-        }
-        else if (location.pathname == '/account') {
-          this.title = 'My account';
-        }
-        else if (location.pathname == '/reports') {
-          this.title = 'Reports - On Time';
-        }
-        else if (location.pathname == '/reports/bags') {
-          this.title = 'Reports - Bags';
-        }
-        else if (location.pathname == '/reports/drivers') {
-          this.title = 'Reports - Drivers';
-        }
-        else if (location.pathname == '/project') {
-
-          // const project = this.projectSrv.getCurrentProject();
-
-          // this.title = project.name;
-
-          this.breadCrumbItems = [
-            {
-              isActive: false,
-              label: 'All Projects',
-              link: '/projects'
-            },
-            {
-              isActive: true,
-              // label: project.name,
-              link: '/project'
-            }
-          ];
-
-        }
-        else {
-          this.title = '';
-        }
-      });
   }
 
 }

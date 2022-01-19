@@ -149,7 +149,7 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
     if (pivot.routes[0]?.started_at) {
 
-      return formatDate(pivot.routes[0].started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.timezone_time * -3600));
+      return formatDate(pivot.routes[0].started_at, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(pivot.utc_offset));
 
     }
 
@@ -163,11 +163,11 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
   }
 
-  public stopTime(route: any, timezone: number) {
+  public stopTime(route: any, UTCOffset: number) {
 
     const value = route.arrived_at ?? route.skipped_at ?? route.forecast;
 
-    return formatDate(value, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(timezone * -3600));
+    return formatDate(value, 'h:mm a', 'en-US', UtilsHelper.utcOffsetString(UTCOffset));
 
   }
 

@@ -20,6 +20,10 @@ export class ModalDriverTimeComponent implements OnInit, OnDestroy {
   
   @Input() end_time: string;
 
+  @Input() utc_offset: number;
+
+  @Input() timezones: any[];
+
   public formGroup: FormGroup;
 
   public onClose = new Subject();
@@ -39,6 +43,7 @@ export class ModalDriverTimeComponent implements OnInit, OnDestroy {
 
     this.formGroup = this.formBuilder.group({
       start_address:  [this.start_address, Validators.required],
+      utc_offset:     [this.utc_offset, Validators.required],
       start_lat:      [this.start_lat, Validators.required],
       start_lng:      [this.start_lng, Validators.required],
       start_time:     [this.start_time, Validators.required],

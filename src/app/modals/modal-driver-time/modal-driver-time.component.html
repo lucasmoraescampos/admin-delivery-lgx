@@ -31,6 +31,24 @@
         </div>
 
         <div class="form-group row">
+        
+            <label for="name" class="col-sm-4 col-form-label">Time zone<span>*</span></label>
+
+            <div class="col-sm-8">
+
+                <select class="form-control" id="name" formControlName="utc_offset">
+
+                    <option value="" hidden>Select a timezone</option>
+
+                    <option [value]="timezone.offset" *ngFor="let timezone of timezones">{{ timezone.name }} — {{ timezone.id }}</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="form-group row">
 
             <label class="col-sm-4 col-form-label" for="start_time">Start Time<span>*</span></label>
 

@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 @Component({
   selector: 'app-drivers',
@@ -21,10 +22,24 @@ export class DriversComponent implements OnInit, OnDestroy {
   constructor(
     private apiSrv: ApiService,
     private formBuilder: FormBuilder,
-    private alertSrv: AlertService
+    private alertSrv: AlertService,
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
+
+    this.navbarSrv.setTitle('Drivers Report');
+
+    this.navbarSrv.setBreadcrumb([
+      {
+        isActive: true,
+        label: 'Reports'
+      },
+      {
+        isActive: true,
+        label: 'Drivers'
+      }
+    ]);
 
     this.formGroup = this.formBuilder.group({
       from: ['', Validators.required],

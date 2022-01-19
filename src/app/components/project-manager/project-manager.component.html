@@ -134,19 +134,19 @@
 
                                         <ng-container *ngFor="let route of driver.pivot.routes; let i=index;">
 
-                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 1">
+                                            <li [tooltip]="stopTime(route, driver.pivot.utc_offset)" [adaptivePosition]="false" *ngIf="route.status == 1">
 
                                                 <button class="card dispatched" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
 
                                             </li>
 
-                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 2">
+                                            <li [tooltip]="stopTime(route, driver.pivot.utc_offset)" [adaptivePosition]="false" *ngIf="route.status == 2">
 
                                                 <button class="completed card" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
 
                                             </li>
 
-                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [adaptivePosition]="false" *ngIf="route.status == 3">
+                                            <li [tooltip]="stopTime(route, driver.pivot.utc_offset)" [adaptivePosition]="false" *ngIf="route.status == 3">
 
                                                 <button class="card skipped" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
 
@@ -160,7 +160,7 @@
 
                                         <ng-container *ngFor="let route of driver.pivot.routes; let i=index;">
 
-                                            <li [tooltip]="stopTime(route, driver.pivot.timezone_time)" [isDisabled]="!tooltip" [adaptivePosition]="false" *ngIf="route.status == 0">
+                                            <li [tooltip]="stopTime(route, driver.pivot.utc_offset)" [isDisabled]="!tooltip" [adaptivePosition]="false" *ngIf="route.status == 0">
 
                                                 <button class="card" (click)="stopInfoById(route.end_id)">{{ i+1 }}</button>
 

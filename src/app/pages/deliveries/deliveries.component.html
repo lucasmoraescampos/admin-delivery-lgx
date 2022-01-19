@@ -1,0 +1,159 @@
+<div class="row animate__animated animate__fadeIn" *ngIf="deliveries">
+
+    <div class="col-md-12">
+
+        <app-iq-card>
+
+            <div card-header class="iq-header-title">
+
+                <div class="filters row">
+
+                    <div class="col-md-2 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" placeholder="Date" class="form-control" bsDatepicker
+                                [bsConfig]="{ showWeekNumbers: false }" (bsValueChange)="changeDateFilter($event)"
+                                readonly #date>
+
+                            <div class="input-group-append">
+
+                                <button class="btn-group-clear" (click)="date.value = ''; clearDateSearch()"
+                                    *ngIf="dateSearch?.length > 0">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3 mt-1 mb-1">
+
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" placeholder="Search Order ID" [(ngModel)]="orderIdSearch"
+                                (ngModelChange)="searchChanged()">
+
+                            <div class="input-group-append">
+
+                                <button class="btn-group-clear" (click)="clearSearch()" *ngIf="orderIdSearch?.length > 0">clear</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead class="thead-primary">
+
+                        <tr class="text-center">
+
+                            <th>Order</th>
+
+                            <th>Stop</th>
+
+                            <th>Project</th>
+
+                            <th>Driver</th>
+
+                            <th>Bags</th>
+
+                            <th>Status</th>
+
+                            <th>Note</th>
+
+                            <th>Finished at</th>
+
+                            <th>Image</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr class="text-center animate__animated animate__fadeIn"
+                            *ngFor="let delivery of deliveries; let i=index">
+
+                            <td>{{ delivery.order_id }}</td>
+
+                            <td>
+
+                                <h6><i class="ri-user-line mr-1"></i> {{ delivery.name }}</h6>
+
+                                <span class="d-block"><i class="ri-phone-line mr-1"></i> {{ delivery.phone }}</span>
+
+                                <span class="d-block"><i class="ri-map-pin-line mr-1"></i> {{ delivery.address }}</span>
+
+                            </td>
+
+                            <td>{{ delivery.project.name }}</td>
+
+                            <td>{{ delivery.driver.name }}</td>
+
+                            <td>
+
+                                <span *ngIf="delivery.route.bags">{{ delivery.route.bags }}</span>
+
+                                <span *ngIf="!delivery.route.bags">0</span>
+
+                            </td>
+
+                            <td>
+
+                                <span class="badge badge-success" *ngIf="delivery.status == 2">Arrived</span>
+
+                                <span class="badge badge-danger" *ngIf="delivery.status == 3">Skipped</span>
+
+                            </td>
+
+                            <td>{{ delivery.route.note }}</td>
+
+                            <td>{{ finishedAt(delivery) }}</td>
+
+                            <td>
+
+                                <a href="javascript:void(0);">
+
+                                    <img class="img-thumbnail" [src]="delivery.route.image" alt="Delivery Image"
+                                        [viewerOptions]="{ navbar: false, toolbar: false }" ngxViewer
+                                        *ngIf="delivery.route.image">
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        <tr class="text-center animate__animated animate__fadeIn" *ngIf="deliveries?.length == 0">
+
+                            <td colspan="9">
+
+                                <i class="ri-search-line"></i> No deliveries found
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <pagination previousText="Prev" [totalItems]="total" [itemsPerPage]="perPage" [maxSize]="5"
+                (pageChanged)="loadDeliveries($event.page)"></pagination>
+
+        </app-iq-card>
+
+    </div>
+
+</div>

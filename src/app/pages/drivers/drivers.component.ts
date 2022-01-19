@@ -6,6 +6,7 @@ import { ArrayHelper } from 'src/app/helpers/array.helper';
 import { ModalDriverComponent } from 'src/app/modals/modal-driver/modal-driver.component';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 @Component({
   selector: 'app-drivers',
@@ -23,11 +24,18 @@ export class DriversComponent implements OnInit, OnDestroy {
   constructor(
     private apiSrv: ApiService,
     private modalSrv: BsModalService,
-    private alertSrv: AlertService
+    private alertSrv: AlertService,
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
+
+    this.navbarSrv.setTitle('Drivers');
+
+    this.navbarSrv.setBreadcrumb([]);
+
     this.initDrivers();
+
   }
 
   ngOnDestroy() {

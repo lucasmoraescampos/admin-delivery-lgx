@@ -6,6 +6,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
 import { ArrayHelper } from 'src/app/helpers/array.helper';
+import { NavbarService } from 'src/app/services/navbar.service';
 
 @Component({
   selector: 'app-customers',
@@ -32,11 +33,18 @@ export class CustomersComponent implements OnInit, OnDestroy {
     private apiSrv: ApiService,
     private formBuilder: FormBuilder,
     private modalSrv: BsModalService,
-    private alertSrv: AlertService
+    private alertSrv: AlertService,
+    private navbarSrv: NavbarService
   ) { }
 
   ngOnInit() {
+
+    this.navbarSrv.setTitle('Customers');
+
+    this.navbarSrv.setBreadcrumb([]);
+
     this.initCustomers();
+
   }
 
   ngOnDestroy() {

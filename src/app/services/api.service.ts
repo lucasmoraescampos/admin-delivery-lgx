@@ -38,6 +38,10 @@ export class ApiService {
     return this.http.post<HttpResult>(`${this.apiUrl}/user/logout`, { token });
   }
 
+  public resume() {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/resume`);
+  }
+
   /*
    * Team Requests
    */
@@ -198,6 +202,35 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/user/project/${id}/download/route`, { responseType: 'blob' });
   }
 
+  public report(params: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report`, { params: params });
+  }
+
+  public reportDownload(params: any) {
+    return this.http.get(`${this.apiUrl}/user/projects/report/download`, { params: params, responseType: 'blob' });
+  }
+
+  public reportDrivers(params: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report/drivers`, { params: params });
+  }
+
+  public reportDriversDownload(params: any) {
+    return this.http.get(`${this.apiUrl}/user/projects/report/drivers/download`, { params: params, responseType: 'blob' });
+  }
+
+  public reportBags(params: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report/bags`, { params: params });
+  }
+
+  public reportBagsDownload(params: any) {
+    return this.http.get(`${this.apiUrl}/user/projects/report/bags/download`, { params: params, responseType: 'blob' });
+  }
+
+  public deliveries(params?: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/deliveries`, { params: params });
+  }
+
+
   /*
    * Stop Requests
    */
@@ -234,33 +267,6 @@ export class ApiService {
 
   public deleteDriver(id: number) {
     return this.http.delete<HttpResult>(`${this.apiUrl}/user/driver/${id}`);
-  }
-
-  /*
-   * Report Requests
-   */
-  public report(params: any) {
-    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report`, { params: params });
-  }
-
-  public reportDownload(params: any) {
-    return this.http.get(`${this.apiUrl}/user/projects/report/download`, { params: params, responseType: 'blob' });
-  }
-
-  public reportDrivers(params: any) {
-    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report/drivers`, { params: params });
-  }
-
-  public reportDriversDownload(params: any) {
-    return this.http.get(`${this.apiUrl}/user/projects/report/drivers/download`, { params: params, responseType: 'blob' });
-  }
-
-  public reportBags(params: any) {
-    return this.http.get<HttpResult>(`${this.apiUrl}/user/projects/report/bags`, { params: params });
-  }
-
-  public reportBagsDownload(params: any) {
-    return this.http.get(`${this.apiUrl}/user/projects/report/bags/download`, { params: params, responseType: 'blob' });
-  }
+  }  
   
 }

@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://api.fariaslgx.localhost',
-  driverUrl: 'https://driver.fariaslgx.com'
+  driverUrl: 'http://localhost:8100'
 };
 
 /*
