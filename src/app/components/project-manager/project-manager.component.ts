@@ -179,8 +179,6 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
 
     this.stopInfo.emit(stop);
 
-    this.collapse = true;
-
   }
 
   public driverInfoById(id: number) {
@@ -192,8 +190,6 @@ export class ProjectManagerComponent implements OnInit, OnDestroy {
     const driver = this.project.drivers[index];
 
     this.driverInfo.emit(driver);
-
-    this.collapse = true;
 
   }
 

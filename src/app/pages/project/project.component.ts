@@ -805,7 +805,9 @@ export class ProjectComponent implements OnInit, OnDestroy {
         start_lat:      this.driverStartLat(driver),
         start_lng:      this.driverStartLng(driver),
         start_time:     this.driverStartTime(driver),
-        end_time:       this.driverEndTime(driver)
+        end_time:       this.driverEndTime(driver),
+        utc_offset:     this.project.utc_offset,
+        timezones:      this.timezones
       }
     });
 
