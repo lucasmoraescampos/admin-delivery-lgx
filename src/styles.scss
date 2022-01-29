@@ -1,7 +1,7 @@
 /* Importing Bootstrap SCSS file. */
 @import "~bootstrap/scss/bootstrap";
 @import "assets/scss/alert";
-@import '~viewerjs/dist/viewer.css';
+@import "~viewerjs/dist/viewer.css";
 
 /* You can add global styles to this file, and also import other style files */
 .owl-carousel .owl-dot {
@@ -111,4 +111,26 @@ table tr td {
 
 .no-link {
   text-decoration: none !important;
+}
+
+.filters {
+  padding: 5px 0;
+
+  input {
+    height: 35px;
+    border-radius: 0.25rem !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .filters {
+    display: flex;
+    justify-content: flex-end;
+
+    div {
+      &:not(:last-child) {
+        padding-right: 0 !important;
+      }
+    }
+  }
 }

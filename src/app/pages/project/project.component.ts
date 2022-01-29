@@ -26,6 +26,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public mapFullscreen: boolean;
 
+  public driverFilter: string;
+
   public project: any;
 
   private map: any;
