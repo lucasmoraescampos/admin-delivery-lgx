@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { UtilsHelper } from 'src/app/helpers/utils.helper';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-where-is-my-order',
@@ -17,34 +18,56 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
 
   public formGroup: FormGroup;
 
+  public id    : any;
+  public phone : any;
+
   private unsubscribe = new Subject();
 
   public stop: any;
 
+
   constructor(
+    private _route : ActivatedRoute,
     private apiSrv: ApiService,
     private formBuilder: FormBuilder,
     private alertSrv: AlertService,
     public router: Router
-  ) { }
+  )
+  {
+  }
 
-  ngOnInit() {
 
+
+  ngOnInit()
+  {
     this.formGroup = this.formBuilder.group({
       order: ['', Validators.required],
       phone: ['', Validators.required]
     });
 
+    this.id    = this._route.snapshot.params.id
+    this.phone = this._route.snapshot.params.phone
+
+    if( this.id && this.phone )
+    {
+      this.call( this.phone, this.id )
+    }
   }
+
+
 
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
   }
 
+
+
   public get formControl() {
     return this.formGroup.controls;
   }
+
+
 
   public send() {
 
@@ -70,33 +93,48 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
       
       else {
 
-        this.apiSrv.findMyOrder(this.formControl.phone.value, this.formControl.order.value)
-          .pipe(takeUntil(this.unsubscribe))
-          .subscribe(res => {
-
-            if (!res.message) {
-
-              this.stop = res.data;
-
-              this.stop.datetime = formatDate(this.stop.timestamp, 'MMM d, y — h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.stop.utc_offset));
-
-              setTimeout(() => {
-
-                window.scrollTo({
-                  top: document.getElementById('info-content').offsetTop,
-                  behavior: 'smooth'
-                });
-
-              }, 100);
-
-            }
-
-          });
+        this.call( this.formControl.phone.value, this.formControl.order.value )
 
       }
 
     }
 
   }
+
+
+  private call( phone, order )
+  {
+    this.apiSrv.findMyOrder( phone, order )
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
+
+        if (!res.message) {
+
+          this.stop = res.data;
+
+          this.stop.datetime = formatDate(this.stop.timestamp, 'MMM d, y — h:mm a', 'en-US', UtilsHelper.utcOffsetString(this.stop.utc_offset));
+
+          setTimeout(() => {
+
+            window.scrollTo({
+              top: document.getElementById('info-content').offsetTop,
+              behavior: 'smooth'
+            });
+
+          }, 100);
+
+        }
+
+      }, err => {
+
+        this.alertSrv.toast({
+          icon: 'error',
+          message: err.statusText
+        });
+
+      });
+
+  } // private call( phone, order )
+
 
 }

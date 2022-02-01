@@ -6,6 +6,10 @@ const routes: Routes = [
   {
     path: '',
     component: WhereIsMyOrderComponent
+  },
+  {
+    path: ':id/:phone',
+    component: WhereIsMyOrderComponent
   }
 ];
 
