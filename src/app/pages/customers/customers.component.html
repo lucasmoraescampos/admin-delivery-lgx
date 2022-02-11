@@ -4,27 +4,31 @@
 
         <app-iq-card>
 
-            <div card-header class="iq-header-title">
+            <div card-header class="iq-header-title w-100">
 
-                <div class="filters row">
+                <div class="d-sm-flex justify-content-end align-items-center my-3">
 
-                    <div class="col-md-3 mt-1 mb-1">
+                    <div class="mr-auto pb-3 pb-sm-0 text-dark text-capitalize">
+                        
+                        <span *ngIf="customers?.length <= 1"><b>{{ customers?.length }}</b> customer found</span>
+                        
+                        <span *ngIf="customers?.length > 1"><b>{{ customers?.length }}</b> customers found</span>
+                    
+                    </div>
 
-                        <div class="input-group">
+                    <div class="input-group col-sm-4 col-md-3 p-0 pb-3 pl-sm-3 pb-sm-0">
 
-                            <input type="text" class="form-control" placeholder="Search Customer Name" [(ngModel)]="search">
+                        <input type="text" class="form-control form-control-sm" placeholder="Search Customer Name" [(ngModel)]="search">
 
-                            <div class="input-group-append" *ngIf="search">
+                        <div class="input-group-append" *ngIf="search">
 
-                                <button class="btn-group-clear" (click)="search = ''">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="search = ''">clear</button>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-3 mt-1 mb-1">
+                    <div class="p-0 pl-sm-3">
 
                         <button type="button" class="btn btn-primary btn-block" (click)="create(modal)">
 
@@ -121,7 +125,7 @@
 
 <ng-template #modal>
 
-    <div class="modal-header">
+    <div class="modal-header border-0">
 
         <h4 class="modal-title pull-left" *ngIf="customerIndex === undefined">Create New Customer</h4>
 

@@ -4,41 +4,42 @@
 
         <app-iq-card>
 
-            <div card-header class="iq-header-title">
+            <div card-header class="iq-header-title w-100">
 
-                <div class="filters row">
+                <div class="d-sm-flex justify-content-end align-items-center my-3">
 
-                    <div class="col-md-2 mt-1 mb-1">
+                    <div class="mr-auto pb-3 pb-sm-0 text-dark text-capitalize">
+                        
+                        <span *ngIf="total <= 1"><b>{{ total }}</b> delivery found</span>
+                        
+                        <span *ngIf="total > 1"><b>{{ total }}</b> deliveries found</span>
+                    
+                    </div>
 
-                        <div class="input-group">
+                    <div class="input-group col-sm-3 p-0 pb-3 pl-sm-3 pb-sm-0">
 
-                            <input type="text" placeholder="Date" class="form-control" bsDatepicker
-                                [bsConfig]="{ showWeekNumbers: false }" (bsValueChange)="changeDateFilter($event)"
-                                readonly #date>
+                        <input type="text" placeholder="Date" class="form-control form-control-sm" bsDatepicker
+                            [bsConfig]="{ showWeekNumbers: false }" (bsValueChange)="changeDateFilter($event)"
+                            readonly #date>
 
-                            <div class="input-group-append">
+                        <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="date.value = ''; clearDateSearch()"
-                                    *ngIf="dateSearch?.length > 0">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="date.value = ''; clearDateSearch()"
+                                *ngIf="dateSearch?.length > 0">clear</button>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-3 mt-1 mb-1">
+                    <div class="input-group col-sm-4 p-0 pl-sm-3 pb-sm-0">
 
-                        <div class="input-group">
+                        <input type="text" class="form-control form-control-sm" placeholder="Search Order ID"
+                            [(ngModel)]="orderIdSearch" (ngModelChange)="searchChanged()">
 
-                            <input type="text" class="form-control" placeholder="Search Order ID" [(ngModel)]="orderIdSearch"
-                                (ngModelChange)="searchChanged()">
+                        <div class="input-group-append">
 
-                            <div class="input-group-append">
-
-                                <button class="btn-group-clear" (click)="clearSearch()" *ngIf="orderIdSearch?.length > 0">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="clearSearch()"
+                                *ngIf="orderIdSearch?.length > 0">clear</button>
 
                         </div>
 

@@ -4,70 +4,66 @@
 
         <app-iq-card>
 
-            <div card-header class="iq-header-title">
+            <div card-header class="iq-header-title w-100">
 
-                <div class="filters row">
+                <div class="d-sm-flex flex-wrap justify-content-end align-items-center my-3">
 
-                    <div class="col-md-2 mt-1 mb-1">
+                    <div class="mr-auto pb-3 pb-md-0 text-dark text-capitalize">
+                        
+                        <span *ngIf="total <= 1"><b>{{ total }}</b> project found</span>
+                        
+                        <span *ngIf="total > 1"><b>{{ total }}</b> projects found</span>
+                    
+                    </div>
 
-                        <div class="input-group">
+                    <div class="input-group col-sm-12 col-md-2 p-0 pb-3 pl-md-3 pb-md-0">
 
-                            <input type="text" placeholder="From" class="form-control" bsDatepicker
+                        <input type="text" placeholder="From" class="form-control form-control-sm" bsDatepicker
                                 [bsConfig]="{ showWeekNumbers: false }"
                                 (bsValueChange)="changeDateFilter($event, 'from')" #datefrom>
 
-                            <div class="input-group-append">
+                        <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="datefrom.value = from = ''; toggleSearch()"
-                                    *ngIf="from?.length > 0">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="datefrom.value = from = ''; toggleSearch()"
+                                *ngIf="from?.length > 0">clear</button>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-2 mt-1 mb-1">
+                    <div class="input-group col-sm-12 col-md-2 p-0 pb-3 pl-md-3 pb-md-0">
 
-                        <div class="input-group">
-
-                            <input type="text" placeholder="To" class="form-control" bsDatepicker
+                        <input type="text" placeholder="To" class="form-control form-control-sm" bsDatepicker
                                 [bsConfig]="{ showWeekNumbers: false }" (bsValueChange)="changeDateFilter($event, 'to')"
                                 #dateto>
 
-                            <div class="input-group-append">
+                        <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="dateto.value = to = ''; toggleSearch()"
-                                    *ngIf="to?.length > 0">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="dateto.value = to = ''; toggleSearch()"
+                                *ngIf="to?.length > 0">clear</button>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-3 mt-1 mb-1">
+                    <div class="input-group col-sm-12 col-md-3 p-0 pb-3 pl-md-3 pb-md-0">
 
-                        <div class="input-group">
-
-                            <input type="text" class="form-control" placeholder="Search Project Name Here"
+                        <input type="text" class="form-control form-control-sm" placeholder="Search Project Name"
                                 [(ngModel)]="name" (ngModelChange)="searchChanged()" #searchname>
 
-                            <div class="input-group-append">
+                        <div class="input-group-append">
 
-                                <button class="btn-group-clear" (click)="searchname.value = name = ''; toggleSearch()"
-                                    *ngIf="name?.length > 0">clear</button>
-
-                            </div>
+                            <button class="btn-group-clear" (click)="searchname.value = name = ''; toggleSearch()"
+                                *ngIf="name?.length > 0">clear</button>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-3 mt-1 mb-1">
+                    <div class="p-0 pl-md-3">
 
                         <button type="button" class="btn btn-primary btn-block" (click)="create(modal)"><i
-                                class="ri-add-line"></i>New Project</button>
+                            class="ri-add-line"></i>New Project</button>
 
                     </div>
 
@@ -314,7 +310,7 @@
 
 <ng-template #modal>
 
-    <div class="modal-header">
+    <div class="modal-header border-0">
 
         <h4 class="modal-title pull-left" *ngIf="selectedUpdateIndex === undefined && selectedCloneIndex === undefined">
             Create New

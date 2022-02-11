@@ -1,24 +1,4 @@
-.iq-header-title {
-    flex: auto;
-}
-
-.filters {
-    padding: 5px 0;
-
-    input {
-        height: 35px;
-        border-radius: 0.25rem !important;
-    }
-}
-
 table tr th {
     font-size: 12px;
     font-weight: 500;
-}
-
-@media (min-width: 768px) {
-    .filters {
-        display: flex;
-        justify-content: flex-end;
-    }
 }

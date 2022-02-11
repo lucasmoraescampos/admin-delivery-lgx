@@ -12,11 +12,11 @@
 
             <div class="col-md-12 mt-3">
 
-              <div class="input-group filters">
+              <div class="d-sm-flex justify-content-end">
 
-                <input type="text" class="form-control col-12 col-sm-5" placeholder="Search Driver Name Here" [(ngModel)]="driverFilter">
+                <input type="text" class="form-control form-control-sm col-sm-5" placeholder="Search Name" [(ngModel)]="driverFilter">
 
-              </div>
+              </div>  
 
             </div>
 
@@ -77,7 +77,7 @@
 
                     </tr>
 
-                    <tr class="text-center" *ngIf="drivers.length == 0">
+                    <tr class="text-center" *ngIf="drivers.length == 0 || (drivers | filter:'name':driverFilter).length == 0">
 
                       <td colspan="4">
 
@@ -103,23 +103,29 @@
 
           <div class="row">
 
-            <div class="col-md-12 mt-3 text-right">
+            <div class="col-md-12">
 
-              <button type="button" class="btn btn-primary btn-sm mr-1" (click)="modalStop()">
+              <div class="d-sm-flex justify-content-end">
 
-                <i class="ri-add-line"></i>
+                <input type="text" class="form-control form-control-sm col-sm-5 mt-3 mr-sm-2" placeholder="Search Name" [(ngModel)]="stopFilter">
 
-                Add Stops
+                <button type="button" class="btn btn-primary btn-sm col-sm-3 mt-3 mr-sm-2" (click)="modalStop()">
 
-              </button>
+                  <i class="ri-add-line"></i>
+  
+                  Add Stops
+  
+                </button>
+  
+                <button type="button" class="btn btn-primary btn-sm col-sm-3 mt-3" (click)="modalUploadStops()">
+  
+                  <i class="ri-upload-line"></i>
+  
+                  Upload Stops
+  
+                </button>
 
-              <button type="button" class="btn btn-primary btn-sm" (click)="modalUploadStops()">
-
-                <i class="ri-upload-line"></i>
-
-                Upload Stops
-
-              </button>
+              </div>              
 
             </div>
 
@@ -149,7 +155,7 @@
 
                   <tbody>
 
-                    <tr class="text-center" *ngFor="let stop of project?.stops" (click)="stopInfo(stop)">
+                    <tr class="text-center" *ngFor="let stop of project?.stops | filter:'name':stopFilter" (click)="stopInfo(stop)">
 
                       <td width="30%">
 
@@ -177,7 +183,7 @@
 
                     </tr>
 
-                    <tr class="text-center" *ngIf="project?.stops.length == 0">
+                    <tr class="text-center" *ngIf="project?.stops.length == 0 || (project?.stops | filter:'name':stopFilter).length == 0">
 
                       <td colspan="3">
 

@@ -257,6 +257,10 @@ export class ApiService {
     return this.http.get<HttpResult>(`${this.apiUrl}/user/driver`);
   }
 
+  public getDriversByTeam(team_id: number) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/driver/team/${team_id}`);
+  }
+
   public createDriver(data: any) {
     return this.http.post<HttpResult>(`${this.apiUrl}/user/driver`, data);
   }

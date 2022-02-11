@@ -113,24 +113,12 @@ table tr td {
   text-decoration: none !important;
 }
 
-.filters {
-  padding: 5px 0;
-
-  input {
-    height: 35px;
-    border-radius: 0.25rem !important;
-  }
+.form-control-sm {
+  height: 35px !important;
+  border-radius: 0.25rem !important;
 }
 
-@media (min-width: 768px) {
-  .filters {
-    display: flex;
-    justify-content: flex-end;
-
-    div {
-      &:not(:last-child) {
-        padding-right: 0 !important;
-      }
-    }
-  }
+input:read-only {
+  background: #e9edf4 !important;
+  border: 0 solid #d7dbda !important;
 }

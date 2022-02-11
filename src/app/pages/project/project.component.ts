@@ -28,6 +28,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public driverFilter: string;
 
+  public stopFilter: string;
+
   public project: any;
 
   private map: any;
@@ -64,8 +66,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
     this.initMap();
 
     this.initProject();
-
-    this.initDrivers();
 
   }
 
@@ -1056,7 +1056,19 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
         this.setProject(res.data);
 
-        this.initTimezones(res.data.date);
+        this.apiSrv.getDriversByTeam(res.data.team_id)
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(res => {
+            this.drivers = res.data;
+          });
+
+        this.apiSrv.getTimezones({ date: formatDate(res.data.date, 'yyyy-MM-dd', 'en-US') })
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(res => {
+            if (res.success) {
+              this.timezones = res.data;
+            }
+          });
 
       }, err => {
 
@@ -1068,24 +1080,6 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
       });
 
-  }
-
-  private initDrivers() {
-    this.apiSrv.getAllDrivers()
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
-        this.drivers = res.data;
-      });
-  }
-
-  private initTimezones(date: any) {
-    this.apiSrv.getTimezones({ date: formatDate(date, 'yyyy-MM-dd', 'en-US') })
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(res => {
-        if (res.success) {
-          this.timezones = res.data;
-        }
-      });
   }
 
 }
