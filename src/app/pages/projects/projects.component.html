@@ -112,13 +112,13 @@
 
                                 <td>{{ project?.customer?.name }}</td>
 
-                                <td>{{ project.drivers.length }}</td>
+                                <td>{{ project.number_of_drivers }}</td>
 
-                                <td>{{ numberStops(project) }}</td>
+                                <td>{{ project.number_of_stops }}</td>
 
-                                <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
+                                <td>{{ (project.distance / 1000) | number:'1.1-1' }} km</td>
 
-                                <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
+                                <td>{{ (project.duration / 60) | number:'1.0-1' }} min</td>
 
                                 <td>
 
@@ -223,13 +223,13 @@
 
                                 <td>{{ project?.customer?.name }}</td>
 
-                                <td>{{ project.drivers.length }}</td>
+                                <td>{{ project.number_of_drivers }}</td>
 
-                                <td>{{ numberStops(project) }}</td>
+                                <td>{{ project.number_of_stops }}</td>
 
-                                <td>{{ totalDistance(project) | number:'1.1-1' }} km</td>
+                                <td>{{ (project.distance / 1000) | number:'1.1-1' }} km</td>
 
-                                <td>{{ totalTime(project) | number:'1.0-1' }} min</td>
+                                <td>{{ (project.duration / 60) | number:'1.0-1' }} min</td>
 
                                 <td>
 

@@ -227,66 +227,6 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   }
 
-  public numberStops(project: any) {
-
-    let stops = 0;
-
-    project.drivers.forEach((driver: any) => {
-
-      if (driver.pivot.routes) {
-        stops += driver.pivot.routes.length;
-      }
-
-    });
-
-    return stops;
-
-  }
-
-  public totalDistance(project: any) {
-
-    let distance = 0;
-
-    project.drivers.forEach((driver: any) => {
-
-      if (driver.pivot.routes) {
-
-        driver.pivot.routes.forEach((route: any) => {
-
-          distance += route.distance;
-
-        });
-
-      }
-
-    });
-
-    return distance / 1000;
-
-  }
-
-  public totalTime(project: any) {
-
-    let time = 0;
-
-    project.drivers.forEach((driver: any) => {
-
-      if (driver.pivot.routes) {
-
-        driver.pivot.routes.forEach((route: any) => {
-
-          time += route.duration;
-
-        });
-
-      }
-
-    });
-
-    return time / 60;
-
-  }
-
   public changeDate(date: Date) {
 
     const day = (`0${date.getDate()}`).slice(-2);
