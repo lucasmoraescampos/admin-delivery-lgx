@@ -27,9 +27,9 @@
 <div id="wimo">
 
 
-    <div class="container">
+    <div class="container animate__animated animate__fadeIn">
         <div class="row justify-content-center">
-            <form class="col-md-8" [formGroup]="formGroup">
+            <form class="col-md-8">
 
                 <h1>TRACK MY ORDER</h1>
                 <p>For phone number, use only numbers, no dashes or spaces.</p>
@@ -38,20 +38,20 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="order" class="form-label">Order ID:</label>
-                        <input type="text" class="form-control" id="order" placeholder="e.g.: 99999"
-                            formControlName="order">
+                        <input type="text" class="form-control" id="order" name="id" placeholder="e.g.: 99999"
+                            [(ngModel)]="id">
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" id="phone" placeholder="e.g.: 99999999999"
-                            formControlName="phone">
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="e.g.: 99999999999"
+                            [(ngModel)]="phone">
                     </div>
 
                 </div> <!-- .row -->
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" (click)="send()">MY ORDER</button>
+                    <button type="submit" class="btn btn-primary" (click)="find()">MY ORDER</button>
                 </div>
 
             </form>
@@ -59,7 +59,7 @@
     </div> <!-- .container -->
 
 
-    <div class="orange" id="info-content" [hidden]="!stop">
+    <div class="orange animate__animated animate__fadeIn" id="info-content" *ngIf="stop">
 
         <div class="container">
 
@@ -71,7 +71,7 @@
 
                         <div class="col-md-6 mb-3">
 
-                            <img *ngIf="stop?.image" [src]="stop?.image">
+                            <img class="img-thumbnail" [src]="stop?.image" *ngIf="stop?.image">
 
                         </div>
 
@@ -124,12 +124,50 @@
 
     </div> <!-- .orange -->
 
+
+    <div class="container animate__animated animate__fadeIn" id="feedback-content" *ngIf="stop?.status == 2">
+        <div class="row justify-content-center">
+            <form class="col-md-8" [formGroup]="formGroup">
+
+                <h1>Feedback</h1>
+                <p>Your opinion is very important to us! tell us about your experience with this delivery.</p>
+
+
+                <div class="row justify-content-center mt-3">
+                    <ngb-rating max="5" formControlName="evaluation" [readonly]="stop.feedback" [rate]="stop.feedback?.evaluation">
+                        <ng-template let-fill="fill" let-index="index">
+                            <span class="star" [class.filled]="fill === 100">&#9733;</span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+
+                <div class="row justify-content-center">
+
+                    <div class="col-sm-12 mb-3 pt-4">
+                        <textarea class="form-control" placeholder="Tell us about your delivery experience" formControlName="note" [readonly]="stop.feedback"></textarea>
+                    </div>
+
+                </div> <!-- .row -->
+
+                <div class="d-flex justify-content-end" *ngIf="!stop.feedback">
+                    <button type="submit" class="btn btn-primary" (click)="sendFeedback()">SEND FEEDBACK</button>
+                </div>
+
+                <div class="d-flex justify-content-end animate__animated animate__fadeIn" *ngIf="stop.feedback">
+                    <span class="text-primary">Feedback sent successfully <i class="ri-check-line"></i></span>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
 </div> <!-- #wimo -->
 
 
 
 
-<div class="phone-info">
+<div class="phone-info animate__animated animate__fadeIn">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 text-center">
@@ -155,7 +193,7 @@
 
 
 <footer>
-    <div class="container">
+    <div class="container animate__animated animate__fadeIn">
         <div class="row justify-content-center">
             <div class="col-md-9">
                 <div class="row">

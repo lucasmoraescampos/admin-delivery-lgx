@@ -2,11 +2,34 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+let apiUrl: string;
+
+let driverUrl: string;
+
+switch (window.location.host) {
+
+  case 'app.fariaslgx.com':
+    apiUrl = 'https://api.fariaslgx.com';
+    driverUrl = 'https://driver.fariaslgx.com';
+    break;
+
+  case 'homologadmin.fariaslgx.com':
+    apiUrl = 'https://homologapi.fariaslgx.com';
+    driverUrl = 'https://homologdriver.fariaslgx.com';
+    break;
+
+  default:
+    apiUrl = 'http://localhost:8000';
+    driverUrl = 'http://localhost:8100';
+    break;
+
+}
+
 export const environment = {
   production: false,
-  apiUrl: 'http://api.fariaslgx.localhost',
-  driverUrl: 'http://localhost:8100'
-};
+  apiUrl: apiUrl,
+  driverUrl: driverUrl
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

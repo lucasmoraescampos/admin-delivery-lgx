@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { WhereIsMyOrderComponent } from './where-is-my-order.component';
 import { WhereIsMyOrderRoutingModule } from './where-is-my-order-routing.module';
+import { NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [WhereIsMyOrderComponent],
@@ -10,6 +11,7 @@ import { WhereIsMyOrderRoutingModule } from './where-is-my-order-routing.module'
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbRatingModule,
     WhereIsMyOrderRoutingModule
   ]
 })

@@ -26,6 +26,10 @@ export class ApiService {
     return this.http.get<HttpResult>(`${this.apiUrl}/timezones`, { params: params });
   }
 
+  public sendFeedback(data: any) {
+    return this.http.post<HttpResult>(`${this.apiUrl}/feedback`, data);
+  }
+
   /*
    * User Requests
    */
