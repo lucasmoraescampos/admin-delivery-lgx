@@ -14,70 +14,50 @@
 
               <div class="d-sm-flex justify-content-end">
 
-                <input type="text" class="form-control form-control-sm col-sm-5" placeholder="Search Name" [(ngModel)]="driverFilter">
+                <input type="text" class="form-control form-control-sm col-sm-5" placeholder="Search Name"
+                  [(ngModel)]="driverFilter">
 
-              </div>  
+              </div>
 
             </div>
 
             <div class="col-md-12 mt-3" *ngIf="project">
 
-              <table class="table table-hover table-sm m-0">
-
-                <thead class="thead-primary">
-
-                  <tr class="text-center">
-
-                    <th width="28px"></th>
-
-                    <th>Name</th>
-
-                    <th>Address</th>
-
-                    <th width="130px">Time</th>
-
-                  </tr>
-
-                </thead>
-
-              </table>
-
-              <div class="table-responsive drivers-table-scroll-y">
+              <div class="table-responsive">
 
                 <table class="table table-hover table-sm">
 
                   <tbody>
 
-                    <tr class="text-center" *ngFor="let driver of drivers | filter:'name':driverFilter; let i=index" (click)="driverInfo(driver)">
-
-                      <td width="28px">
-
-                        <input type="checkbox" [checked]="isDriverchecked(driver)" (input)="checkDriver(driver, $event)"
-                          (click)="$event.stopPropagation()">
-
-                      </td>
+                    <tr *ngFor="let driver of drivers | filter:'name':driverFilter; let i=index"
+                      (click)="driverInfo(driver)">
 
                       <td>
 
-                        <span>{{ driver.name }}</span>
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" [id]="'drivercheckbox' + i"
+                            [checked]="isDriverchecked(driver)" (input)="checkDriver(driver, $event)"
+                            (click)="$event.stopPropagation()">
+                          <label class="custom-control-label" [for]="'drivercheckbox' + i">&nbsp;</label>
+                        </div>
 
                       </td>
 
-                      <td>
+                      <td class="py-2">
 
-                        <span>{{ driverStartAddress(driver) }}</span>
+                        <h6>{{ driver.name }}</h6>
 
-                      </td>
+                        <p class="m-0">{{ driverStartAddress(driver) }}</p>
 
-                      <td width="130px">
-
-                        <span>{{ driverStartTime(driver) }} ~ {{ driverEndTime(driver) }}</span>
+                        <span class="badge badge-outline-primary">{{ driverStartTime(driver) }} ~ {{
+                          driverEndTime(driver) }}</span>
 
                       </td>
 
                     </tr>
 
-                    <tr class="text-center" *ngIf="drivers.length == 0 || (drivers | filter:'name':driverFilter).length == 0">
+                    <tr class="text-center"
+                      *ngIf="drivers.length == 0 || (drivers | filter:'name':driverFilter).length == 0">
 
                       <td colspan="4">
 
@@ -103,73 +83,76 @@
 
           <div class="row">
 
-            <div class="col-md-12">
+            <div class="col-md-12 mt-3">
 
-              <div class="d-sm-flex justify-content-end">
+              <div class="d-flex">
 
-                <input type="text" class="form-control form-control-sm col-sm-5 mt-3 mr-sm-2" placeholder="Search Name" [(ngModel)]="stopFilter">
+                <div class="d-flex justify-content-start align-items-center">
+                  <div class="custom-control custom-checkbox stopcheckboxall">
+                    <input type="checkbox" class="custom-control-input" id="stopcheckboxall"
+                      (change)="checkAllStopsChanged($event.target.checked)">
+                    <label class="custom-control-label" for="stopcheckboxall">&nbsp;</label>
+                  </div>
+                </div>
 
-                <button type="button" class="btn btn-primary btn-sm col-sm-3 mt-3 mr-sm-2" (click)="modalStop()">
+                <div class="d-flex justify-content-end w-100">
 
-                  <i class="ri-add-line"></i>
-  
-                  Add Stops
-  
-                </button>
-  
-                <button type="button" class="btn btn-primary btn-sm col-sm-3 mt-3" (click)="modalUploadStops()">
-  
-                  <i class="ri-upload-line"></i>
-  
-                  Upload Stops
-  
-                </button>
+                  <div class="mr-2">
+                    <input type="text" class="form-control form-control-sm" placeholder="Search Name"
+                      [(ngModel)]="stopFilter">
+                  </div>
 
-              </div>              
+                  <button type="button" class="btn btn-primary btn-sm text-nowrap animate__animated animate__fadeIn"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" *ngIf="selectedStops.length == 0">
+                    <i class="ri-add-line"></i> Add Stop
+                  </button>
+
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <button class="dropdown-item" type="button" (click)="modalStop()">Create Stop</button>
+                    <button class="dropdown-item" type="button" (click)="modalUploadStops()">Upload Stops</button>
+                  </div>
+
+                  <button type="button" class="btn btn-danger btn-sm text-nowrap animate__animated animate__fadeIn"
+                    *ngIf="selectedStops.length > 0" (click)="deleteSelectedStops()">
+                    <i class="ri-trash-line"></i> Delete {{ selectedStops.length }} stop<span
+                      *ngIf="selectedStops.length > 1">s</span>
+                  </button>
+
+                </div>
+
+              </div>
 
             </div>
 
             <div class="col-md-12 mt-3">
 
-              <table class="table table-hover table-sm m-0">
-
-                <thead class="thead-primary">
-
-                  <tr class="text-center">
-
-                    <th width="30%">Name</th>
-
-                    <th width="45%">Address</th>
-
-                    <th width="25%">Status</th>
-
-                  </tr>
-
-                </thead>
-
-              </table>
-
-              <div class="table-responsive stops-table-scroll-y">
+              <div class="table-responsive">
 
                 <table class="table table-hover table-sm">
 
                   <tbody>
 
-                    <tr class="text-center" *ngFor="let stop of project?.stops | filter:'name':stopFilter" (click)="stopInfo(stop)">
+                    <tr *ngFor="let stop of project?.stops | filter:'name':stopFilter; let i=index;">
 
-                      <td width="30%">
+                      <td>
 
-                        <span>{{ stop.name }}</span>
-
-                      </td>
-
-                      <td width="45%">
-
-                        <span>{{ stop.address }}</span>
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input" [id]="'stopcheckbox' + i"
+                            (change)="checkStopsChanged(stop, $event.target.checked)">
+                          <label class="custom-control-label" [for]="'stopcheckbox' + i">&nbsp;</label>
+                        </div>
 
                       </td>
 
-                      <td width="25%">
+                      <td (click)="stopInfo(stop)">
+
+                        <h6>{{ stop.name }}</h6>
+
+                        <p class="m-0">{{ stop.address }}</p>
+
+                      </td>
+
+                      <td (click)="stopInfo(stop)">
 
                         <span class="badge badge-light" *ngIf="stop.status == 0">Waiting</span>
 
@@ -183,7 +166,8 @@
 
                     </tr>
 
-                    <tr class="text-center" *ngIf="project?.stops.length == 0 || (project?.stops | filter:'name':stopFilter).length == 0">
+                    <tr class="text-center"
+                      *ngIf="project?.stops.length == 0 || (project?.stops | filter:'name':stopFilter).length == 0">
 
                       <td colspan="3">
 
@@ -249,12 +233,8 @@
 
     <div class="map-footer animate__animated animate__fadeInUp" *ngIf="project?.status > 0 && mapFullscreen">
 
-      <app-project-manager
-        [project]="project" 
-        [colors]="colors"
-        (stopInfo)="stopInfo($event)"
-        (driverInfo)="driverInfo($event)"
-        (projectChanged)="setProject($event)">
+      <app-project-manager [project]="project" [colors]="colors" (stopInfo)="stopInfo($event)"
+        (driverInfo)="driverInfo($event)" (projectChanged)="setProject($event)">
       </app-project-manager>
 
     </div>

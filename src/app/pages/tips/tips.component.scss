@@ -1,0 +1,178 @@
+.navbar {
+    height: 75px;
+    background: #fff;
+    box-shadow: rgb(0 0 0 / 25%) 0 3px 11px 0;
+
+    .navbar-toggler {
+        font-size: 24px;
+    }
+
+    .navbar-collapse {
+        top: 75px;
+        z-index: 99999;
+    }
+
+    .navbar-brand {
+        display: none;
+    }
+
+    .wimo {
+        padding: 10px 0 20px 15px;
+
+        button {
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: #000;
+            border-color: #000;
+            color: #fc9d20;
+            box-shadow: rgb(0 0 0 / 25%) 0px 3px 11px 0px;
+            padding-right: 25px;
+            padding-left: 25px;
+
+            &:hover {
+                background: #fc9d20;
+                border-color: #fc9d20;
+                color: #000;
+            }
+        }
+    }
+
+    .nav-item {
+        .nav-link {
+            font-size: 16px;
+            font-weight: 700;
+            padding-right: 10px;
+            padding-left: 10px;
+            color: #222;
+        }
+
+        &.active .nav-link {
+            color: #fc9d20;
+        }
+    }
+}
+
+.container {
+    min-height: 520px;
+    padding: 40px 20px;
+
+    .star {
+        font-size: 42px;
+        color: #dee1e7;
+    }
+
+    .filled {
+        color: #fc9d20;
+    }
+
+    .btn-tip {
+        width: 60px;
+        height: 60px;
+        border-radius: 100%;
+        border-color: #fc9d20;
+        color: #fc9d20;
+        font-size: 16px;
+        margin: 10px;
+
+        &.active {
+            background: #fc9d20;
+            color: #fff;
+        }
+    }
+
+    .btn-back {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        font-size: 26px;
+        margin-right: 5px;
+
+        i {
+            margin: 0;
+        }
+
+        &:hover {
+            background: #fc9d20;
+        }
+    }
+
+    .rounded-0 {
+        border-radius: 0;
+    }
+
+    .rounded-50 {
+        border-radius: 50px;
+    }
+
+    .cmpt {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 180px;
+        display: block;
+    }
+
+    #card-number,
+    #card-expiry,
+    #card-cvc {
+        background: #fff;
+    }
+
+    .field {
+        padding-left: 10px;
+        padding-right: 2px;
+    }
+    
+    .error {
+        float: left;
+        width: 100%;
+        padding-top: 8px;
+        min-height: 24px;
+        text-align: center;
+        font-size: 13px;
+        color: #e4584c;
+    }
+    
+    .spinner-border {
+        font-size: 8px;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    textarea {
+        line-height: 24px !important;
+    }
+}
+
+footer {
+    padding: 50px 0;
+}
+
+@media (min-width: 992px) {
+    .navbar {
+        background: url(../../../assets/images/bg-header.webp) 50% no-repeat;
+        background-size: cover;
+        box-shadow: none;
+        height: 85px;
+
+        .navbar-brand {
+            display: flex;
+            justify-content: end;
+            width: 25%;
+        }
+
+        .navbar-brand-mobile {
+            display: none;
+        }
+
+        .wimo {
+            width: 25%;
+            padding: 0;
+        }
+    }
+}

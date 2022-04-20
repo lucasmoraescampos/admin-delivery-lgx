@@ -1,11 +1,16 @@
-.drivers-table-scroll-y {
+.table-responsive {
     overflow-y: auto;
-    max-height: calc(100vh - 300px);
+    max-height: calc(100vh - 270px);
 }
 
-.stops-table-scroll-y {
-    overflow-y: auto;
-    max-height: calc(100vh - 300px);
+.stopcheckboxall {
+    margin-left: 5px;
+}
+
+.badge-outline-primary {
+    border: 1px solid #fc9d20;
+    color: #fc9d20;
+    border-radius: 25px;
 }
 
 .map {
@@ -55,29 +60,35 @@ tab table td input {
     margin-top: 7px;
 }
 
-tab table tr td span {
-    &:not(.badge) {
-        font-size: 0.9em;
-        line-height: 18px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
+tab table tr {
+    td span {
+        &:not(.badge) {
+            font-size: 0.9em;
+            line-height: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-box-orient: vertical;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+        }
+
+        &.badge {
+            font-size: 10px;
+            font-weight: 500;
+        }
     }
 
-    &.badge {
-        font-size: 10px;
-        font-weight: 500;
+    &:first-child td {
+        border-top: 0;
     }
 }
 
-::ng-deep
-{
-    .ms-3 { margin-left: 1rem !important; }
+::ng-deep {
+    .ms-3 {
+        margin-left: 1rem !important;
+    }
 
-    .flex-grow-1.ms-3.text-right
-    {
+    .flex-grow-1.ms-3.text-right {
         line-height: 1.5;
         font-size: 1em;
     }

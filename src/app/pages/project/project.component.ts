@@ -36,6 +36,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public drivers: any[] = [];
 
+  public selectedStops: any[] = [];
+
   public stops_markers: any[];
 
   public drivers_markers: any[];
@@ -426,6 +428,70 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
     });
 
+  }
+
+  public checkAllStopsChanged(checked: boolean) {
+
+    this.selectedStops = [];
+
+    for (let i=0; i<this.project.stops.length; i++) {
+
+      const el: any = document.getElementById('stopcheckbox' + i);
+
+      el.checked = checked;
+
+      if (checked) {
+        this.selectedStops.push(this.project.stops[i].id);
+      }
+
+    }
+
+  }
+
+  public checkStopsChanged(stop: any, checked: boolean) {
+    if (checked) {
+      this.selectedStops.push(stop.id);
+    }
+    else {
+      const index = ArrayHelper.getIndexByKey(this.selectedStops, 'id', stop.id);
+      this.selectedStops = ArrayHelper.removeItem(this.selectedStops, index);
+    }
+  }
+
+  public deleteSelectedStops() {
+
+    const message = this.selectedStops.length > 1 ?
+      `This will permanently delete all ${this.selectedStops.length} selected stops. Continue?` :
+      `This will permanently delete 1 selected stop. Continue?`;
+
+    this.alertSrv.show({
+      icon: 'warning',
+      message: message,
+      onConfirm: () => {
+
+        this.infoWindow.close();
+
+        this.apiSrv.deleteProjectStops(this.project.id, { stops: this.selectedStops.join(',') })
+          .pipe(takeUntil(this.unsubscribe))
+          .subscribe(res => {
+
+            if (res.success) {
+
+              this.selectedStops = [];
+
+              this.setProject(res.data);
+
+              this.alertSrv.toast({
+                icon: 'success',
+                message: res.message
+              });
+
+            }
+
+          });
+
+      }
+    });
   }
 
   public modalStop(stop?: any) {

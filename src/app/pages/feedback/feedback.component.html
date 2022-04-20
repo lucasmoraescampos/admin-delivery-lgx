@@ -14,9 +14,6 @@
                 <li><a href="https://www.fariaslgx.com/#CALLUS" class="nav-link px-2"> CALL US </a></li>
                 <li><a href="https://www.fariaslgx.com/drivers" class="nav-link px-2"> DRIVERS </a></li>
             </ul>
-
-            <a class="btn-w" href="https://app.fariaslgx.com/where-is-my-order">WHERE'S MY ORDER</a>
-
         </div>
     </div>
 </header>
@@ -27,111 +24,21 @@
 <div id="wimo">
 
 
-    <div class="container animate__animated animate__fadeIn">
+    <div class="container animate__animated animate__fadeIn" *ngIf="stop">
         <div class="row justify-content-center">
-            <form class="col-md-8">
-
-                <h1>TRACK MY ORDER</h1>
-                <p>For phone number, use only numbers, no dashes or spaces.</p>
-
-                <div class="row justify-content-center pt-4">
-
-                    <div class="col-md-6 mb-3">
-                        <label for="order" class="form-label">Order ID:</label>
-                        <input type="text" class="form-control" id="order" name="id" placeholder="e.g.: 99999"
-                            [(ngModel)]="id">
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" id="phone" name="phone" placeholder="e.g.: 99999999999"
-                            [(ngModel)]="phone">
-                    </div>
-
-                </div> <!-- .row -->
-
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" (click)="find()">MY ORDER</button>
-                </div>
-
-            </form>
-        </div>
-    </div> <!-- .container -->
-
-
-    <div class="orange animate__animated animate__fadeIn" id="info-content" *ngIf="stop">
-
-        <div class="container">
-
-            <div class="row justify-content-center">
-
-                <div class="col-md-8">
-
-                    <div class="row justify-content-center pt-4">
-
-                        <div class="col-md-6 mb-3">
-
-                            <img class="img-thumbnail" [src]="stop?.image" *ngIf="stop?.image">
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <h2>MY ORDER</h2>
-
-                            <p>Name: &nbsp; {{ stop?.name }}</p>
-
-                            <p>Address: &nbsp; {{ stop?.address }}</p>
-
-                            <p>Order Id: &nbsp; {{ stop?.order_id }}</p>
-
-                            <p>
-                                Status: &nbsp;
-
-                                <container-element [ngSwitch]="stop?.status">
-
-                                    <span *ngSwitchCase="0">Waiting</span>
-
-                                    <span *ngSwitchCase="1">Dispatched</span>
-
-                                    <span *ngSwitchCase="2">Delivered</span>
-
-                                    <span *ngSwitchCase="3">Skipped</span>
-
-                                    <span *ngSwitchCase="4">Completed</span>
-
-                                </container-element>
-
-                            </p>
-
-                            <p *ngIf=" stop?.status == 0 ">Delivery ETA: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
-
-                            <p *ngIf=" stop?.status == 1 ">Started at: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
-
-                            <p *ngIf=" stop?.status == 3 ">Skipped At: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
-
-                            <p *ngIf=" stop?.status == 2 || stop?.status == 4 ">Delivered at: &nbsp; {{ stop.datetime }} / Pacific Standard Time (PST)</p>
-
-                        </div>
-
-                    </div>
-
-                </div> <!-- .col-md-8 -->
-
-            </div> <!-- .row -->
-
-        </div> <!-- .container -->
-
-    </div> <!-- .orange -->
-
-
-    <div class="container animate__animated animate__fadeIn" id="feedback-content" *ngIf="stop?.status == 2 && false">
-        <div class="row justify-content-center">
-            <form class="col-md-8" [formGroup]="formGroup">
+            <form class="col-sm-12 col-md-10 col-lg-6" [formGroup]="formGroup">
 
                 <h1>Feedback</h1>
-                <p>Your opinion is very important to us! tell us about your experience with this delivery.</p>
 
+                <div class="text-center mb-2">
+                    <img class="stop-image" [src]="stop.image" height="100px">
+                </div>
+
+                <p class="d-block m-0"><b>Order Id:</b> {{ stop.order_id }}</p>
+                <p class="d-block m-0"><b>Name:</b> {{ stop.name }}</p>
+                <p class="d-block m-0"><b>Phone:</b> {{ stop.phone }}</p>
+                <p class="d-block m-0"><b>Address:</b> {{ stop.address }}</p>
+                <p class="d-block m-0"><b>Delivered at:</b> {{ stop.arrived_at }}</p>
 
                 <div class="row justify-content-center mt-3">
                     <ngb-rating max="5" formControlName="evaluation" [readonly]="stop.feedback" [rate]="stop.feedback?.evaluation">
@@ -150,7 +57,7 @@
                 </div> <!-- .row -->
 
                 <div class="d-flex justify-content-end" *ngIf="!stop.feedback">
-                    <button type="submit" class="btn btn-primary" (click)="sendFeedback()">SEND FEEDBACK</button>
+                    <button type="submit" class="btn btn-primary" (click)="send()">SEND FEEDBACK</button>
                 </div>
 
                 <div class="d-flex justify-content-end animate__animated animate__fadeIn" *ngIf="stop.feedback">
@@ -158,16 +65,15 @@
                 </div>
 
             </form>
-
         </div>
-    </div>
+    </div> <!-- .container -->
 
 </div> <!-- #wimo -->
 
 
 
 
-<div class="phone-info animate__animated animate__fadeIn">
+<div class="phone-info">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 text-center">
@@ -193,7 +99,7 @@
 
 
 <footer>
-    <div class="container animate__animated animate__fadeIn">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-9">
                 <div class="row">

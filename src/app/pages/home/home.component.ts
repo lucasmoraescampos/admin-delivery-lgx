@@ -5,6 +5,8 @@ import { ApiService } from 'src/app/services/api.service';
 import { NavbarService } from 'src/app/services/navbar.service';
 import * as am4charts from '@amcharts/amcharts4/charts';
 import * as am4core from '@amcharts/amcharts4/core';
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import am4themes_dataviz from "@amcharts/amcharts4/themes/dataviz";
 
 @Component({
   selector: 'app-home',
@@ -14,6 +16,8 @@ import * as am4core from '@amcharts/amcharts4/core';
 export class HomeComponent implements OnInit, OnDestroy {
 
   public resume: any;
+
+  public deliveryTimeStatistics: any;
 
   public deliveries: any[];
 
@@ -34,7 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.initResume();
 
-    this.initChart();
+    this.initDeliveryTimeStatistics();
 
   }
 
@@ -43,37 +47,60 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  public initChart() {
+  private initDeliveryTimeStatistics() {
 
-    const chart = am4core.create('chart', am4charts.PieChart3D);
+    const now = new Date();
+    
+    const start_date = [now.getFullYear(), (`0${now.getMonth() + 1}`).slice(-2), '01'].join('-');
 
-    chart.legend = new am4charts.Legend();
+    const end_date = [now.getFullYear(), (`0${(now.getMonth() + 1) % 12 + 1}`).slice(-2), '01'].join('-');
 
-    chart.data = [
-      {
-        status: 'On Time',
-        amount: 501.9,
-        color: am4core.color('#28a745')
-      },
-      {
-        status: 'Late',
-        amount: 165.8,
-        color: am4core.color('#dc3545')
-      },
-      {
-        status: 'Early',
-        amount: 139.9,
-        color: am4core.color('#fc9d20')
-      }
-    ];
+    this.apiSrv.deliveryTimeStatistics({ start_date, end_date })
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(res => {
 
-    const series = chart.series.push(new am4charts.PieSeries3D());
+        if (res.success) {
 
-    series.dataFields.category = 'status';
-  
-    series.dataFields.value = 'amount';
+          this.deliveryTimeStatistics = res.data;
 
-    series.slices.template.propertyFields.fill = 'color';
+          am4core.useTheme(am4themes_animated);
+          am4core.useTheme(am4themes_dataviz);
+
+          const chart = am4core.create('chart', am4charts.PieChart3D);
+
+          chart.legend = new am4charts.Legend();
+
+          chart.data = [
+            {
+              status: 'On Time',
+              amount: this.deliveryTimeStatistics.on_time,
+              color: am4core.color('#28a745')
+            },
+            {
+              status: 'Late',
+              amount: this.deliveryTimeStatistics.late,
+              color: am4core.color('#dc3545')
+            },
+            {
+              status: 'Early',
+              amount: this.deliveryTimeStatistics.early,
+              color: am4core.color('#fc9d20')
+            }
+          ];
+
+          const series = chart.series.push(new am4charts.PieSeries3D());
+
+          series.dataFields.category = 'status';
+
+          series.dataFields.value = 'amount';
+
+          series.slices.template.propertyFields.fill = 'color';
+
+          series.hiddenState.properties.endAngle = -90;
+
+        }
+
+      });
 
   }
 

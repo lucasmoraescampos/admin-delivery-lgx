@@ -2,6 +2,8 @@ let apiUrl: string;
 
 let driverUrl: string;
 
+const stripeKey: string = 'pk_live_51KdMsrCCjfenGFMK7YBBcA5Uf6VpSK7KLhUuzALHnD7VusDB8pGTUXrRYo4IrxERY256endehRHDdfqUiw6ehUgC002snDja0p';
+
 switch (window.location.host) {
 
   case 'app.fariaslgx.com':
@@ -24,5 +26,6 @@ switch (window.location.host) {
 export const environment = {
   production: true,
   apiUrl: apiUrl,
-  driverUrl: driverUrl
+  driverUrl: driverUrl,
+  stripeKey: stripeKey
 }

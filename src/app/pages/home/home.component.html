@@ -55,13 +55,13 @@
                 </app-iq-card>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12 animate__animated animate__fadeIn" [hidden]="!deliveryTimeStatistics">
 
                 <app-iq-card>
                     <div card-header class="iq-header-title">
                       <h4 class="card-title">Monthly Performance</h4>
                     </div>
-                    <div card-bottom id="chart"></div>
+                    <div card-body id="chart"></div>
                 </app-iq-card>
 
             </div>
@@ -80,7 +80,7 @@
                 <button class="btn btn-outline-primary btn-sm" [routerLink]="['/deliveries']">View All</button>
             </div>
             <ul class="iq-timeline">
-                <li *ngFor="let delivery of deliveries">
+                <li class="animate__animated animate__fadeIn" *ngFor="let delivery of deliveries">
                     <div class="timeline-dots "
                         [ngClass]="{ 'border-success': delivery.status == 2, 'border-danger': delivery.status == 3 }">
                     </div>
@@ -90,7 +90,7 @@
                             <span class="code">{{ delivery.order_id }}</span>
                             <span class="project">{{ delivery.project.name }}</span>
                         </h6>
-                        <small>{{ delivery.finished_at | date:'MMM d, h:mm a' }}</small>
+                        <small>{{ delivery.finished_at | dateTz:delivery.utc_offset }}</small>
                     </div>
                     <div class="d-inline-block w-100">
                         <span class="note" *ngIf="delivery.note">"{{ delivery.note }}"</span>

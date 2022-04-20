@@ -35,16 +35,14 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    
+    this.id = this.route.snapshot.paramMap.get('id') ?? this.route.snapshot.queryParamMap.get('id');
 
-    this.id = this.route.snapshot.queryParamMap.get('id');
-
-    this.phone = this.route.snapshot.queryParamMap.get('phone');
-
+    this.phone = this.route.snapshot.paramMap.get('phone') ?? this.route.snapshot.queryParamMap.get('phone');
+    
     if (this.id && this.phone) {
 
-      const scrollToFeedback = this.route.snapshot.queryParamMap.get('feedback');
-
-      this.loadStop(this.id, this.phone, scrollToFeedback === 'true');
+      this.loadStop(this.id, this.phone);
 
     }
 
@@ -99,9 +97,9 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadStop(order: string, phone: string, scrollToFeedback?: boolean) {
+  private loadStop(order_id: string, phone: string) {
 
-    this.apiSrv.findMyOrder(phone, order)
+    this.apiSrv.getOrder({ order_id, phone })
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(res => {
 
@@ -119,23 +117,10 @@ export class WhereIsMyOrderComponent implements OnInit, OnDestroy {
           
           setTimeout(() => {
 
-            if (scrollToFeedback) {
-
-              window.scrollTo({
-                top: document.getElementById('feedback-content').offsetTop,
-                behavior: 'smooth'
-              });
-
-            }
-
-            else {
-
               window.scrollTo({
                 top: document.getElementById('info-content').offsetTop,
                 behavior: 'smooth'
               });
-
-            }
 
           }, 100);
 

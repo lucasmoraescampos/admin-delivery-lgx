@@ -18,8 +18,8 @@ export class ApiService {
   /*
    * Api Requests
    */
-  public findMyOrder(phone: any, order: any) {
-    return this.http.get<any>(`${this.apiUrl}/find-my-order/${phone}/${order}`);
+  public getOrder(params: any) {
+    return this.http.get<any>(`${this.apiUrl}/order`, { params: params });
   }
 
   public getTimezones(params: any) {
@@ -166,6 +166,10 @@ export class ApiService {
     return this.http.delete<HttpResult>(`${this.apiUrl}/user/project/${id}/stop/${stop_id}`);
   }
 
+  public deleteProjectStops(id: number, params: any) { //
+    return this.http.delete<HttpResult>(`${this.apiUrl}/user/project/${id}/stops`, { params: params });
+  }
+
   public optimize(id: number) { //
     return this.http.get<HttpResult>(`${this.apiUrl}/user/project/${id}/optimize`);
   }
@@ -276,5 +280,9 @@ export class ApiService {
   public deleteDriver(id: number) {
     return this.http.delete<HttpResult>(`${this.apiUrl}/user/driver/${id}`);
   }  
+  
+  public deliveryTimeStatistics(params: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/statistics/deliveryTime`, { params: params });
+  }
   
 }

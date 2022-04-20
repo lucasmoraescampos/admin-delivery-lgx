@@ -1,0 +1,217 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand-mobile" href="#">
+        <img src="../../../assets/images/logo-full2.png" height="35px" alt="">
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-brand">
+            <a href="#">
+                <img src="../../../assets/images/logo-full2.png" height="35px" alt="">
+            </a>
+        </div>
+        <ul class="navbar-nav m-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="https://www.fariaslgx.com">HOME</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://www.fariaslgx.com/about">ABOUT US</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://www.fariaslgx.com/#SEGMENTS">SEGMENTS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://www.fariaslgx.com/#CALLUS">CALL US</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://www.fariaslgx.com/drivers">DRIVERS</a>
+            </li>
+        </ul>
+        <div class="wimo">
+            <button class="btn btn-primary btn-lg" [routerLink]="['/where-is-my-order']">WHERE'S MY ORDER</button>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+    <div class="row justify-content-center" *ngIf="stop">
+        <div class="col-xl-3" [formGroup]="formGroup" *ngIf="!stop.feedback">
+            <div class="animate__animated animate__fadeIn" [hidden]="step != 0">
+                <h3>How was your delivery with {{ stop.driver.name }}?</h3>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <ngb-rating max="5" formControlName="evaluation">
+                            <ng-template let-fill="fill" let-index="index">
+                                <span class="star" [class.filled]="fill === 100">&#9733;</span>
+                            </ng-template>
+                        </ngb-rating>
+                    </div>
+                    <div class="col-md-12 text-center animate__animated animate__fadeIn"
+                        *ngIf="formCtrl.evaluation.value">
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-50" (click)="step = 1">
+                            <span *ngIf="formCtrl.compliment.value.length == 0">Give a compliment</span>
+                            <span class="cmpt" *ngIf="formCtrl.compliment.value.length > 0">{{ formCtrl.compliment.value
+                                }}</span>
+                        </button>
+                    </div>
+                    <div class="col-md-12 text-center mt-3">
+                        <h5 class="my-2">Add a tip for {{ stop.driver.name }}</h5>
+                        <button type="button" class="btn btn-tip" [ngClass]="{ 'active': formCtrl.tip.value == '2.00' }"
+                            (click)="setTip('2.00', true)">$2</button>
+                        <button type="button" class="btn btn-tip" [ngClass]="{ 'active': formCtrl.tip.value == '5.00' }"
+                            (click)="setTip('5.00', true)">$5</button>
+                        <button type="button" class="btn btn-tip" [ngClass]="{ 'active': formCtrl.tip.value == '8.00' }"
+                            (click)="setTip('8.00', true)">$8</button>
+                    </div>
+                    <div class="col-md-12 text-center my-3">
+                        <button class="btn btn-link" (click)="step = 2"
+                            *ngIf="['0.00', '2.00', '5.00', '8.00'].indexOf(formCtrl.tip.value) != -1">Enter custom
+                            amount</button>
+                        <button class="btn btn-primary btn-sm rounded-50" (click)="step = 2"
+                            *ngIf="['0.00', '2.00', '5.00', '8.00'].indexOf(formCtrl.tip.value) == -1">Tip total: ${{
+                            formCtrl.tip.value }}</button>
+                    </div>
+                    <div class="col-md-12 mt-2 text-center">
+                        <button type="button" class="btn btn-primary btn-lg btn-block rounded-0"
+                            [disabled]="formCtrl.evaluation.value.length == 0 && formCtrl.tip.value == '0.00'"
+                            (click)="done()">Done</button>
+                    </div>
+                </div>
+            </div>
+            <div class="animate__animated animate__fadeIn" [hidden]="step != 1">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-back" (click)="step = 0">
+                        <i class="las la-arrow-left"></i>
+                    </button>
+                    <h4>Compliment</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-3">
+                        <textarea class="form-control" placeholder="Give a compliment"
+                            formControlName="compliment"></textarea>
+                    </div>
+                    <div class="col-md-12 mt-4 text-center">
+                        <button type="button" class="btn btn-primary btn-lg btn-block rounded-0"
+                            [disabled]="formCtrl.compliment.value.length == 0" (click)="step = 0">Set
+                            compliment</button>
+                    </div>
+                </div>
+            </div>
+            <div class="animate__animated animate__fadeIn" [hidden]="step != 2">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-back" (click)="step = 0">
+                        <i class="las la-arrow-left"></i>
+                    </button>
+                    <h4>Custom amount</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-3">
+                        <input class="form-control" [value]="formCtrl.tip.value"
+                            [brmasker]="{ money: true, thousand: ',', decimalCaracter: '.', decimal: 2 }" #tip>
+                    </div>
+                    <div class="col-md-12 mt-4 text-center">
+                        <button type="button" class="btn btn-primary btn-lg btn-block rounded-0"
+                            [disabled]="tip.value == 0" (click)="setTip(tip.value)">Set tip</button>
+                    </div>
+                </div>
+            </div>
+            <div class="animate__animated animate__fadeIn" [hidden]="step != 3">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-back" (click)="step = 0">
+                        <i class="las la-arrow-left"></i>
+                    </button>
+                    <h4>Payment</h4>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-3">
+                        <div class="card rounded-0">
+                            <div id="card-element" class="field"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-3 text-center">
+                        <button class="btn btn-primary btn-lg btn-block rounded-0" [disabled]="cardError"
+                            (click)="pay()"><span class="spinner-border mr-1" *ngIf="spinner"></span> Pay ${{
+                            formCtrl.tip.value }}</button>
+                        <div class="error" *ngIf="cardError">{{ cardError }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 animate__animated animate__fadeIn" *ngIf="stop.feedback">
+            <h3>Your delivery with {{ stop.driver.name }}</h3>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <ngb-rating max="5" [readonly]="true" [rate]="stop.feedback?.evaluation">
+                        <ng-template let-fill="fill" let-index="index">
+                            <span class="star" [class.filled]="fill === 100">&#9733;</span>
+                        </ng-template>
+                    </ngb-rating>
+                </div>
+                <div class="col-md-12 text-center animate__animated animate__fadeIn" *ngIf="stop.feedback?.compliment">
+                    <textarea class="form-control" [value]="stop.feedback?.compliment" readonly></textarea>
+                </div>
+                <div class="col-md-12 text-center my-3">
+                    <button class="btn btn-success btn-sm rounded-50">Tip sent: ${{ stop.feedback?.tip }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer class="border-top">
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="col-md-2 col-sm-3 col-6">
+            <img class="mb-2" src="../../../assets/images/logo.png" width="100px">
+            <p>No matter what,<br>We get it done!</p>
+        </div>
+        <div class="col-md-2 col-sm-3 col-6">
+            <h5>Navigation</h5>
+            <ul class="list-unstyled text-small">
+                <li><a class="text-muted" href="#">Home</a></li>
+                <li><a class="text-muted" href="#">About us</a></li>
+                <li><a class="text-muted" href="#">Services</a></li>
+                <li><a class="text-muted" href="#">Drivers</a></li>
+                <li><a class="text-muted" href="#">Privacy Policy</a></li>
+                <li><a class="text-muted" href="#">Segments</a></li>
+                <li><a class="text-muted" href="#">Where's my order</a></li>
+            </ul>
+        </div>
+        <div class="col-md-4 col-sm-3 col-12">
+            <h5>Services</h5>
+            <p class="text-small">
+                Management
+                Processing
+                Palletizing
+                Deliveries
+                Routing
+                Projects
+                Consultancy
+                GPS tracking
+                SMS to customers
+                MMS to customers
+                Customized service
+            </p>
+        </div>
+        <div class="col-md-3 col-sm-3 col-12">
+            <h5>Working Hours</h5>
+            <div class="row">
+                <div class="col-4">Mon-Wed</div>
+                <div class="col-8 text-primary"> 9:00 am - 9:00 pm</div>
+            </div>
+            <div class="row">
+                <div class="col-4">Thu-Sat</div>
+                <div class="col-8 text-primary"> 9:00 am - 9:00 pm</div>
+            </div>
+            <div class="row">
+                <div class="col-4">Sunday</div>
+                <div class="col-8 text-primary"> 9:00 am - 9:00 pm</div>
+            </div>
+        </div>
+    </div>
+</footer>

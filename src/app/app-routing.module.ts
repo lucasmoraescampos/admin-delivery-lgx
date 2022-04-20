@@ -12,6 +12,18 @@ const routes: Routes = [
     loadChildren: () => import('./pages/where-is-my-order/where-is-my-order.module').then(m => m.WhereIsMyOrderModule)
   },
   {
+    path: 'wimo/:id/:phone',
+    loadChildren: () => import('./pages/where-is-my-order/where-is-my-order.module').then(m => m.WhereIsMyOrderModule)
+  },
+  {
+    path: 'tips/:id/:phone',
+    loadChildren: () => import('./pages/tips/tips.module').then(m => m.TipsModule)
+  },
+  // {
+  //   path: 'feedback/',
+  //   loadChildren: () => import('./pages/feedback/feedback.module').then(m => m.FeedbackModule)
+  // },
+  {
     path: '',
     loadChildren: () => import('./pages/layout/layout.module').then(m => m.LayoutModule),
     canActivate: [AuthGuard]
