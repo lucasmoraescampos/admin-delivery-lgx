@@ -1,4 +1,4 @@
-<div class="modal-header">
+<div class="modal-header pb-0 border-0">
 
     <h4 class="modal-title pull-left" *ngIf="activeIndex == 0">Driver</h4>
 
@@ -14,142 +14,147 @@
 
 <div class="modal-body">
 
-    <div class="animate__animated animate__fadeIn" *ngIf="activeIndex == 0">
+    <tabset [justified]="true">
 
-        <form [formGroup]="formGroup">
+        <tab heading="Profile">
 
-            <div class="form-group row">
-
-                <div class="col-sm-4">
-
-                    <label for="name" class="col-form-label mt-1">Name</label>
-
+            <form class="animate__animated animate__fadeIn" [formGroup]="formGroup">
+    
+                <div class="form-group row">
+    
+                    <div class="col-sm-4">
+    
+                        <label for="name" class="col-form-label mt-1">Name</label>
+    
+                    </div>
+    
+                    <div class="col-sm-8">
+    
+                        <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
+                            formControlName="name">
+    
+                    </div>
+    
                 </div>
-
-                <div class="col-sm-8">
-
-                    <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
-                        formControlName="name">
-
+    
+                <div class="form-group row">
+    
+                    <div class="col-sm-4">
+    
+                        <label for="phone" class="col-form-label mt-1">Phone</label>
+    
+                    </div>
+    
+                    <div class="col-sm-8">
+    
+                        <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
+                            formControlName="phone" [brmasker]="{ type: 'num' }">
+    
+                    </div>
+    
                 </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-sm-4">
-
-                    <label for="phone" class="col-form-label mt-1">Phone</label>
-
+    
+                <div class="form-group row">
+    
+                    <div class="col-sm-4">
+    
+                        <label class="col-form-label mt-1">Start Address</label>
+    
+                    </div>
+    
+                    <div class="col-sm-8">
+    
+                        <app-google-autocomplete [address]="formControl.start_address.value"
+                            (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+    
+                    </div>
+    
                 </div>
-
-                <div class="col-sm-8">
-
-                    <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
-                        formControlName="phone" [brmasker]="{ type: 'num' }">
-
+    
+                <div class="form-group row">
+    
+                    <div class="col-sm-4">
+    
+                        <label for="start_time" class="col-form-label mt-1">Start Time</label>
+    
+                    </div>
+    
+                    <div class="col-sm-8">
+    
+                        <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00"
+                            formControlName="start_time">
+    
+                    </div>
+    
                 </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-sm-4">
-
-                    <label class="col-form-label mt-1">Start Address</label>
-
+    
+                <div class="form-group row">
+    
+                    <div class="col-sm-4">
+    
+                        <label for="end_time" class="col-form-label mt-1">End Time</label>
+    
+                    </div>
+    
+                    <div class="col-sm-8">
+    
+                        <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00"
+                            formControlName="end_time">
+    
+                    </div>
+    
                 </div>
+    
+            </form>
 
-                <div class="col-sm-8">
+        </tab>
 
-                    <app-google-autocomplete [address]="formControl.start_address.value"
-                        (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
+        <tab heading="Teams">
 
+            <form class="animate__animated animate__fadeIn">
+
+                <div class="form-group">
+        
+                    <div class="custom-control custom-checkbox" *ngFor="let team of teams; let i=index">
+        
+                        <input type="checkbox" class="custom-control-input" [value]="team.id" [id]="'checkbox-' + i"
+                            [checked]="selectedTeams.indexOf(team.id) != -1" (change)="addTeam($event)">
+        
+                        <label [for]="'checkbox-' + i" class="custom-control-label">{{ team.name }}</label>
+        
+                    </div>
+        
                 </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-sm-4">
-
-                    <label for="start_time" class="col-form-label mt-1">Start Time</label>
-
+        
+                <div class="form-group row">
+        
+                    <div class="col-sm-6 pt-3">
+        
+                        <button class="btn btn-secondary" (click)="activeIndex = 0">Voltar</button>
+        
+                    </div>
+        
+                    <div class="col-sm-6 text-right pt-3">
+        
+                        <button class="btn btn-primary" [disabled]="formGroup.invalid || selectedTeams?.length == 0"
+                            (click)="save()">Save</button>
+        
+                    </div>
+        
                 </div>
+        
+            </form>
 
-                <div class="col-sm-8">
+        </tab>
 
-                    <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00"
-                        formControlName="start_time">
+        <tab heading="Documents">
 
-                </div>
+        </tab>
 
-            </div>
+        <tab heading="Password">
 
-            <div class="form-group row">
+        </tab>
 
-                <div class="col-sm-4">
-
-                    <label for="end_time" class="col-form-label mt-1">End Time</label>
-
-                </div>
-
-                <div class="col-sm-8">
-
-                    <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00"
-                        formControlName="end_time">
-
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-sm-12 text-center pt-3">
-
-                    <button class="btn btn-primary" [disabled]="formGroup.invalid" (click)="activeIndex = 1">Select
-                        teams</button>
-
-                </div>
-
-            </div>
-
-        </form>
-
-    </div>
-
-    <div class="animate__animated animate__fadeIn" *ngIf="activeIndex == 1">
-
-        <div class="form-group">
-
-            <div class="custom-control custom-checkbox" *ngFor="let team of teams; let i=index">
-
-                <input type="checkbox" class="custom-control-input" [value]="team.id" [id]="'checkbox-' + i"
-                    [checked]="selectedTeams.indexOf(team.id) != -1" (change)="addTeam($event)">
-
-                <label [for]="'checkbox-' + i" class="custom-control-label">{{ team.name }}</label>
-
-            </div>
-
-        </div>
-
-        <div class="form-group row">
-
-            <div class="col-sm-6 pt-3">
-
-                <button class="btn btn-secondary" (click)="activeIndex = 0">Voltar</button>
-
-            </div>
-
-            <div class="col-sm-6 text-right pt-3">
-
-                <button class="btn btn-primary" [disabled]="formGroup.invalid || selectedTeams?.length == 0"
-                    (click)="save()">Save</button>
-
-            </div>
-
-        </div>
-
-    </div>
+    </tabset>
 
 </div>

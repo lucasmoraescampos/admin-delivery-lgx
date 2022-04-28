@@ -6,6 +6,7 @@ import { GoogleAutocompleteModule } from 'src/app/components/google-autocomplete
 import { BrMaskerModule } from 'br-mask';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 
 
@@ -18,7 +19,8 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     GoogleAutocompleteModule,
     BrMaskerModule,
     ModalModule.forRoot(),
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    TabsModule.forRoot()
   ]
 })
 export class ModalDriverModule { }

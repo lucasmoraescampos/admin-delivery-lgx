@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -61,7 +62,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
     private modalSrv: BsModalService,
     private formBuilder: FormBuilder,
     private alertSrv: AlertService,
-    private navbarSrv: NavbarService
+    private navbarSrv: NavbarService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -163,7 +165,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
     else {
 
-      this.apiSrv.getAllProjects({ page: page })
+      const params: any = { page };
+
+      const status = this.route.snapshot.queryParamMap.get('status');
+
+      if (status) {
+        params.status = status;
+      }
+
+      this.apiSrv.getAllProjects(params)
         .pipe(takeUntil(this.unsubscribe))
         .subscribe(res => {
 
@@ -193,6 +203,8 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       const params: any = {};
 
+      const status = this.route.snapshot.queryParamMap.get('status');
+
       if (page) {
         params.page = page;
       }
@@ -207,6 +219,10 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
       if (this.name) {
         params.name = this.name;
+      }
+
+      if (status) {
+        params.status = status;
       }
 
       this.apiSrv.getAllProjects(params)
@@ -494,7 +510,15 @@ export class ProjectsComponent implements OnInit, OnDestroy {
 
   private initProjects() {
 
-    this.apiSrv.getAllProjects()
+    const params: any = {};
+
+    const status = this.route.snapshot.queryParamMap.get('status');
+
+    if (status) {
+      params.status = status;
+    }
+
+    this.apiSrv.getAllProjects(params)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
 

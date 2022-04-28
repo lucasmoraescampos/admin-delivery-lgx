@@ -261,8 +261,8 @@ export class ApiService {
   /*
    * Driver Requests
    */
-  public getAllDrivers() {
-    return this.http.get<HttpResult>(`${this.apiUrl}/user/driver`);
+  public getAllDrivers(params?: any) {
+    return this.http.get<HttpResult>(`${this.apiUrl}/user/driver`, { params: params });
   }
 
   public getDriversByTeam(team_id: number) {

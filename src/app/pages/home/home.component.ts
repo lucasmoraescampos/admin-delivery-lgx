@@ -7,6 +7,7 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import * as am4core from '@amcharts/amcharts4/core';
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4themes_dataviz from "@amcharts/amcharts4/themes/dataviz";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiSrv: ApiService,
-    private navbarSrv: NavbarService
+    private navbarSrv: NavbarService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +47,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  public navigate(url: string) {
+    this.router.navigateByUrl(url);
   }
 
   private initDeliveryTimeStatistics() {

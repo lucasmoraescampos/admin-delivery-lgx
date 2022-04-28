@@ -16,28 +16,24 @@
                     
                     </div>
 
+                    <div class="col-sm-3 col-md-2 p-0 pb-3 pl-sm-3 pb-sm-0">
+                        <select class="form-control form-control-sm" [(ngModel)]="status" (ngModelChange)="statusChanged()">
+                            <option [value]="0">All Drivers</option>
+                            <option [value]="1">Drivers under review</option>
+                        </select>
+                    </div>
+
                     <div class="input-group col-sm-4 col-md-3 p-0 pb-3 pl-sm-3 pb-sm-0">
-
-                        <input type="text" class="form-control form-control-sm" placeholder="Search Driver Name Here" [(ngModel)]="search">
-
+                        <input type="text" class="form-control form-control-sm" placeholder="Search Driver Name" [(ngModel)]="search">
                         <div class="input-group-append" *ngIf="search">
-
                             <button class="btn-group-clear" (click)="search = ''">clear</button>
-
                         </div>
-
                     </div>
 
                     <div class="p-0 pl-sm-3">
-
-                        <button type="button" class="btn btn-primary btn-block" (click)="modalDriver()">
-                            
-                            <i class="ri-add-line"></i>
-                            
-                            New Driver
-                        
+                        <button type="button" class="btn btn-primary btn-block" [disabled]="true" (click)="modalDriver()">
+                            <i class="ri-add-line"></i> New Driver
                         </button>
-
                     </div>
 
                 </div>

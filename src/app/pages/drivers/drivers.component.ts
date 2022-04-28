@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,13 +20,17 @@ export class DriversComponent implements OnInit, OnDestroy {
 
   public drivers: any[];
 
+  public status: number;
+
   private unsubscribe = new Subject();
 
   constructor(
     private apiSrv: ApiService,
     private modalSrv: BsModalService,
     private alertSrv: AlertService,
-    private navbarSrv: NavbarService
+    private navbarSrv: NavbarService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -34,13 +39,25 @@ export class DriversComponent implements OnInit, OnDestroy {
 
     this.navbarSrv.setBreadcrumb([]);
 
-    this.initDrivers();
+    this.status = Number(this.route.snapshot.queryParamMap.get('status') ?? 0);
+
+    this.loadDrivers();
 
   }
 
   ngOnDestroy() {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  public statusChanged() {
+    if (this.status == 0) {
+      this.router.navigateByUrl('drivers');
+    }
+    else {
+      this.router.navigateByUrl(`drivers?status=${this.status}`);
+    }
+    this.loadDrivers();
   }
 
   public modalDriver(index?: number) {
@@ -96,8 +113,8 @@ export class DriversComponent implements OnInit, OnDestroy {
 
   }
 
-  private initDrivers() {
-    this.apiSrv.getAllDrivers()
+  private loadDrivers() {
+    this.apiSrv.getAllDrivers({ status: this.status })
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.drivers = res.data;

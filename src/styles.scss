@@ -122,3 +122,12 @@ input:read-only {
   background: #e9edf4 !important;
   border: 0 solid #d7dbda !important;
 }
+
+.btn-card .iq-card {
+  transition: 0.2s;
+  
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.07);
+  }
+}
