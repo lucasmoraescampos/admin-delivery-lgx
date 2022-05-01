@@ -1,8 +1,6 @@
-<div class="modal-header pb-0 border-0">
+<div class="modal-header border-0">
 
-    <h4 class="modal-title pull-left" *ngIf="activeIndex == 0">Driver</h4>
-
-    <h4 class="modal-title pull-left" *ngIf="activeIndex == 1">Select driver teams</h4>
+    <h4 class="modal-title pull-left">Driver</h4>
 
     <button type="button" class="close pull-right" aria-label="Close" (click)="dismiss()">
 
@@ -16,145 +14,140 @@
 
     <tabset [justified]="true">
 
-        <tab heading="Profile">
-
+        <tab heading="Profile" [active]="activeIndex == 'profile'" (selectTab)="tabChanged('profile')">
             <form class="animate__animated animate__fadeIn" [formGroup]="formGroup">
-    
                 <div class="form-group row">
-    
                     <div class="col-sm-4">
-    
                         <label for="name" class="col-form-label mt-1">Name</label>
-    
                     </div>
-    
                     <div class="col-sm-8">
-    
-                        <input type="text" class="form-control" id="name" placeholder="Driver name" maxlength="100"
-                            formControlName="name">
-    
+                        <input type="text" class="form-control" id="name" maxlength="100" formControlName="name">
                     </div>
-    
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <label for="email" class="col-form-label mt-1">Email</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="email" class="form-control" id="email" maxlength="40" formControlName="email">
+                    </div>
                 </div>
     
                 <div class="form-group row">
-    
                     <div class="col-sm-4">
-    
                         <label for="phone" class="col-form-label mt-1">Phone</label>
-    
                     </div>
-    
                     <div class="col-sm-8">
-    
-                        <input type="tel" class="form-control" id="phone" placeholder="e.g. 3148675309" maxlength="40"
-                            formControlName="phone" [brmasker]="{ type: 'num' }">
-    
+                        <input type="tel" class="form-control" id="phone" maxlength="40" formControlName="phone" [brmasker]="{ type: 'num' }">
                     </div>
-    
                 </div>
     
                 <div class="form-group row">
-    
                     <div class="col-sm-4">
-    
                         <label class="col-form-label mt-1">Start Address</label>
-    
                     </div>
-    
                     <div class="col-sm-8">
-    
                         <app-google-autocomplete [address]="formControl.start_address.value"
                             (changeAddress)="changeStartAddress($event)"></app-google-autocomplete>
-    
                     </div>
-    
                 </div>
     
                 <div class="form-group row">
-    
                     <div class="col-sm-4">
-    
                         <label for="start_time" class="col-form-label mt-1">Start Time</label>
-    
                     </div>
-    
                     <div class="col-sm-8">
-    
-                        <input type="time" class="form-control" id="start_time" placeholder="e.g. 08:00"
-                            formControlName="start_time">
-    
+                        <input type="time" class="form-control" id="start_time" formControlName="start_time">
                     </div>
-    
                 </div>
     
                 <div class="form-group row">
-    
                     <div class="col-sm-4">
-    
                         <label for="end_time" class="col-form-label mt-1">End Time</label>
-    
                     </div>
-    
                     <div class="col-sm-8">
-    
-                        <input type="time" class="form-control" id="end_time" placeholder="e.g. 08:00"
-                            formControlName="end_time">
-    
+                        <input type="time" class="form-control" id="end_time" formControlName="end_time">
                     </div>
-    
                 </div>
-    
             </form>
-
         </tab>
 
-        <tab heading="Teams">
+        <tab heading="Teams" [active]="activeIndex == 'teams'" (selectTab)="tabChanged('teams')">
+            <div class="table-responsive animate__animated animate__fadeIn">
+                <table class="table table-hover table-sm" width="100%">
+                    <tbody>
+                        <tr *ngFor="let team of teams; let i=index" (click)="toggleTeam(team.id)">
+                            <td class="border-0 ">{{ team.name }}</td>
+                            <td class="border-0 text-right">
+                                <i class="ri-checkbox-blank-circle-line checkbox text-muted" *ngIf="selectedTeams.indexOf(team.id) == -1"></i>
+                                <i class="ri-checkbox-circle-fill checkbox text-primary" *ngIf="selectedTeams.indexOf(team.id) != -1"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </tab>
 
-            <form class="animate__animated animate__fadeIn">
+        <tab heading="Documents" [active]="activeIndex == 'documents'" (selectTab)="tabChanged('documents')" *ngIf="driver?.license && driver?.insurance">
+            <div class="table-responsive animate__animated animate__fadeIn">
+                <table class="table" width="100%">
+                    <tbody>
+                        <tr>
+                            <td class="border-0">Driver License</td>
+                            <td class="border-0 text-right">
+                                <img class="img-thumbnail doc" [src]="driver.license" [viewerOptions]="{ navbar: false, toolbar: false }" ngxViewer>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border-0">Car Insurance</td>
+                            <td class="border-0 text-right">
+                                <img class="img-thumbnail doc" [src]="driver.insurance" [viewerOptions]="{ navbar: false, toolbar: false }" ngxViewer>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border-0">Status</td>
+                            <td class="border-0 text-right">
+                                <select class="form-control form-control-sm" (change)="statusChanged($event)">
+                                    <option hidden [value]="null">Select</option>
+                                    <option [value]="2">Approved Documents</option>
+                                    <option [value]="3">Disapproved Documents</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </tab>
 
-                <div class="form-group">
-        
-                    <div class="custom-control custom-checkbox" *ngFor="let team of teams; let i=index">
-        
-                        <input type="checkbox" class="custom-control-input" [value]="team.id" [id]="'checkbox-' + i"
-                            [checked]="selectedTeams.indexOf(team.id) != -1" (change)="addTeam($event)">
-        
-                        <label [for]="'checkbox-' + i" class="custom-control-label">{{ team.name }}</label>
-        
-                    </div>
-        
-                </div>
-        
+        <tab heading="Password" [active]="activeIndex == 'password'" (selectTab)="tabChanged('password')">
+            <form class="animate__animated animate__fadeIn" [formGroup]="formGroup">
                 <div class="form-group row">
-        
-                    <div class="col-sm-6 pt-3">
-        
-                        <button class="btn btn-secondary" (click)="activeIndex = 0">Voltar</button>
-        
+                    <div class="col-sm-4">
+                        <label for="password" class="col-form-label mt-1">Password</label>
                     </div>
-        
-                    <div class="col-sm-6 text-right pt-3">
-        
-                        <button class="btn btn-primary" [disabled]="formGroup.invalid || selectedTeams?.length == 0"
-                            (click)="save()">Save</button>
-        
+                    <div class="col-sm-8">
+                        <input type="password" class="form-control" id="password" maxlength="255"
+                            formControlName="password">
                     </div>
-        
                 </div>
-        
+
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <label for="confirm_password" class="col-form-label mt-1">Confirm password</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="password" class="form-control" id="confirm_password" maxlength="255"
+                            formControlName="confirm_password">
+                    </div>
+                </div>
             </form>
-
-        </tab>
-
-        <tab heading="Documents">
-
-        </tab>
-
-        <tab heading="Password">
-
         </tab>
 
     </tabset>
 
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" (click)="save()" [disabled]="!driver && formGroup.invalid">Save</button>
 </div>

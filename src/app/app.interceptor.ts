@@ -22,7 +22,14 @@ export class AppInterceptor implements HttpInterceptor {
 
         this.loadingSrv.hide();
 
-        if (err.status === 401) {
+        if (err.status == 400) {
+            this.alertSrv.toast({
+                icon: 'error',
+                message: err.error.message
+            });
+        }
+
+        else if (err.status === 401) {
 
             localStorage.clear();
 

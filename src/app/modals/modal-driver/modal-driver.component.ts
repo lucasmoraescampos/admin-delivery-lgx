@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ArrayHelper } from 'src/app/helpers/array.helper';
+import { UtilsHelper } from 'src/app/helpers/utils.helper';
 import { AlertService } from 'src/app/services/alert.service';
 import { ApiService } from 'src/app/services/api.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -17,7 +17,7 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
   @Input() driver: any;
 
-  public activeIndex: number = 0;
+  public activeIndex: string = 'profile';
 
   public teams: any[];
 
@@ -41,12 +41,16 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
 
     this.formGroup = this.formBuilder.group({
       name: [this.driver?.name ?? '', Validators.required],
+      email: [this.driver?.email ?? '', Validators.required],
       phone: [this.driver?.phone ?? '', Validators.required],
       start_address: [this.driver?.start_address ?? '', Validators.required],
       start_lat: [this.driver?.start_lat ?? '', Validators.required],
       start_lng: [this.driver?.start_lng ?? '', Validators.required],
       start_time: [this.driver?.start_time ?? '08:00', Validators.required],
-      end_time: [this.driver ? this.driver.end_time : '16:00', Validators.required]
+      end_time: [this.driver ? this.driver.end_time : '16:00', Validators.required],
+      status: [''],
+      password: [''],
+      confirm_password: ['']
     });
 
     this.initTeams();
@@ -68,6 +72,10 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
     return this.formGroup.controls;
   }
 
+  public tabChanged(activeIndex: string) {
+    this.activeIndex = activeIndex;
+  }
+
   public changeStartAddress(event: any) {
     this.formGroup.patchValue({
       start_address: event.address,
@@ -76,29 +84,100 @@ export class ModalDriverComponent implements OnInit, OnDestroy {
     });
   }
 
-  public addTeam(event: any) {
-    if (event.target.checked) {
-      this.selectedTeams.push(event.target.value);
+  public toggleTeam(teamId: number) {
+    if (this.selectedTeams.indexOf(teamId) == -1) {
+      this.selectedTeams.push(teamId);
     }
     else {
-      const index = ArrayHelper.getIndexByKey(this.selectedTeams, 'id', event.target.value);
-      this.selectedTeams = ArrayHelper.removeItem(this.selectedTeams, index);
+      this.selectedTeams = this.selectedTeams.filter(x => x != teamId);
     }
+  }
+
+  public statusChanged(ev: any) {
+    this.formGroup.patchValue({ status: ev.target.value });
   }
 
   public save() {
 
-    if (this.activeIndex == 1 && this.selectedTeams.length > 0) {
+    const data = { ...this.formGroup.value };
+
+    if (data.email == '') {
+
+      this.activeIndex = 'profile';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'The field email is required'
+      });
+
+    }
+
+    else if (!UtilsHelper.validateEmail(data.email)) {
+
+      this.activeIndex = 'profile';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'Invalid email'
+      });
+
+    }
+
+    else if (this.selectedTeams.length == 0) {
+
+      this.activeIndex = 'teams';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'Select driver teams!'
+      });
+
+    }
+
+    else if (!this.driver && data.password == '') {
+
+      this.activeIndex = 'password';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'Create a password'
+      });
+
+    }
+
+    else if (data.password && data.confirm_password == '') {
+
+      this.activeIndex = 'password';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'Confirm the new password'
+      });
+
+    }
+
+    else if (data.password && data.password != data.confirm_password) {
+
+      this.activeIndex = 'password';
+
+      this.alertSrv.toast({
+        icon: 'error',
+        message: 'The passwords are different!'
+      });
+
+    }
+
+    else {
 
       this.loadingSrv.show();
-
-      const data = this.formGroup.value;
 
       data.start_time = data.start_time.slice(0, 5);
 
       data.end_time = data.end_time.slice(0, 5);
 
       data.teams = this.selectedTeams;
+
+      delete data.confirm_password;
 
       if (this.driver) {
 

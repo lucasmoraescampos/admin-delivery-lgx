@@ -7,6 +7,7 @@ import { BrMaskerModule } from 'br-mask';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { NgxViewerModule } from 'ngx-viewer';
 
 
 
@@ -18,6 +19,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     ReactiveFormsModule,
     GoogleAutocompleteModule,
     BrMaskerModule,
+    NgxViewerModule,
     ModalModule.forRoot(),
     TooltipModule.forRoot(),
     TabsModule.forRoot()
