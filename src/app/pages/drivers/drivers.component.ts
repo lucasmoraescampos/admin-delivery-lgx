@@ -60,20 +60,21 @@ export class DriversComponent implements OnInit, OnDestroy {
     this.loadDrivers();
   }
 
-  public modalDriver(index?: number) {
+  public modalDriver(driver?: any) {
 
     const modal = this.modalSrv.show(ModalDriverComponent, {
       keyboard: false,
       class: 'modal-dialog-centered',
       backdrop: 'static',
       initialState: {
-        driver: this.drivers[index]
+        driver: driver
       }
     });
 
     modal.content.onClose.pipe(takeUntil(this.unsubscribe))
       .subscribe((driver: any) => {
-        if (index !== undefined) {
+        if (driver) {
+          const index = ArrayHelper.getIndexByKey(this.drivers, 'id', driver.id);
           this.drivers[index] = driver;
         }
         else {
@@ -83,9 +84,7 @@ export class DriversComponent implements OnInit, OnDestroy {
 
   }
 
-  public delete(index: number) {
-
-    const driver = this.drivers[index];
+  public delete(driver: any) {
 
     this.alertSrv.show({
       icon: 'warning',
@@ -97,6 +96,8 @@ export class DriversComponent implements OnInit, OnDestroy {
           .subscribe(res => {
 
             if (res.success) {
+
+              const index = ArrayHelper.getIndexByKey(this.drivers, 'id', driver.id);
 
               this.drivers = ArrayHelper.removeItem(this.drivers, index);
 
