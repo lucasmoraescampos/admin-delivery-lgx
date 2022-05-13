@@ -114,11 +114,19 @@ export class DriversComponent implements OnInit, OnDestroy {
   }
 
   private loadDrivers() {
-    this.apiSrv.getAllDrivers({ status: this.status })
+
+    const params: any = {};
+
+    if (this.status != 0) {
+      params.status = this.status;
+    }
+
+    this.apiSrv.getAllDrivers(params)
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(res => {
         this.drivers = res.data;
       });
+      
   }
 
 }
