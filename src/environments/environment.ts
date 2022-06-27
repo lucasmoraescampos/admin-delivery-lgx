@@ -3,8 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 let apiUrl: string;
-
 let driverUrl: string;
+let socketUrl: string;
 
 const stripeKey: string = 'pk_test_51KdMsrCCjfenGFMKlYg2uisMXJzNXBGg1F6dgaNI1sFdhXxKs3tsf7GdAskYqmKJb1ZOMlIcz1kJ1mT7niFZUMlb00BaXFNgP4';
 
@@ -13,16 +13,19 @@ switch (window.location.host) {
   case 'app.fariaslgx.com':
     apiUrl = 'https://api.fariaslgx.com';
     driverUrl = 'https://driver.fariaslgx.com';
+    socketUrl = 'https://socket.fariaslgx.com';
     break;
 
   case 'homologadmin.fariaslgx.com':
     apiUrl = 'https://homologapi.fariaslgx.com';
     driverUrl = 'https://homologdriver.fariaslgx.com';
+    socketUrl = 'https://socket.fariaslgx.com';
     break;
 
   default:
     apiUrl = 'http://localhost:8000';
     driverUrl = 'http://localhost:8100';
+    socketUrl = 'http://localhost:1337';
     break;
 
 }
@@ -31,6 +34,7 @@ export const environment = {
   production: false,
   apiUrl: apiUrl,
   driverUrl: driverUrl,
+  socketUrl: socketUrl,
   stripeKey: stripeKey
 }
 

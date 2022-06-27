@@ -12,6 +12,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { formatDate } from '@angular/common';
 import { UtilsHelper } from 'src/app/helpers/utils.helper';
 import { NavbarService } from 'src/app/services/navbar.service';
+import { SocketService } from 'src/app/services/socket.service';
 
 declare const google: any;
 
@@ -42,6 +43,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   public drivers_markers: any[];
 
+  public live_drivers_markers: any[];
+
   private polyline: any[];
 
   public colors = ['#0000cd', '#ff0000', '#2e8b57', '#ffa500', '#c71585', '#ff4500', '#808000', '#1e90ff', '#e9967a', '#2f4f4f', '#8b0000', '#191970', '#ff00ff', '#00ff00', '#ba55d3', '#00fa9a', '#f0e68c', '#dda0dd', '#006400', '#ffd700'];
@@ -54,21 +57,22 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
   private modalRef: BsModalRef;
 
+  private socketID: string;
+
   constructor(
     private apiSrv: ApiService,
     private modalSrv: BsModalService,
     private alertSrv: AlertService,
     private router: Router,
     private route: ActivatedRoute,
-    private navbarSrv: NavbarService
+    private navbarSrv: NavbarService,
+    private socketSrv: SocketService
   ) { }
 
   ngOnInit() {
-
     this.initMap();
-
     this.initProject();
-
+    this.initSocket();
   }
 
   ngOnDestroy() {
@@ -1146,6 +1150,48 @@ export class ProjectComponent implements OnInit, OnDestroy {
 
       });
 
+  }
+
+  private initSocket() {
+    this.socketSrv.subscribe()
+      .then(socketID => {
+        this.socketID = socketID;
+        this.live_drivers_markers = [];
+        this.socketSrv.on('driver_history', history => {
+          if (this.project.id == history.project_id) {
+            const index = this.live_drivers_markers.findIndex(x => x.id == history.driver_id);
+            if (index > -1) {
+              this.live_drivers_markers[index].marker.setPosition(new google.maps.LatLng(history.lat, history.lng));
+            } else {
+              const color = this.drivers_markers.find(x => x.id == history.driver_id).marker.icon.fillColor;
+              const marker = new google.maps.Marker({
+                map: this.map,
+                position: new google.maps.LatLng(history.lat, history.lng),
+                zIndex: 999,
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  scale: 9,
+                  fillColor: "#FFFFFF",
+                  fillOpacity: 0.8,
+                  strokeColor: color,
+                  strokeWeight: 6
+                }
+              });
+              this.live_drivers_markers.push({
+                id: history.driver_id,
+                marker: marker
+              });
+            }
+          }
+        });
+
+        // Cancelando a inscrição do socket em caso de fechamento ou atualização da pagina
+        window.onbeforeunload = () => {
+          this.socketSrv.unsubscribe(this.socketID);
+        }
+      });
+
+      
   }
 
 }
