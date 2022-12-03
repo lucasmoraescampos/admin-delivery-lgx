@@ -10,6 +10,7 @@ import { HttpResult } from '../models/http-result';
 export class ApiService {
 
   private apiUrl = environment.apiUrl;
+  private smsApiUrl = environment.smsApiUrl;
 
   constructor(
     private http: HttpClient
@@ -284,5 +285,12 @@ export class ApiService {
   public deliveryTimeStatistics(params: any) {
     return this.http.get<HttpResult>(`${this.apiUrl}/user/statistics/deliveryTime`, { params: params });
   }
+
+  public getSettings() {
+    return this.http.get<HttpResult>(`${this.smsApiUrl}/settings`);
+  }
   
+  public setSettings(data: any) {
+    return this.http.post<HttpResult>(`${this.smsApiUrl}/settings`, data);
+  }
 }

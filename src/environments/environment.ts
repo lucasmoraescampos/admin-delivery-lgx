@@ -5,7 +5,7 @@
 let apiUrl: string;
 let driverUrl: string;
 let socketUrl: string;
-
+const smsApiUrl: string = 'https://sms.fariaslgx.com/api';
 const stripeKey: string = 'pk_test_51KdMsrCCjfenGFMKlYg2uisMXJzNXBGg1F6dgaNI1sFdhXxKs3tsf7GdAskYqmKJb1ZOMlIcz1kJ1mT7niFZUMlb00BaXFNgP4';
 
 switch (window.location.host) {
@@ -33,6 +33,7 @@ switch (window.location.host) {
 export const environment = {
   production: false,
   apiUrl: apiUrl,
+  smsApiUrl: smsApiUrl,
   driverUrl: driverUrl,
   socketUrl: socketUrl,
   stripeKey: stripeKey

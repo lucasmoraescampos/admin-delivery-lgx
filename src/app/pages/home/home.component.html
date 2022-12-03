@@ -1,9 +1,6 @@
 <div class="row">
-
     <div class="col-md-8">
-
         <div class="row">
-
             <div class="col-md-4 animate__animated animate__fadeIn" *ngIf="resume">
                 <app-iq-card class="btn-card" [isCardHeader]="false" (click)="navigate('/projects?status=2')">
                     <div class="row">
@@ -20,7 +17,6 @@
                     </div>
                 </app-iq-card>
             </div>
-
             <div class="col-md-4 animate__animated animate__fadeIn" *ngIf="resume">
                 <app-iq-card class="btn-card" [isCardHeader]="false" (click)="navigate('/projects?status=3')">
                     <div class="row">
@@ -37,7 +33,6 @@
                     </div>
                 </app-iq-card>
             </div>
-
             <div class="col-md-4 animate__animated animate__fadeIn" *ngIf="resume">
                 <app-iq-card class="btn-card" [isCardHeader]="false" (click)="navigate('/drivers?status=1')">
                     <div class="row">
@@ -54,7 +49,6 @@
                     </div>
                 </app-iq-card>
             </div>
-
             <div class="col-md-12 animate__animated animate__fadeIn" [hidden]="!deliveryTimeStatistics">
 
                 <app-iq-card>
@@ -65,46 +59,56 @@
                 </app-iq-card>
 
             </div>
-
         </div>
-
     </div>
-
-    <div class="col-md-4 animate__animated animate__fadeIn" *ngIf="deliveries">
-
-        <app-iq-card>
-            <div card-header class="iq-header-title">
-                <h4 class="card-title">Last Deliveries</h4>
-            </div>
-            <div card-header class="iq-card-header-toolbar d-flex align-items-center">
-                <button class="btn btn-outline-primary btn-sm" [routerLink]="['/deliveries']">View All</button>
-            </div>
-            <ul class="iq-timeline">
-                <li class="animate__animated animate__fadeIn" *ngFor="let delivery of deliveries">
-                    <div class="timeline-dots "
-                        [ngClass]="{ 'border-success': delivery.status == 2, 'border-danger': delivery.status == 3 }">
-                    </div>
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-12 animate__animated animate__fadeIn" *ngIf="settings">
+                <app-iq-card [isCardHeader]="false">
                     <div class="d-flex justify-content-between">
-                        <h6>
-                            <span>{{ delivery.name }} </span>
-                            <span class="code">{{ delivery.order_id }}</span>
-                            <span class="project">{{ delivery.project.name }}</span>
-                        </h6>
-                        <small>{{ delivery.finished_at | dateTz:delivery.utc_offset }}</small>
-                    </div>
-                    <div class="d-inline-block w-100">
-                        <span class="note" *ngIf="delivery.note">"{{ delivery.note }}"</span>
-                        <div class="iq-media-group" *ngIf="delivery.route.image">
-                            <a href="javascript:void(0);" class="iq-media">
-                                <img class="img-fluid avatar-40 rounded-circle" [src]="delivery.route.image"
-                                    [viewerOptions]="{ navbar: false, toolbar: false }" ngxViewer>
-                            </a>
+                        <h5 class="d-flex align-items-center">
+                        <i class="las la-sms mr-2 text-primary"></i> SMS Server Status</h5>
+                        <div class="custom-control custom-switch custom-switch-color custom-control-inline m-0">
+                            <input type="checkbox" id="customSwitch01" class="custom-control-input bg-primary" [checked]="settings.sms_server_status" (change)="changeSmsStatus($event.target.checked)">
+                            <label for="customSwitch01" class="custom-control-label"></label>
                         </div>
                     </div>
-                </li>
-            </ul>
-        </app-iq-card>
-
+                </app-iq-card>
+            </div>
+            <div class="col-md-12 animate__animated animate__fadeIn" *ngIf="deliveries">
+                <app-iq-card>
+                    <div card-header class="iq-header-title">
+                        <h4 class="card-title">Last Deliveries</h4>
+                    </div>
+                    <div card-header class="iq-card-header-toolbar d-flex align-items-center">
+                        <button class="btn btn-outline-primary btn-sm" [routerLink]="['/deliveries']">View All</button>
+                    </div>
+                    <ul class="iq-timeline">
+                        <li class="animate__animated animate__fadeIn" *ngFor="let delivery of deliveries">
+                            <div class="timeline-dots "
+                                [ngClass]="{ 'border-success': delivery.status == 2, 'border-danger': delivery.status == 3 }">
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <h6>
+                                    <span>{{ delivery.name }} </span>
+                                    <span class="code">{{ delivery.order_id }}</span>
+                                    <span class="project">{{ delivery.project.name }}</span>
+                                </h6>
+                                <small>{{ delivery.finished_at | dateTz:delivery.utc_offset }}</small>
+                            </div>
+                            <div class="d-inline-block w-100">
+                                <span class="note" *ngIf="delivery.note">"{{ delivery.note }}"</span>
+                                <div class="iq-media-group" *ngIf="delivery.route.image">
+                                    <a href="javascript:void(0);" class="iq-media">
+                                        <img class="img-fluid avatar-40 rounded-circle" [src]="delivery.route.image"
+                                            [viewerOptions]="{ navbar: false, toolbar: false }" ngxViewer>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </app-iq-card>
+            </div>
+        </div>
     </div>
-
 </div>
